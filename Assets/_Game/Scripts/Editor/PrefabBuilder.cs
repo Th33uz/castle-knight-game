@@ -105,6 +105,7 @@ public static class PrefabBuilder
         so.FindProperty("checagemChao").objectReferenceValue = checagemChao.transform;
         so.FindProperty("camadaChao").intValue = MascaraDe("Ground", "OneWayPlatform");
         so.FindProperty("pulosMaximos").intValue = 2; // pulo duplo com a cambalhota
+        so.FindProperty("forcaPuloDuplo").floatValue = 13.5f; // o segundo salto e mais baixo
         so.ApplyModifiedProperties();
 
         jogador.AddComponent<PlayerHealth>();

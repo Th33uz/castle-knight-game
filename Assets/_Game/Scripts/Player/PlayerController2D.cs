@@ -22,6 +22,8 @@ public class PlayerController2D : MonoBehaviour
     [Header("Pulo")]
     [Tooltip("Com gravidade 4 no Rigidbody, 17 sobe cerca de 3,7 tiles: quase o dobro da altura do jogador.")]
     [SerializeField] private float forcaPulo = 17f;
+    [Tooltip("Pulo no ar. Mais fraco que o do chao de proposito: com a mesma forca (17) os dois saltos somavam 7,4 tiles, alto demais. Com 13,5 somam 6,0 - a maior subida do jogo e de 5.")]
+    [SerializeField] private float forcaPuloDuplo = 13.5f;
     [Tooltip("Tempo extra para pular depois de sair do chao.")]
     [SerializeField] private float coyoteTime = 0.12f;
     [Tooltip("Tempo que o comando de pulo fica guardado antes de tocar o chao.")]
@@ -155,7 +157,8 @@ public class PlayerController2D : MonoBehaviour
 
         if (contadorBuffer > 0f && podePular)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, forcaPulo);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x,
+                podePularDoChao ? forcaPulo : forcaPuloDuplo);
 
             pulosRestantes = Mathf.Max(0, pulosRestantes - 1);
             contadorBuffer = 0f;
