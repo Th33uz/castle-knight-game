@@ -19,6 +19,8 @@ public static class UiArtGenerator
     public const string CaminhoTeclaDir = Pasta + "/tecla_dir.png";
     public const string CaminhoTeclaE = Pasta + "/tecla_e.png";
     public const string CaminhoTeclaY = Pasta + "/tecla_y.png";
+    public const string CaminhoMoldura = Pasta + "/moldura_selecao.png";
+    public const string CaminhoSetaSelecao = Pasta + "/seta_selecao.png";
 
     private static readonly Color32 Nada = new Color32(0, 0, 0, 0);
 
@@ -36,6 +38,11 @@ public static class UiArtGenerator
     private static readonly Color32 Verde = new Color32(62, 142, 78, 255);
     private static readonly Color32 VerdeClaro = new Color32(111, 207, 122, 255);
     private static readonly Color32 VerdeEscuro = new Color32(42, 97, 54, 255);
+
+    // Realce de selecao: dourado, para destacar do verde dos botoes.
+    private static readonly Color32 Dourado = new Color32(247, 194, 66, 255);
+    private static readonly Color32 DouradoClaro = new Color32(255, 232, 150, 255);
+    private static readonly Color32 DouradoEscuro = new Color32(158, 104, 20, 255);
 
     // Tecla
     private static readonly Color32 TeclaTopo = new Color32(236, 236, 244, 255);
@@ -58,6 +65,8 @@ public static class UiArtGenerator
         if (!Existe(CaminhoTeclaDir)) GerarTecla(CaminhoTeclaDir, "dir");
         if (!Existe(CaminhoTeclaE)) GerarTecla(CaminhoTeclaE, "E");
         if (!Existe(CaminhoTeclaY)) GerarTecla(CaminhoTeclaY, "Y");
+        if (!Existe(CaminhoMoldura)) GerarMoldura();
+        if (!Existe(CaminhoSetaSelecao)) GerarSetaDeSelecao();
 
         AssetDatabase.Refresh();
     }
@@ -233,6 +242,64 @@ public static class UiArtGenerator
     }
 
     // ----------------- Salvar -----------------
+
+    // ----------------- Realce de selecao -----------------
+
+    /// <summary>
+    /// Moldura dourada vazada, desenhada POR CIMA do botao selecionado. O centro
+    /// e transparente para o botao continuar aparecendo; so a borda entra em
+    /// 9-slice, entao ela acompanha qualquer tamanho de botao.
+    /// </summary>
+    private static void GerarMoldura()
+    {
+        const int w = 24, h = 24, chanfro = 3;
+        Color32[] px = new Color32[w * h];
+
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
+            {
+                int dx = Mathf.Min(x, w - 1 - x);
+                int dy = Mathf.Min(y, h - 1 - y);
+                int daBorda = Mathf.Min(dx, dy);
+
+                Color32 cor;
+                if (dx + dy < chanfro) cor = Nada;              // canto chanfrado
+                else if (daBorda == 0) cor = DouradoEscuro;     // contorno externo
+                else if (daBorda == 1) cor = DouradoClaro;      // brilho
+                else if (daBorda == 2) cor = Dourado;
+                else if (daBorda == 3) cor = DouradoEscuro;     // contorno interno
+                else cor = Nada;                                // miolo vazado
+
+                px[y * w + x] = cor;
+            }
+
+        Salvar(CaminhoMoldura, w, h, px, new Vector4(6, 6, 6, 6));
+    }
+
+    /// <summary>Seta cheia apontando para a direita, colada a esquerda do botao selecionado.</summary>
+    private static void GerarSetaDeSelecao()
+    {
+        const int w = 10, h = 14;
+        Color32[] px = new Color32[w * h];
+
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
+            {
+                // Triangulo: a largura vai afinando conforme se afasta do meio.
+                float meio = (h - 1) / 2f;
+                float alcance = (1f - Mathf.Abs(y - meio) / (meio + 1f)) * w;
+
+                Color32 cor;
+                if (x > alcance) cor = Nada;
+                else if (x > alcance - 1.6f) cor = DouradoEscuro;   // contorno da ponta
+                else if (y > meio) cor = DouradoClaro;              // luz em cima
+                else cor = Dourado;
+
+                px[y * w + x] = cor;
+            }
+
+        Salvar(CaminhoSetaSelecao, w, h, px, Vector4.zero);
+    }
 
     private static void Salvar(string caminho, int w, int h, Color32[] px, Vector4 borda)
     {

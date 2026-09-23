@@ -12,7 +12,7 @@ public static class RetroSfx
     private const int TaxaDeAmostragem = 22050;
 
     private static AudioClip pulo, puloDuplo, moeda, dano, pisao, morte, checkpoint, vitoria, trampolim, cura, vidaExtra;
-    private static AudioClip espada, golpe, chefeDano, chefeMorte, compra, recusado, miado;
+    private static AudioClip espada, golpe, chefeDano, chefeMorte, compra, recusado, miado, navegar;
     private static AudioClip[] passinhos;
 
     private const float DuracaoDoMiado = 0.95f;
@@ -69,6 +69,10 @@ public static class RetroSfx
             return (Ruido(t) * 0.75f + Triangular(t, grave) * 0.25f) * queda * queda * 0.5f;
         });
     }
+
+    /// <summary>Tique curto de mudar de botao no menu. Discreto: toca muito.</summary>
+    public static AudioClip Navegar => navegar ??= Gerar("sfx_navegar", 0.06f, t =>
+        Quadrada(t, 1046f) * Decair(t, 0.06f) * 0.35f);
 
     // Caixa registradora: duas notas rapidas e altas.
     public static AudioClip Compra => compra ??= Gerar("sfx_compra", 0.3f, t =>

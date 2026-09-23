@@ -573,13 +573,7 @@ public static class UIBuilder
 
         Button botao = go.AddComponent<Button>();
         botao.targetGraphic = fundo;
-        ColorBlock cores = botao.colors;
-        cores.normalColor = Color.white;
-        cores.highlightedColor = new Color(1f, 0.92f, 0.6f);
-        cores.pressedColor = new Color(0.7f, 0.7f, 0.7f);
-        cores.selectedColor = new Color(1f, 0.92f, 0.6f);
-        cores.fadeDuration = 0.05f;
-        botao.colors = cores;
+        PintarBotao(botao);
 
         RectTransform rect = go.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
@@ -594,6 +588,9 @@ public static class UIBuilder
         TMP_Text subtitulo = CriarTexto(go.transform, "Subtitulo", nivel.subtitulo, new Vector2(0.5f, 0f), new Vector2(0f, 40f), TextAlignmentOptions.Center, 18f);
         subtitulo.rectTransform.sizeDelta = new Vector2(280f, 50f);
 
+        // Sem seta: os cartoes ficam lado a lado e a seta de um encostaria no
+        // vizinho. A moldura e o aumento de escala ja marcam o foco.
+        AdicionarRealce(botao, comSeta: false);
         return botao;
     }
 
@@ -627,6 +624,10 @@ public static class UIBuilder
         rect.anchorMax = Vector2.one;
         rect.offsetMin = Vector2.zero;
         rect.offsetMax = Vector2.zero;
+
+        // Todo painel navegavel ganha o guarda de foco. Num painel sem botoes ele
+        // nao faz nada, entao sai mais barato poe-lo aqui do que em cada tela.
+        painel.AddComponent<FocoDeMenu>();
         return painel;
     }
 
@@ -816,13 +817,7 @@ public static class UIBuilder
 
         Button botao = go.AddComponent<Button>();
         botao.targetGraphic = fundo;
-        ColorBlock cores = botao.colors;
-        cores.normalColor = Color.white;
-        cores.highlightedColor = new Color(1f, 0.95f, 0.7f);
-        cores.pressedColor = new Color(0.75f, 0.75f, 0.75f);
-        cores.selectedColor = new Color(1f, 0.95f, 0.7f);
-        cores.fadeDuration = 0.05f;
-        botao.colors = cores;
+        PintarBotao(botao);
 
         RectTransform rect = go.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
@@ -835,6 +830,75 @@ public static class UIBuilder
         TMP_Text texto = CriarTexto(go.transform, "Texto", rotulo, new Vector2(0.5f, 0.5f), new Vector2(0f, 3f), TextAlignmentOptions.Center, 30f);
         texto.rectTransform.sizeDelta = rect.sizeDelta;
 
+        AdicionarRealce(botao);
         return botao;
+    }
+
+    /// <summary>
+    /// Cores do Button. O tint anterior clareava so uns 5%, o que some na pixel
+    /// art: o foco agora escurece o botao de verdade, e quem faz o trabalho
+    /// pesado e a moldura do RealceDeSelecao.
+    /// </summary>
+    private static void PintarBotao(Button botao)
+    {
+        ColorBlock cores = botao.colors;
+        cores.normalColor = Color.white;
+        cores.highlightedColor = new Color(1f, 0.88f, 0.45f);
+        cores.selectedColor = new Color(1f, 0.88f, 0.45f);
+        cores.pressedColor = new Color(0.7f, 0.62f, 0.32f);
+        cores.disabledColor = new Color(0.45f, 0.45f, 0.5f, 0.6f);
+        cores.fadeDuration = 0.06f;
+        botao.colors = cores;
+    }
+
+    /// <summary>
+    /// Poe a moldura dourada e a seta no botao e liga o RealceDeSelecao.
+    ///
+    /// A moldura fica esticada sobre o botao inteiro, com uma folga para fora,
+    /// e o miolo dela e vazado: o botao continua aparecendo por dentro. Os dois
+    /// nascem desligados; quem acende e apaga e o componente.
+    /// </summary>
+    private static void AdicionarRealce(Button botao, bool comSeta = true)
+    {
+        GameObject moldura = new GameObject("Moldura", typeof(RectTransform));
+        moldura.transform.SetParent(botao.transform, false);
+        Image molduraImagem = moldura.AddComponent<Image>();
+        molduraImagem.sprite = Carregar(UiArtGenerator.CaminhoMoldura);
+        molduraImagem.type = Image.Type.Sliced;
+        molduraImagem.pixelsPerUnitMultiplier = 2f;
+        molduraImagem.raycastTarget = false;
+
+        RectTransform molduraRect = moldura.GetComponent<RectTransform>();
+        molduraRect.anchorMin = Vector2.zero;
+        molduraRect.anchorMax = Vector2.one;
+        molduraRect.offsetMin = new Vector2(-10f, -10f);
+        molduraRect.offsetMax = new Vector2(10f, 10f);
+
+        GameObject seta = null;
+
+        if (comSeta)
+        {
+            seta = new GameObject("Seta", typeof(RectTransform));
+            seta.transform.SetParent(botao.transform, false);
+            Image setaImagem = seta.AddComponent<Image>();
+            setaImagem.sprite = Carregar(UiArtGenerator.CaminhoSetaSelecao);
+            setaImagem.raycastTarget = false;
+            setaImagem.preserveAspect = true;
+
+            RectTransform setaRect = seta.GetComponent<RectTransform>();
+            setaRect.anchorMin = setaRect.anchorMax = new Vector2(0f, 0.5f);
+            setaRect.pivot = new Vector2(1f, 0.5f);
+            setaRect.anchoredPosition = new Vector2(-22f, 0f);
+            setaRect.sizeDelta = new Vector2(30f, 42f);
+            seta.SetActive(false);
+        }
+
+        moldura.SetActive(false);
+
+        RealceDeSelecao realce = botao.gameObject.AddComponent<RealceDeSelecao>();
+        SerializedObject so = new SerializedObject(realce);
+        so.FindProperty("moldura").objectReferenceValue = moldura;
+        so.FindProperty("seta").objectReferenceValue = seta;
+        so.ApplyModifiedProperties();
     }
 }
