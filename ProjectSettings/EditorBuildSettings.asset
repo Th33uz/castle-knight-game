@@ -7,22 +7,25 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/_Game/Scenes/MainMenu.unity
-    guid: 09e6301116b302948a037e0c05aab3b8
+    guid: acae55ecc5eee9242b8493adc5c15f96
   - enabled: 1
     path: Assets/_Game/Scenes/Cutscene.unity
-    guid: 1af44769d07c2c7438b63e188186fc87
+    guid: 31fdbc9b5b4fd3642a854715fed10f08
   - enabled: 1
     path: Assets/_Game/Scenes/Tutorial.unity
-    guid: 4ad322b4952bf2641b5076e14a4a6627
+    guid: 2d57b3a5cfbdcea489fee236312ea9c6
   - enabled: 1
     path: Assets/_Game/Scenes/Fase1.unity
-    guid: 5fecdf0e2f6b18f49b5110f9f19aaf18
+    guid: c12c89f634f24af4b99cecd13ecbf64a
   - enabled: 1
     path: Assets/_Game/Scenes/Fase2.unity
-    guid: b8c9155c4d909a14e8aeae0166f47619
+    guid: e3cc99e29615d0e4d9721f52b9867a95
   - enabled: 1
     path: Assets/_Game/Scenes/Fase3.unity
-    guid: a05d50cfd8a2b0848a4d284ce3e20cc8
+    guid: ae5ffd6fbe6e9d245ab92e29eb024cba
+  - enabled: 1
+    path: Assets/_Game/Scenes/Fase4.unity
+    guid: 16cee33b6fb4a27469aec9563eb49ff2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5419331877995556729
+--- !u!1 &3891742858409885060
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,11 +8,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7652163235108232284}
-  - component: {fileID: 4474276053516200193}
-  - component: {fileID: 686152261334094408}
-  - component: {fileID: 2784343854292978319}
-  - component: {fileID: 1951102975245258985}
+  - component: {fileID: 1840768099748826138}
+  - component: {fileID: 6647193044547131333}
+  - component: {fileID: 5270491075590162455}
+  - component: {fileID: 2369732931650454445}
+  - component: {fileID: 3316409961536675630}
   m_Layer: 0
   m_Name: Cereja
   m_TagString: Collectible
@@ -20,13 +20,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7652163235108232284
+--- !u!4 &1840768099748826138
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5419331877995556729}
+  m_GameObject: {fileID: 3891742858409885060}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -35,14 +35,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &4474276053516200193
+--- !u!212 &6647193044547131333
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5419331877995556729}
+  m_GameObject: {fileID: 3891742858409885060}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -94,14 +94,14 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!95 &686152261334094408
+--- !u!95 &5270491075590162455
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5419331877995556729}
+  m_GameObject: {fileID: 3891742858409885060}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: dff1eb6c03ca87048b978d0aa2f3d8ab, type: 2}
@@ -116,13 +116,13 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!58 &2784343854292978319
+--- !u!58 &2369732931650454445
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5419331877995556729}
+  m_GameObject: {fileID: 3891742858409885060}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -152,13 +152,13 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &1951102975245258985
+--- !u!114 &3316409961536675630
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5419331877995556729}
+  m_GameObject: {fileID: 3891742858409885060}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed4eb2d41f4e816439a7157bed293be4, type: 3}
@@ -167,4 +167,4 @@ MonoBehaviour:
   tipo: 1
   valor: 1
   somAoPegar: {fileID: 0}
-  efeitoVisual: {fileID: 9051268871738668096, guid: 3a72411d81420894ebfb0dc1c4a5dbe5, type: 3}
+  efeitoVisual: {fileID: 8311123247782498291, guid: 3a72411d81420894ebfb0dc1c4a5dbe5, type: 3}

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1983434701961250820
+--- !u!1 &4700414069263413092
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,12 +8,12 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3642961881195567323}
-  - component: {fileID: 3837089546297847640}
-  - component: {fileID: 1407746310508705509}
-  - component: {fileID: 2769138704258860800}
-  - component: {fileID: 4106356806367012838}
-  - component: {fileID: 396458228137790879}
+  - component: {fileID: 6879066223105139159}
+  - component: {fileID: 7962267409066745889}
+  - component: {fileID: 2978927682922841429}
+  - component: {fileID: 4872086476201449068}
+  - component: {fileID: 2525250885237103701}
+  - component: {fileID: 6160160106639048591}
   m_Layer: 11
   m_Name: BolaDeFogo
   m_TagString: Hazard
@@ -21,13 +21,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3642961881195567323
+--- !u!4 &6879066223105139159
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983434701961250820}
+  m_GameObject: {fileID: 4700414069263413092}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -36,14 +36,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &3837089546297847640
+--- !u!212 &7962267409066745889
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983434701961250820}
+  m_GameObject: {fileID: 4700414069263413092}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -95,14 +95,14 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!95 &1407746310508705509
+--- !u!95 &2978927682922841429
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983434701961250820}
+  m_GameObject: {fileID: 4700414069263413092}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 4a30ef00cdf590d4e9dfc149840e63fc, type: 2}
@@ -117,14 +117,14 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!50 &2769138704258860800
+--- !u!50 &4872086476201449068
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983434701961250820}
+  m_GameObject: {fileID: 4700414069263413092}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -144,13 +144,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!58 &4106356806367012838
+--- !u!58 &2525250885237103701
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983434701961250820}
+  m_GameObject: {fileID: 4700414069263413092}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -180,13 +180,13 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.28
---- !u!114 &396458228137790879
+--- !u!114 &6160160106639048591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983434701961250820}
+  m_GameObject: {fileID: 4700414069263413092}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7da917241242ea4692a0657a109749e, type: 3}
@@ -197,4 +197,4 @@ MonoBehaviour:
   camadasQueDestroem:
     serializedVersion: 2
     m_Bits: 256
-  efeitoImpacto: {fileID: 8841829227736864328, guid: 19d586fa2ec39b242aa2c79f64bbbf88, type: 3}
+  efeitoImpacto: {fileID: 3856993193061329374, guid: 19d586fa2ec39b242aa2c79f64bbbf88, type: 3}
