@@ -52,6 +52,17 @@ pula), Lagarto de Fogo (4 golpes, cospe bolas de fogo), Yeti Gigante (4 golpes, 
 saltador) e **A Bruxa** (6 golpes, chefe final — carrega magia antes de lançar). Quanto menos
 vida, mais frequentes os ataques. Pisão e espada tiram 1 cada.
 
+**O gatinho preto** (`Scripts/Level/Companion.cs`) anda colado no herói com um atraso de
+0,05 s — ele persegue o alvo de alguns quadros atrás, então segue os movimentos sem ficar
+sincronizado demais; a velocidade copia a do herói e o termo proporcional só corrige o desvio,
+para ele não viver atrasado. Tem física própria: cai, enxerga buraco antes de pisar nele e
+calcula a força do pulo pela altura a vencer; o teleporte só acontece fora da tela. **Ele anota
+onde você bateu o pé para pular e repete o salto no mesmo ponto** (com a mesma altura; pulo
+duplo vira um pulo só, mais alto), em vez de reagir ao obstáculo quando já está encostando
+nele. Parado, ele tem
+ócio próprio: mia aos 7 s, senta aos 12 s e dorme aos 26 s. Miado e passinhos são sintetizados
+no `RetroSfx`.
+
 **Diamantes** são a moeda: contam na HUD e a cada 50 dão uma tentativa extra.
 **Frutas** curam um coração — são raras e só podem ser pegas quando você está machucado
 (com a vida cheia, ficam no lugar).
@@ -132,7 +143,7 @@ porque traz a `Global Light 2D`. Sem ela, todo sprite fica preto no URP 2D.
 - **Importação automática** (`SpriteImportSettings`): qualquer PNG em `Art/` vira sprite
   pixel-art (Point, sem compressão) e arquivos com `(LxA)` no nome são fatiados em grade.
 - **Efeitos sonoros** são sintetizados em código (`RetroSfx`): pulo, moeda, dano, pisão,
-  checkpoint, vitória. Não há arquivos de SFX no projeto.
+  checkpoint, vitória, miado e passinhos do gato. Não há arquivos de SFX no projeto.
 - **Luz 2D**: o gerador inclui todas as Sorting Layers na `Global Light 2D`; sem isso
   o que está em `Midground`/`Player` aparece em silhueta.
 - **Input** em modo *Both*; o código usa o `Input` clássico.
@@ -147,7 +158,7 @@ porque traz a `Global Light 2D`. Sem ela, todo sprite fica preto no URP 2D.
 | Witches Pack — Blue Witch (chefe final) | 9E0 | livre p/ uso comercial, sem revender |
 | Pixel Adventure 1 | Pixel Frog | CC0 |
 | Hearts and health bar | VampireGirl | CC0 |
-| Black Cat Sprites (gato companheiro) | carysaurus | livre p/ uso, crédito obrigatório, sem redistribuir |
+| Black Cat Sprites — versão completa (gato companheiro) | carysaurus | comprada; crédito obrigatório, sem redistribuir |
 | Música "platformer_level03" | Pascal Belisle | crédito requerido |
 | Press Start 2P | CodeMan38 | OFL |
 
