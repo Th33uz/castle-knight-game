@@ -46,7 +46,7 @@ public class LevelIntroCard : MonoBehaviour
         float t = 0f;
 
         // Meio segundo sem aceitar tecla: evita que o clique em "Jogar" pule o cartao.
-        while (t < duracao && (t < 0.5f || !Input.anyKeyDown))
+        while (t < duracao && (t < 0.5f || !GameInput.ConfirmouAgora))
         {
             t += Time.unscaledDeltaTime;
             yield return null;

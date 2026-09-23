@@ -25,15 +25,32 @@ public static class UIBuilder
 
     // ----------------- Estruturas basicas -----------------
 
-    public static void CriarEventSystem()
+    /// <param name="primeiroBotao">
+    /// Botao que ja nasce selecionado. Sem isso o controle nao tem por onde
+    /// comecar a navegar o menu (o mouse funciona, o gamepad nao).
+    /// </param>
+    public static void CriarEventSystem(GameObject primeiroBotao = null)
     {
-        if (Object.FindFirstObjectByType<EventSystem>() != null)
-            return;
+        EventSystem existente = Object.FindFirstObjectByType<EventSystem>();
 
-        GameObject go = new GameObject("EventSystem");
-        go.AddComponent<EventSystem>();
-        // Modulo antigo: funciona com o projeto em "Both" sem precisar de InputActions.
-        go.AddComponent<StandaloneInputModule>();
+        if (existente == null)
+        {
+            GameObject go = new GameObject("EventSystem");
+            existente = go.AddComponent<EventSystem>();
+            // Modulo antigo: funciona com o projeto em "Both" sem precisar de InputActions.
+            StandaloneInputModule modulo = go.AddComponent<StandaloneInputModule>();
+            modulo.horizontalAxis = "Horizontal";
+            modulo.verticalAxis = "Vertical";
+            modulo.submitButton = "Submit";
+            modulo.cancelButton = "Cancel";
+        }
+
+        if (primeiroBotao != null)
+        {
+            SerializedObject so = new SerializedObject(existente);
+            so.FindProperty("m_FirstSelected").objectReferenceValue = primeiroBotao;
+            so.ApplyModifiedProperties();
+        }
     }
 
     private static Canvas CriarCanvas(string nome)
@@ -108,6 +125,30 @@ public static class UIBuilder
         }
 
         CriarEventSystem();
+    }
+
+    /// <summary>Canto inferior direito da cutscene: keycap ESPACO + "PULAR".</summary>
+    public static Canvas CriarAvisoDePular()
+    {
+        Canvas canvas = CriarCanvas("Canvas Cutscene");
+
+        GameObject grupo = new GameObject("AvisoPular", typeof(RectTransform));
+        grupo.transform.SetParent(canvas.transform, false);
+        RectTransform rect = grupo.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1f, 0f);
+        rect.anchoredPosition = new Vector2(-50f, 50f);
+        rect.sizeDelta = new Vector2(420f, 90f);
+
+        // Keycap que troca sozinho entre ESPACO (teclado) e A (controle).
+        GameObject tecla = CriarTeclaAjustavel(grupo.transform, new Vector2(-130f, 0f));
+
+        TMP_Text rotulo = CriarTexto(grupo.transform, "Rotulo", "PULAR",
+            new Vector2(0.5f, 0.5f), new Vector2(60f, 0f), TextAlignmentOptions.Left, 26f, new Color(1f, 1f, 1f, 0.85f));
+        rotulo.rectTransform.pivot = new Vector2(0f, 0.5f);
+        rotulo.rectTransform.sizeDelta = new Vector2(200f, 60f);
+
+        CriarEventSystem();
+        return canvas;
     }
 
     /// <summary>Tela da loja: saldo, tres itens com icone/descricao/preco e botao de compra.</summary>
@@ -191,6 +232,12 @@ public static class UIBuilder
         so.ApplyModifiedProperties();
 
         UnityEventTools.AddPersistentListener(fechar.onClick, loja.Fechar);
+
+        // Na loja o controle anda entre os tres itens e o botao de fechar.
+        Button[] navegaveis = new Button[botoes.Length + 1];
+        botoes.CopyTo(navegaveis, 0);
+        navegaveis[botoes.Length] = fechar;
+        LigarNavegacao(navegaveis, vertical: true);
 
         painel.SetActive(false);
     }
@@ -324,8 +371,11 @@ public static class UIBuilder
         UnityEventTools.AddPersistentListener(reiniciar.onClick, pausa.ReiniciarFase);
         UnityEventTools.AddPersistentListener(menu.onClick, pausa.VoltarAoMenu);
 
+        LigarNavegacao(new[] { continuar, reiniciar, menu }, vertical: true);
+
         SerializedObject so = new SerializedObject(pausa);
         so.FindProperty("painelPausa").objectReferenceValue = painel;
+        so.FindProperty("primeiroBotao").objectReferenceValue = continuar.gameObject;
         so.ApplyModifiedProperties();
 
         painel.SetActive(false);
@@ -378,36 +428,50 @@ public static class UIBuilder
         GameObject caixaControles = CriarCaixa(painelControles.transform, "Caixa", new Vector2(1000f, 760f));
         CriarTexto(caixaControles.transform, "Titulo", "CONTROLES", new Vector2(0.5f, 1f), new Vector2(0f, -50f), TextAlignmentOptions.Center, 48f, CorTitulo);
 
-        const float xTeclas = -400f;
-        const float xRotulo = -150f;
+        // Tres colunas: teclado | controle | o que faz.
+        const float xTeclas = -420f;
+        const float xControle = -60f;
+        const float xRotulo = 60f;
+
+        CriarTexto(caixaControles.transform, "CabecalhoTeclado", "TECLADO", new Vector2(0.5f, 0.5f), new Vector2(xTeclas + 60f, 285f), TextAlignmentOptions.Center, 18f, new Color(0.7f, 0.7f, 0.75f));
+        CriarTexto(caixaControles.transform, "CabecalhoControle", "CONTROLE", new Vector2(0.5f, 0.5f), new Vector2(xControle, 285f), TextAlignmentOptions.Center, 18f, new Color(0.7f, 0.7f, 0.75f));
 
         // Andar: setas e A / D
         float y = 210f;
         CriarTeclaSeta(caixaControles.transform, esquerda: true, new Vector2(xTeclas, y));
-        CriarTeclaSeta(caixaControles.transform, esquerda: false, new Vector2(xTeclas + 86f, y));
-        CriarTecla(caixaControles.transform, "A", new Vector2(xTeclas + 196f, y));
-        CriarTecla(caixaControles.transform, "D", new Vector2(xTeclas + 282f, y));
-        CriarRotulo(caixaControles.transform, "ANDAR", new Vector2(xRotulo + 220f, y));
+        CriarTeclaSeta(caixaControles.transform, esquerda: false, new Vector2(xTeclas + 80f, y));
+        CriarTecla(caixaControles.transform, "A", new Vector2(xTeclas + 176f, y));
+        CriarTecla(caixaControles.transform, "D", new Vector2(xTeclas + 252f, y));
+        CriarBotaoDoControle(caixaControles.transform, "ANALOG", new Vector2(xControle, y), 150f);
+        CriarRotulo(caixaControles.transform, "ANDAR", new Vector2(xRotulo, y));
 
         y = 110f;
-        CriarTecla(caixaControles.transform, "ESPACO", new Vector2(xTeclas + 78f, y), 232f);
-        CriarRotulo(caixaControles.transform, "PULAR   (de novo no ar: pulo duplo)", new Vector2(xRotulo + 100f, y));
+        CriarTecla(caixaControles.transform, "ESPACO", new Vector2(xTeclas + 66f, y), 210f);
+        CriarBotaoDoControle(caixaControles.transform, "A", new Vector2(xControle, y));
+        CriarRotulo(caixaControles.transform, "PULAR  (de novo no ar: pulo duplo)", new Vector2(xRotulo, y), 22f);
 
         y = 10f;
         CriarTecla(caixaControles.transform, "L", new Vector2(xTeclas, y));
+        CriarBotaoDoControle(caixaControles.transform, "B", new Vector2(xControle, y));
         CriarRotulo(caixaControles.transform, "GOLPE DE ESPADA", new Vector2(xRotulo, y));
 
         y = -90f;
+        CriarTecla(caixaControles.transform, "E", new Vector2(xTeclas, y));
+        CriarBotaoDoControle(caixaControles.transform, "Y", new Vector2(xControle, y));
+        CriarRotulo(caixaControles.transform, "FALAR COM A LOJA", new Vector2(xRotulo, y));
+
+        y = -180f;
         CriarTecla(caixaControles.transform, "ESC", new Vector2(xTeclas + 24f, y), 124f);
-        CriarRotulo(caixaControles.transform, "PAUSAR", new Vector2(xRotulo + 40f, y));
+        CriarBotaoDoControle(caixaControles.transform, "START", new Vector2(xControle, y), 130f);
+        CriarRotulo(caixaControles.transform, "PAUSAR", new Vector2(xRotulo, y));
 
         // Legenda dos itens, com os proprios sprites.
-        y = -200f;
-        CriarImagem(caixaControles.transform, "IconeGema", Carregar(Art + "/SunnyLand/Items/Gem/gem-1.png"), new Vector2(0.5f, 0.5f), new Vector2(xTeclas, y), new Vector2(64f, 64f));
-        CriarRotulo(caixaControles.transform, "DIAMANTE = PONTOS  (50 = VIDA EXTRA)", new Vector2(xRotulo, y), 22f);
-        y = -270f;
-        CriarImagem(caixaControles.transform, "IconeCereja", Carregar(Art + "/SunnyLand/Items/Cherry/cherry-1.png"), new Vector2(0.5f, 0.5f), new Vector2(xTeclas, y), new Vector2(64f, 64f));
-        CriarRotulo(caixaControles.transform, "FRUTA = CURA 1 CORACAO  (SO SE FERIDO)", new Vector2(xRotulo, y), 22f);
+        y = -262f;
+        CriarImagem(caixaControles.transform, "IconeGema", Carregar(Art + "/SunnyLand/Items/Gem/gem-1.png"), new Vector2(0.5f, 0.5f), new Vector2(xTeclas + 20f, y), new Vector2(56f, 56f));
+        CriarRotulo(caixaControles.transform, "DIAMANTE = PONTOS  (50 = VIDA EXTRA)", new Vector2(xTeclas + 60f, y), 20f);
+        y = -312f;
+        CriarImagem(caixaControles.transform, "IconeCereja", Carregar(Art + "/SunnyLand/Items/Cherry/cherry-1.png"), new Vector2(0.5f, 0.5f), new Vector2(xTeclas + 20f, y), new Vector2(56f, 56f));
+        CriarRotulo(caixaControles.transform, "FRUTA = CURA 1 CORACAO  (SO SE FERIDO)", new Vector2(xTeclas + 60f, y), 20f);
 
         Button voltar1 = CriarBotao(caixaControles.transform, "BotaoVoltar", "VOLTAR", new Vector2(0f, -335f));
 
@@ -417,9 +481,11 @@ public static class UIBuilder
         CriarTexto(caixaCreditos.transform, "Titulo", "CREDITOS", new Vector2(0.5f, 1f), new Vector2(0f, -60f), TextAlignmentOptions.Center, 52f, CorTitulo);
         TMP_Text textoCreditos = CriarTexto(caixaCreditos.transform, "Texto",
             "Personagem: Animated Pixel Adventurer - rvros\n\n" +
-            "Cenarios e inimigos: SunnyLand, SunnyLand Winter,\nSuper Grotto Escape - ansimuz\n\n" +
+            "Cenarios e inimigos: SunnyLand, SunnyLand Winter,\nSuper Grotto Escape, GothicVania Church - ansimuz\n\n" +
+            "A Bruxa: Witches Pack - 9E0\n\n" +
             "Armadilhas e itens: Pixel Adventure - Pixel Frog\n\n" +
             "Coracoes: Hearts and health bar - VampireGirl\n\n" +
+            "Gato: Black Cat Sprites - carysaurus\n\n" +
             "Musica: Pascal Belisle e ansimuz\n\n" +
             "Fonte: Press Start 2P - CodeMan38",
             new Vector2(0.5f, 0.5f), new Vector2(0f, 20f), TextAlignmentOptions.Center, 24f);
@@ -450,7 +516,47 @@ public static class UIBuilder
         painelCreditos.SetActive(false);
         painelFases.SetActive(false);
 
-        CriarEventSystem();
+        // Navegacao vertical entre os botoes do menu, em ciclo, para o controle
+        // andar de JOGAR ate SAIR e voltar.
+        LigarNavegacao(new[] { jogar, fases, controles, creditos, sair }, vertical: true);
+        LigarNavegacao(botoesDeFase.ConvertAll(b => b.botao).ToArray(), vertical: false);
+
+        CriarEventSystem(jogar.gameObject);
+    }
+
+    /// <summary>
+    /// Liga os botoes em sequencia (Explicit) para o direcional do controle
+    /// andar entre eles. O modo Automatic da Unity erra quando os botoes ficam
+    /// dentro de paineis diferentes.
+    /// </summary>
+    private static void LigarNavegacao(Button[] botoes, bool vertical)
+    {
+        if (botoes == null || botoes.Length == 0)
+            return;
+
+        for (int i = 0; i < botoes.Length; i++)
+        {
+            if (botoes[i] == null)
+                continue;
+
+            Button anterior = botoes[(i - 1 + botoes.Length) % botoes.Length];
+            Button proximo = botoes[(i + 1) % botoes.Length];
+
+            Navigation nav = new Navigation { mode = Navigation.Mode.Explicit };
+
+            if (vertical)
+            {
+                nav.selectOnUp = anterior;
+                nav.selectOnDown = proximo;
+            }
+            else
+            {
+                nav.selectOnLeft = anterior;
+                nav.selectOnRight = proximo;
+            }
+
+            botoes[i].navigation = nav;
+        }
     }
 
     /// <summary>Cartao clicavel da selecao de fases: moldura, sprite do bioma e nome.</summary>
@@ -590,6 +696,65 @@ public static class UIBuilder
             Carregar(esquerda ? UiArtGenerator.CaminhoTeclaEsq : UiArtGenerator.CaminhoTeclaDir),
             new Vector2(0.5f, 0.5f), posicao, new Vector2(76f, 76f));
         imagem.preserveAspect = true;
+    }
+
+    /// <summary>
+    /// Keycap cujo rotulo e largura acompanham o dispositivo em uso
+    /// (ESPACO no teclado, A no controle).
+    /// </summary>
+    private static GameObject CriarTeclaAjustavel(Transform pai, Vector2 posicao)
+    {
+        GameObject go = new GameObject("TeclaPular", typeof(RectTransform));
+        go.transform.SetParent(pai, false);
+
+        Image imagem = go.AddComponent<Image>();
+        imagem.sprite = Carregar(UiArtGenerator.CaminhoTecla);
+        imagem.type = Image.Type.Sliced;
+        imagem.pixelsPerUnitMultiplier = 2f;
+        imagem.raycastTarget = false;
+
+        RectTransform rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = posicao;
+        rect.sizeDelta = new Vector2(200f, 76f);
+
+        TMP_Text texto = CriarTexto(go.transform, "Rotulo", "ESPACO", new Vector2(0.5f, 0.5f), new Vector2(0f, 8f),
+            TextAlignmentOptions.Center, 20f, new Color(0.17f, 0.16f, 0.24f));
+        texto.rectTransform.anchorMin = Vector2.zero;
+        texto.rectTransform.anchorMax = Vector2.one;
+        texto.rectTransform.offsetMin = Vector2.zero;
+        texto.rectTransform.offsetMax = Vector2.zero;
+
+        AvisoDeBotao aviso = go.AddComponent<AvisoDeBotao>();
+        SerializedObject so = new SerializedObject(aviso);
+        so.FindProperty("rotulo").objectReferenceValue = texto;
+        so.FindProperty("fundo").objectReferenceValue = rect;
+        so.ApplyModifiedProperties();
+
+        return go;
+    }
+
+    /// <summary>Botao do controle: pastilha redonda escura com a letra (A, B, Y, START).</summary>
+    private static void CriarBotaoDoControle(Transform pai, string rotulo, Vector2 posicao, float largura = 76f)
+    {
+        GameObject go = new GameObject("Botao" + rotulo, typeof(RectTransform));
+        go.transform.SetParent(pai, false);
+
+        Image fundo = go.AddComponent<Image>();
+        fundo.sprite = Carregar(UiArtGenerator.CaminhoBotao);
+        fundo.type = Image.Type.Sliced;
+        fundo.pixelsPerUnitMultiplier = 2f;
+        fundo.color = new Color(0.30f, 0.34f, 0.46f);  // cinza-azulado, diferente dos botoes verdes
+        fundo.raycastTarget = false;
+
+        RectTransform rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = posicao;
+        rect.sizeDelta = new Vector2(largura, 64f);
+
+        TMP_Text texto = CriarTexto(go.transform, "Rotulo", rotulo, new Vector2(0.5f, 0.5f), new Vector2(0f, 3f),
+            TextAlignmentOptions.Center, rotulo.Length > 1 ? 18f : 26f);
+        texto.rectTransform.sizeDelta = rect.sizeDelta;
     }
 
     private static void CriarRotulo(Transform pai, string conteudo, Vector2 posicao, float tamanho = 26f)

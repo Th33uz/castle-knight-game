@@ -136,12 +136,16 @@ public static class LevelDesigns
 {
     private const string PropsFloresta = "Assets/_Game/Art/SunnyLand/Props";
     private const string PropsCaverna = "Assets/_Game/Art/Grotto/Props";
+    private const string PropsCastelo = "Assets/_Game/Art/Castle/Props";
 
-    public static readonly string[] OrdemDasCenas = { "MainMenu", "Tutorial", "Fase1", "Fase2", "Fase3" };
+    // A ordem vira a ordem do Build Settings, e a primeira e por onde o .exe abre.
+    // A progressao entre fases NAO depende disso: o GameManager anda por nome
+    // (ver ordemDasFases la), entao a Cutscene no meio da lista nao atrapalha.
+    public static readonly string[] OrdemDasCenas = { "MainMenu", "Cutscene", "Tutorial", "Fase1", "Fase2", "Fase3", "Fase4" };
 
     public static List<NivelDef> Todas()
     {
-        return new List<NivelDef> { Tutorial(), Fase1(), Fase2(), Fase3() };
+        return new List<NivelDef> { Tutorial(), Fase1(), Fase2(), Fase3(), Fase4() };
     }
 
     public static NivelDef PorNome(string cena)
@@ -408,6 +412,99 @@ public static class LevelDesigns
         n.Carimbar(0, 4, 4).Carimbar(1, 10, 4).Carimbar(0, 37, 4).Carimbar(1, 61, 4).Carimbar(0, 76, 4)
          .Carimbar(0, 101, 4).Carimbar(1, 110, 4).Carimbar(0, 133, 4).Carimbar(0, 150, 4).Carimbar(1, 154, 4)
          .Carimbar(0, 170, 4).Carimbar(1, 195, 4).Carimbar(0, 206, 4).Carimbar(0, 224, 4);
+
+        return n;
+    }
+
+    // =====================================================================
+    // FASE 4 - o castelo da bruxa. Fase final: vertical, escura e cheia de
+    // magia. Chefe: A BRUXA (a mesma da cutscene).
+    // =====================================================================
+    private static NivelDef Fase4()
+    {
+        var n = new NivelDef
+        {
+            cena = "Fase4", bioma = Bioma.Castelo, musica = "castelo", largura = 240,
+            nascimento = new Vector2(3f, 4f), corDoCeu = new Color(0.09f, 0.07f, 0.15f),
+            titulo = "FASE 4", subtitulo = "O CASTELO DA BRUXA",
+            icone = "Assets/_Game/Art/Castle/Bruxa/Bruxa_Idle (32x48).png"
+        };
+
+        // Salas ligadas por vaos: o castelo e mais recortado que as outras fases.
+        n.Chao(0, 26).Chao(30, 18).Chao(52, 14, 6).Chao(70, 20).Chao(94, 16)
+         .Chao(114, 24, 6).Chao(142, 18).Chao(164, 20).Chao(188, 14).Chao(206, 34);
+
+        // Torres e degraus de pedra.
+        n.Bloco(36, 4, 3, 4).Bloco(74, 4, 4, 3).Bloco(80, 4, 3, 6).Bloco(120, 6, 3, 4)
+         .Bloco(150, 4, 4, 3).Bloco(172, 4, 3, 5).Bloco(212, 4, 4, 3);
+
+        // Plataformas suspensas: a fase sobe e desce mais que as outras.
+        n.Plataforma(8, 8, 4).Plataforma(14, 11, 3).Plataforma(19, 8, 3)
+         .Plataforma(32, 9, 3).Plataforma(41, 7, 4).Plataforma(46, 10, 3)
+         .Plataforma(56, 9, 4).Plataforma(62, 12, 3).Plataforma(66, 8, 3)
+         .Plataforma(84, 9, 4).Plataforma(90, 12, 3).Plataforma(100, 8, 4).Plataforma(106, 11, 3)
+         .Plataforma(126, 9, 4).Plataforma(132, 12, 4).Plataforma(146, 8, 3)
+         .Plataforma(156, 10, 4).Plataforma(168, 9, 3).Plataforma(178, 11, 4)
+         .Plataforma(192, 8, 4).Plataforma(198, 11, 3).Plataforma(210, 9, 4);
+
+        // Diamantes
+        n.Fila("Gema", 5f, 5.6f, 4).Fila("Gema", 8.5f, 10.6f, 4).Fila("Gema", 14.5f, 13.6f, 3)
+         .Fila("Gema", 19.5f, 10.6f, 3).Fila("Gema", 22f, 5.6f, 4).Fila("Gema", 32.5f, 11.6f, 3)
+         .Fila("Gema", 41.5f, 9.6f, 4).Fila("Gema", 46.5f, 12.6f, 3).Fila("Gema", 53f, 7.6f, 5)
+         .Fila("Gema", 56.5f, 11.6f, 4).Fila("Gema", 62.5f, 14.6f, 3).Fila("Gema", 71f, 5.6f, 5)
+         .Fila("Gema", 84.5f, 11.6f, 4).Fila("Gema", 90.5f, 14.6f, 3).Fila("Gema", 100.5f, 10.6f, 4)
+         .Fila("Gema", 106.5f, 13.6f, 3).Fila("Gema", 116f, 7.6f, 5).Fila("Gema", 126.5f, 11.6f, 4)
+         .Fila("Gema", 132.5f, 14.6f, 4).Fila("Gema", 146.5f, 10.6f, 3).Fila("Gema", 156.5f, 12.6f, 4)
+         .Fila("Gema", 165f, 5.6f, 5).Fila("Gema", 168.5f, 11.6f, 3).Fila("Gema", 178.5f, 13.6f, 4)
+         .Fila("Gema", 192.5f, 10.6f, 4).Fila("Gema", 198.5f, 13.6f, 3).Fila("Gema", 208f, 5.6f, 5);
+
+        // Frutas: nos pontos altos, antes dos trechos duros.
+        n.NoAr("Cereja", 15.5f, 14.6f).NoAr("Cereja", 63.5f, 15.6f).NoAr("Cereja", 92f, 15.6f)
+         .NoAr("Cereja", 134f, 15.6f).NoAr("Cereja", 180f, 14.6f).NoAr("Cereja", 200f, 14.6f);
+
+        // Inimigos do castelo: ghoul corre, mago esqueleto anda devagar, anjo voa.
+        n.NoChao("Ghoul", 12f, 4f).NoChao("MagoEsqueleto", 20f, 4f, true)
+         .NoChao("Ghoul", 34f, 4f).NoChao("MagoEsqueleto", 44f, 4f, true)
+         .NoChao("Ghoul", 58f, 6f).NoChao("MagoEsqueleto", 72f, 4f)
+         .NoChao("Ghoul", 88f, 4f, true).NoChao("MagoEsqueleto", 98f, 4f)
+         .NoChao("Ghoul", 118f, 6f).NoChao("MagoEsqueleto", 130f, 6f, true)
+         .NoChao("Ghoul", 145f, 4f).NoChao("MagoEsqueleto", 158f, 4f, true)
+         .NoChao("Ghoul", 168f, 4f).NoChao("Ghoul", 192f, 4f, true).NoChao("MagoEsqueleto", 210f, 4f)
+         .NoAr("Anjo", 25f, 11f).NoAr("Anjo", 50f, 12f).NoAr("Anjo", 78f, 11f)
+         .NoAr("Anjo", 110f, 12f).NoAr("Anjo", 140f, 11f).NoAr("Anjo", 175f, 12f).NoAr("Anjo", 203f, 11f);
+
+        // Armadilhas
+        n.NoChao("Espinhos", 28f, 4f).NoChao("Espinhos", 29f, 4f)
+         .NoChao("Espinhos", 68f, 4f).NoChao("Espinhos", 69f, 4f)
+         .NoChao("Espinhos", 110f, 4f).NoChao("Espinhos", 111f, 4f).NoChao("Espinhos", 112f, 4f)
+         .NoChao("Espinhos", 162f, 4f).NoChao("Espinhos", 163f, 4f)
+         .NoChao("Fogo", 24f, 4f).NoChao("Fogo", 76f, 4f).NoChao("Fogo", 128f, 6f).NoChao("Fogo", 186f, 4f)
+         .NoAr("Serra", 49f, 5f).NoAr("Serra", 92f, 5f).NoAr("Serra", 139f, 5f).NoAr("Serra", 187f, 5f)
+         .NoChao("Trampolim", 65f, 4f).NoChao("Trampolim", 148f, 4f).NoChao("Trampolim", 196f, 4f);
+
+        n.Movel("PlataformaMovelCaverna", 27f, 6f, new Vector2(0f, 5f))
+         .Movel("PlataformaMovelCaverna", 48f, 6f, new Vector2(4f, 0f))
+         .Movel("PlataformaMovelCaverna", 91f, 6f, new Vector2(0f, 6f))
+         .Movel("PlataformaMovelCaverna", 140f, 6f, new Vector2(4f, 0f))
+         .Movel("PlataformaMovelCaverna", 185f, 6f, new Vector2(0f, 5f));
+
+        n.NoChao("Checkpoint", 31f, 4f).NoChao("Checkpoint", 72f, 4f).NoChao("Checkpoint", 116f, 6f)
+         .NoChao("Checkpoint", 166f, 4f).NoChao("Checkpoint", 208f, 4f)
+         .NoChao("FimDeFase", 236f, 4f);
+
+        n.NoChao("Loja", 210.5f, 4f);
+        n.Chefe("Bruxa", 228f, 4f, 215f);
+
+        // Cenario: janelas, altares, estatuas e tochas do pack gotico.
+        n.Enfeite(PropsCastelo + "/janela.png", 6f, 4f, 2).Enfeite(PropsCastelo + "/tocha.png", 16f, 4f, 6)
+         .Enfeite(PropsCastelo + "/estatua.png", 22f, 4f, 4).Enfeite(PropsCastelo + "/altar.png", 38f, 4f, 3)
+         .Enfeite(PropsCastelo + "/tocha.png", 54f, 6f, 6).Enfeite(PropsCastelo + "/janela.png", 60f, 4f, 2)
+         .Enfeite(PropsCastelo + "/coluna.png", 79f, 4f, 3).Enfeite(PropsCastelo + "/estatua.png", 96f, 4f, 4)
+         .Enfeite(PropsCastelo + "/tocha.png", 104f, 4f, 6).Enfeite(PropsCastelo + "/janela.png", 122f, 6f, 2)
+         .Enfeite(PropsCastelo + "/altar.png", 144f, 4f, 3).Enfeite(PropsCastelo + "/coluna.png", 160f, 4f, 3)
+         .Enfeite(PropsCastelo + "/tocha.png", 176f, 4f, 6).Enfeite(PropsCastelo + "/janela.png", 190f, 4f, 2)
+         .Enfeite(PropsCastelo + "/estatua.png", 204f, 4f, 4).Enfeite(PropsCastelo + "/altar.png", 222f, 4f, 3)
+         .Enfeite(PropsCastelo + "/tocha.png", 232f, 4f, 6);
 
         return n;
     }

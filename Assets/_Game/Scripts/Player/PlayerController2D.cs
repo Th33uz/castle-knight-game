@@ -79,19 +79,19 @@ public class PlayerController2D : MonoBehaviour
             return;
         }
 
-        entradaHorizontal = Input.GetAxisRaw("Horizontal");
+        entradaHorizontal = GameInput.Horizontal;
 
         // Durante o golpe no chao o jogador fica plantado (ainda pode pular).
         if (Time.time < movimentoTravadoAte)
             entradaHorizontal = 0f;
 
-        if (Input.GetButtonDown("Jump"))
+        if (GameInput.PulouAgora)
             contadorBuffer = jumpBuffer;
         else
             contadorBuffer -= Time.deltaTime;
 
         // Soltar o botao no meio do pulo faz o salto ser mais curto.
-        if (Input.GetButtonUp("Jump"))
+        if (GameInput.SoltouPulo)
             soltouBotaoPulo = true;
 
         Virar();

@@ -26,6 +26,7 @@ public static class PrefabBuilder
         CriarMarcadores();
         CriarPlataformas();
         CriarLoja();
+        CriarGato();
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -144,6 +145,117 @@ public static class PrefabBuilder
             escala: 2.6f, colisor: new Vector2(1.5f, 1.6f), offset: new Vector2(0f, -0.15f),
             vida: 4, velocidade: 2.8f, investida: 9f, pulo: 18f, intervalo: 2.0f, olhaEsquerda: false,
             projetil: null, boca: Vector2.zero, fxMorte);
+
+        // Castelo: a Bruxa da cutscene. Chefe final, 6 golpes, lanca magia.
+        CriarBruxa(fxMorte);
+    }
+
+    /// <summary>
+    /// A Bruxa: chefe final. Tem animacoes proprias de carregar magia, atacar,
+    /// levar dano e morrer, entao ganha um controller mais completo que os outros.
+    /// </summary>
+    private static void CriarBruxa(GameObject fxMorte)
+    {
+        string b = Art + "/Castle/Bruxa";
+
+        Sprite[] idle = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Idle (32x48).png");
+        Sprite[] correr = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Run (32x48).png");
+        Sprite[] carregar = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Charge (48x48).png");
+        Sprite[] atacar = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Attack (104x46).png");
+        Sprite[] dano = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Hit (32x48).png");
+        Sprite[] morte = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Death (32x40).png");
+
+        if (idle.Length == 0)
+        {
+            Debug.LogWarning("[Setup] Sprites da Bruxa nao encontrados; chefe nao criado.");
+            return;
+        }
+
+        AnimationClip clipIdle = AnimationBuilder.CriarClip("Bruxa_Idle", idle, 8f, true);
+        AnimationClip clipCorrer = AnimationBuilder.CriarClip("Bruxa_Correr", correr, 12f, true);
+        AnimationClip clipCarregar = AnimationBuilder.CriarClip("Bruxa_Carregar", carregar, 10f, false);
+        AnimationClip clipAtacar = AnimationBuilder.CriarClip("Bruxa_Atacar", atacar, 14f, false);
+        AnimationClip clipDano = AnimationBuilder.CriarClip("Bruxa_Dano", dano, 10f, false);
+        AnimationClip clipMorte = AnimationBuilder.CriarClip("Bruxa_Morte", morte, 10f, false);
+
+        AnimatorController controller = AnimationBuilder.CriarControllerBruxa(
+            "Bruxa", clipIdle, clipCorrer, clipCarregar, clipAtacar, clipDano, clipMorte);
+
+        GameObject bruxa = new GameObject("Bruxa");
+        bruxa.tag = "Enemy";
+        bruxa.layer = LayerMask.NameToLayer("Enemy");
+        bruxa.transform.localScale = Vector3.one * 2.2f;
+
+        SpriteRenderer sr = bruxa.AddComponent<SpriteRenderer>();
+        sr.sprite = idle[0];
+        sr.sortingLayerName = "Player";
+        sr.sortingOrder = 2;
+        bruxa.AddComponent<Animator>().runtimeAnimatorController = controller;
+
+        Rigidbody2D rb = bruxa.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 4f;
+        rb.mass = 5f;
+        rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        // Quadro de 32x48 com o corpo em 20x38, base 6 px acima do fundo.
+        BoxCollider2D col = bruxa.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(1.1f, 2.2f);
+        col.offset = new Vector2(0f, -0.2f);
+
+        Boss boss = bruxa.AddComponent<Boss>();
+        SerializedObject so = new SerializedObject(boss);
+        so.FindProperty("nome").stringValue = "A BRUXA";
+        so.FindProperty("vidaMaxima").intValue = 6;          // chefe final: o mais duro
+        so.FindProperty("velocidade").floatValue = 3.2f;
+        so.FindProperty("velocidadeInvestida").floatValue = 10f;
+        so.FindProperty("forcaPulo").floatValue = 17f;
+        so.FindProperty("intervaloEntreAcoes").floatValue = 1.9f;
+        so.FindProperty("spriteOlhaParaEsquerda").boolValue = false;
+        so.FindProperty("camadaChao").intValue = MascaraDe("Ground");
+        so.FindProperty("projetil").objectReferenceValue = CriarMagia(fxMorte);
+        so.FindProperty("bocaDoTiro").vector2Value = new Vector2(1.2f, 0.4f);
+        so.FindProperty("velocidadeDoProjetil").floatValue = 11f;
+        so.FindProperty("alturaMinimaDoPisao").floatValue = 1.4f;
+        so.FindProperty("efeitoMorte").objectReferenceValue = fxMorte;
+        so.ApplyModifiedProperties();
+
+        Salvar(bruxa, "Bruxa");
+    }
+
+    /// <summary>Bola de magia da Bruxa (fireball do pack gotico).</summary>
+    private static GameObject CriarMagia(GameObject fxImpacto)
+    {
+        Sprite[] quadros = AnimationBuilder.QuadrosFatiados(Art + "/Castle/FX/fireball (26x26).png");
+        AnimationClip clip = AnimationBuilder.CriarClip("Magia_Voar", quadros, 12f, true);
+        AnimatorController controller = AnimationBuilder.CriarControllerLoop("Magia", clip);
+
+        GameObject magia = new GameObject("MagiaDaBruxa");
+        magia.tag = "Hazard";
+        magia.layer = LayerMask.NameToLayer("Hazard");
+        magia.transform.localScale = Vector3.one * 1.4f;
+
+        SpriteRenderer sr = magia.AddComponent<SpriteRenderer>();
+        sr.sprite = quadros.Length > 0 ? quadros[0] : null;
+        sr.sortingLayerName = "Player";
+        sr.sortingOrder = 3;
+        magia.AddComponent<Animator>().runtimeAnimatorController = controller;
+
+        Rigidbody2D rb = magia.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+        rb.freezeRotation = true;
+
+        CircleCollider2D col = magia.AddComponent<CircleCollider2D>();
+        col.radius = 0.4f;
+        col.isTrigger = true;
+
+        Projetil projetil = magia.AddComponent<Projetil>();
+        SerializedObject so = new SerializedObject(projetil);
+        so.FindProperty("camadasQueDestroem").intValue = MascaraDe("Ground");
+        so.FindProperty("efeitoImpacto").objectReferenceValue = fxImpacto;
+        so.ApplyModifiedProperties();
+
+        return Salvar(magia, "MagiaDaBruxa");
     }
 
     private static void CriarChefe(string nome, string nomeExibido, Sprite[] quadros, float fps, Sprite[] quadrosAtaque,
@@ -269,6 +381,16 @@ public static class PrefabBuilder
         CriarInimigo("Fantasma", AnimationBuilder.QuadrosDaPasta(gr + "/Ghost", "ghost"), 8f,
             new Vector2(1.2f, 1.3f), Vector2.zero, 2f, voador: true, pisavel: false, fxMorte);
 
+        // Castelo (GothicVania). Sprites grandes, entao a escala desce.
+        string ca = Art + "/Castle/Enemies";
+
+        CriarInimigo("Ghoul", AnimationBuilder.QuadrosFatiados(ca + "/Ghoul/run (57x60).png"), 12f,
+            new Vector2(1.4f, 2.2f), new Vector2(0f, -0.3f), 3.5f, voador: false, pisavel: true, fxMorte, olhaEsquerda: true, escala: 0.6f);
+        CriarInimigo("Anjo", AnimationBuilder.QuadrosFatiados(ca + "/Angel/idle (122x117).png"), 10f,
+            new Vector2(2.4f, 2.6f), new Vector2(0f, 0f), 2.5f, voador: true, pisavel: true, fxMorte, olhaEsquerda: true, escala: 0.45f);
+        CriarInimigo("MagoEsqueleto", AnimationBuilder.QuadrosFatiados(ca + "/Wizard/idle (81x66).png"), 8f,
+            new Vector2(1.2f, 2.4f), new Vector2(0f, -0.2f), 1.6f, voador: false, pisavel: true, fxMorte, olhaEsquerda: true, escala: 0.6f);
+
         // Inverno
         CriarInimigo("Raposa", AnimationBuilder.QuadrosDaPasta(wi + "/Fox", "fox-"), 12f,
             new Vector2(3.0f, 1.7f), new Vector2(0f, -0.1f), 4f, voador: false, pisavel: true, fxMorte, olhaEsquerda: false);
@@ -283,7 +405,7 @@ public static class PrefabBuilder
     /// quadros: quase todos olham para a esquerda; esqueleto, raposa e yeti, para a direita.
     /// </param>
     private static void CriarInimigo(string nome, Sprite[] quadros, float fps, Vector2 tamanho, Vector2 offset,
-        float velocidade, bool voador, bool pisavel, GameObject fxMorte, bool olhaEsquerda = true)
+        float velocidade, bool voador, bool pisavel, GameObject fxMorte, bool olhaEsquerda = true, float escala = 1f)
     {
         if (quadros.Length == 0)
         {
@@ -297,6 +419,10 @@ public static class PrefabBuilder
         GameObject inimigo = new GameObject(nome);
         inimigo.tag = "Enemy";
         inimigo.layer = LayerMask.NameToLayer("Enemy");
+        // Os sprites goticos sao bem maiores que os outros packs; a escala
+        // iguala o tamanho deles ao dos demais inimigos do jogo.
+        if (!Mathf.Approximately(escala, 1f))
+            inimigo.transform.localScale = Vector3.one * escala;
 
         SpriteRenderer sr = inimigo.AddComponent<SpriteRenderer>();
         sr.sprite = quadros[0];
@@ -681,18 +807,75 @@ public static class PrefabBuilder
         aviso.transform.SetParent(loja.transform);
         aviso.transform.localPosition = new Vector3(0.6f, 1.7f, 0f);
         aviso.transform.localScale = Vector3.one * 0.8f;
+        Sprite teclaE = AssetDatabase.LoadAssetAtPath<Sprite>(UiArtGenerator.CaminhoTeclaE);
+        Sprite teclaY = AssetDatabase.LoadAssetAtPath<Sprite>(UiArtGenerator.CaminhoTeclaY);
+
         SpriteRenderer srAviso = aviso.AddComponent<SpriteRenderer>();
-        srAviso.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(UiArtGenerator.CaminhoTeclaE);
+        srAviso.sprite = teclaE;
         srAviso.sortingLayerName = "Foreground";
 
         Shop script = loja.AddComponent<Shop>();
         SerializedObject so = new SerializedObject(script);
         so.FindProperty("vendedor").objectReferenceValue = srVendedor;
         so.FindProperty("aviso").objectReferenceValue = srAviso;
+        so.FindProperty("avisoTeclado").objectReferenceValue = teclaE;
+        so.FindProperty("avisoControle").objectReferenceValue = teclaY;
         so.FindProperty("vendedorOlhaParaDireita").boolValue = true;
         so.ApplyModifiedProperties();
 
         Salvar(loja, "Loja");
+    }
+
+    // ----------------- Gato companheiro -----------------
+
+    /// <summary>Gato preto (carysaurus) que segue o jogador. Sem fisica: so sprite, animacao e o script.</summary>
+    private static void CriarGato()
+    {
+        Sprite[] idle = AnimationBuilder.QuadrosFatiados(Art + "/BlackCat/Black-Idle (48x48).png");
+        Sprite[] corrida = AnimationBuilder.QuadrosFatiados(Art + "/BlackCat/Black-Run (48x48).png");
+
+        if (idle.Length == 0 || corrida.Length == 0)
+        {
+            Debug.LogWarning("[Setup] Quadros do gato nao encontrados; prefab nao criado.");
+            return;
+        }
+
+        AnimationClip clipIdle = AnimationBuilder.CriarClip("Gato_Idle", idle, 6f, true);
+        AnimationClip clipCorrida = AnimationBuilder.CriarClip("Gato_Corrida", corrida, 9f, true);
+        AnimatorController controller = AnimationBuilder.CriarControllerIdleCorrida("Gato", clipIdle, clipCorrida);
+
+        GameObject gato = new GameObject("Gato");
+        gato.layer = LayerMask.NameToLayer("Companion");
+        // O quadro de 48 px deixaria o gato do tamanho do heroi; 0,65 da um gato de gato.
+        gato.transform.localScale = Vector3.one * 0.65f;
+
+        SpriteRenderer sr = gato.AddComponent<SpriteRenderer>();
+        sr.sprite = idle[0];
+        sr.sortingLayerName = "Player";
+        sr.sortingOrder = 4; // logo atras do heroi (5)
+        gato.AddComponent<Animator>().runtimeAnimatorController = controller;
+
+        // Fisica propria: cai, anda e pula como qualquer personagem.
+        Rigidbody2D rb = gato.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 4f;
+        rb.freezeRotation = true;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        // O gato ocupa uns 31x20 px no quadro de 48; com escala 0,65 fica ~1,2 x 0,8.
+        CapsuleCollider2D col = gato.AddComponent<CapsuleCollider2D>();
+        col.size = new Vector2(1.5f, 1.1f);
+        col.offset = new Vector2(0f, -0.7f);
+        col.direction = CapsuleDirection2D.Horizontal;
+        col.sharedMaterial = MaterialSemAtrito();
+
+        Companion script = gato.AddComponent<Companion>();
+        SerializedObject so = new SerializedObject(script);
+        so.FindProperty("spriteOlhaParaDireita").boolValue = true;
+        so.FindProperty("camadaChao").intValue = MascaraDe("Ground", "OneWayPlatform");
+        so.ApplyModifiedProperties();
+
+        Salvar(gato, "Gato");
     }
 
     // ----------------- Efeitos -----------------

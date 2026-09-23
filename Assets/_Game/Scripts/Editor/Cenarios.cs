@@ -25,6 +25,16 @@ public static class Cenarios
                     new CamadaFundo { sprite = Art + "/Grotto/Background/middle.png", fatorX = 0.5f,  fatorY = 0.12f, baseY = -1f, ordem = 2 },
                 };
 
+            case Bioma.Castelo:
+                // O pack gotico nao traz camadas de parallax: o fundo e feito de
+                // paineis de parede (janela, pilar, altar) repetidos, que dao a
+                // sensacao de corredor sem fim de castelo.
+                return new[]
+                {
+                    new CamadaFundo { sprite = Art + "/Castle/Props/janela.png", fatorX = 0.15f, fatorY = 0.05f, baseY = -1f, ordem = 0 },
+                    new CamadaFundo { sprite = Art + "/Castle/Props/pilar.png",  fatorX = 0.4f,  fatorY = 0.1f,  baseY = -1f, ordem = 1 },
+                };
+
             case Bioma.Inverno:
                 return new[]
                 {

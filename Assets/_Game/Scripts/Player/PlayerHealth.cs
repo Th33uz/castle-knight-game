@@ -27,6 +27,7 @@ public class PlayerHealth : MonoBehaviour
 
     private bool invencivel;
     private bool morto;
+    private bool imune;
 
     public int VidaAtual { get; private set; }
     public int VidaMaxima => vidaMaxima;
@@ -71,7 +72,7 @@ public class PlayerHealth : MonoBehaviour
     /// </summary>
     public void TomarDano(int quantidade, Vector3 origemDoDano)
     {
-        if (invencivel || morto)
+        if (invencivel || morto || imune)
             return;
 
         VidaAtual = Mathf.Max(0, VidaAtual - quantidade);
@@ -98,10 +99,19 @@ public class PlayerHealth : MonoBehaviour
         StartCoroutine(FicarInvencivel());
     }
 
+    /// <summary>
+    /// Deixa o jogador imune a qualquer dano ate o fim da cena. Usado ao tocar
+    /// no trofeu: durante a animacao de vitoria ele nao pode mais morrer.
+    /// </summary>
+    public void TornarImune()
+    {
+        imune = true;
+    }
+
     /// <summary>Mata o jogador na hora, ignorando a vida. Usado por espinhos e pelo abismo.</summary>
     public void MatarInstantaneamente()
     {
-        if (morto)
+        if (morto || imune)
             return;
 
         VidaAtual = 0;

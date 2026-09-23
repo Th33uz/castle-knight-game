@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// Botoes do menu principal. Ligue cada metodo no evento OnClick do botao
@@ -62,6 +64,21 @@ public class MainMenuController : MonoBehaviour
         if (painelControles != null) painelControles.SetActive(painel == painelControles);
         if (painelCreditos != null) painelCreditos.SetActive(painel == painelCreditos);
         if (painelFases != null) painelFases.SetActive(painel == painelFases);
+
+        FocarPrimeiroBotao(painel);
+    }
+
+    /// <summary>
+    /// Poe o foco no primeiro botao do painel que abriu. Sem isso o controle
+    /// fica sem nada selecionado ao trocar de tela e para de navegar.
+    /// </summary>
+    private static void FocarPrimeiroBotao(GameObject painel)
+    {
+        if (painel == null || EventSystem.current == null)
+            return;
+
+        Button primeiro = painel.GetComponentInChildren<Button>();
+        EventSystem.current.SetSelectedGameObject(primeiro != null ? primeiro.gameObject : null);
     }
 
     public void Sair()

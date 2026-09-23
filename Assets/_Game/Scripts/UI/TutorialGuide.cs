@@ -15,15 +15,16 @@ public class TutorialGuide : MonoBehaviour
 {
     public enum Conclusao { Andar, Coletar, Pular, PuloDuplo, Atacar, MatarInimigo, PassarX }
 
-    [System.Serializable]
     public class Passo
     {
-        public string texto;
+        // Funcao, e nao texto fixo: o nome do botao muda conforme o jogador
+        // esteja no teclado ou no controle, e e resolvido na hora de mostrar.
+        public System.Func<string> texto;
         public float xInicio;       // o balao aparece quando o jogador passa daqui
         public Conclusao conclusao; // o que encerra o passo
         public float xLimite;       // acao: onde fica a barreira; dica: onde ela some
 
-        public Passo(string texto, float xInicio, Conclusao conclusao, float xLimite)
+        public Passo(System.Func<string> texto, float xInicio, Conclusao conclusao, float xLimite)
         {
             this.texto = texto;
             this.xInicio = xInicio;
@@ -63,24 +64,24 @@ public class TutorialGuide : MonoBehaviour
         return new List<Passo>
         {
             // Acoes: a barreira fica em xLimite ate a acao ser feita.
-            new Passo("ANDAR:  SETAS  ou  A / D",                    0f,   Conclusao.Andar,        6f),
-            new Passo("PEGUE OS DIAMANTES",                           0f,   Conclusao.Coletar,     10f),
-            new Passo("PULAR:  ESPACO",                               0f,   Conclusao.Pular,       13f),
-            new Passo("PULO DUPLO:  ESPACO DE NOVO NO AR",            0f,   Conclusao.PuloDuplo,   17f),
-            new Passo("ATACAR:  L",                                   0f,   Conclusao.Atacar,      19.5f),
-            new Passo("GAMBA A FRENTE!  PISE NELE OU CORTE COM L",   17f,  Conclusao.MatarInimigo, 28f),
+            new Passo(() => "ANDAR:  " + GameInput.BotaoAndar,                      0f,   Conclusao.Andar,        6f),
+            new Passo(() => "PEGUE OS DIAMANTES",                                    0f,   Conclusao.Coletar,     10f),
+            new Passo(() => "PULAR:  " + GameInput.BotaoPular,                       0f,   Conclusao.Pular,       13f),
+            new Passo(() => "PULO DUPLO:  " + GameInput.BotaoPular + " DE NOVO NO AR", 0f, Conclusao.PuloDuplo,   17f),
+            new Passo(() => "ATACAR:  " + GameInput.BotaoAtacar,                     0f,   Conclusao.Atacar,      19.5f),
+            new Passo(() => "GAMBA A FRENTE!  PISE NELE OU CORTE COM  " + GameInput.BotaoAtacar, 17f, Conclusao.MatarInimigo, 28f),
 
             // Dicas: aparecem em xInicio e somem em xLimite.
-            new Passo("BURACO!  USE O PULO DUPLO",                    25f,  Conclusao.PassarX,     32f),
-            new Passo("ESPINHOS TIRAM VIDA.  PULE!",                  31.5f, Conclusao.PassarX,    36.5f),
-            new Passo("FRUTA CURA 1 CORACAO  (SO SE ESTIVER FERIDO)", 36f,  Conclusao.PassarX,     41f),
-            new Passo("CHECKPOINT:  SALVA SEU PROGRESSO",             45f,  Conclusao.PassarX,     50f),
-            new Passo("BURACO GRANDE:  PULO DUPLO!",                  50.5f, Conclusao.PassarX,    57f),
-            new Passo("TRAMPOLIM:  PULE EM CIMA",                     57f,  Conclusao.PassarX,     63f),
-            new Passo("AGUIA!  PISE NELA OU CORTE",                   68f,  Conclusao.PassarX,     76f),
-            new Passo("LOJA DO RAPOSO:  CHEGUE PERTO E APERTE  E",    86f,  Conclusao.PassarX,     93.5f),
-            new Passo("DOIS GAMBAS:  HORA DA ESPADA  (L)",            93.5f, Conclusao.PassarX,    103f),
-            new Passo("CHEGUE AO TROFEU!",                            103f, Conclusao.PassarX,     999f),
+            new Passo(() => "BURACO!  USE O PULO DUPLO",                             25f,  Conclusao.PassarX,     32f),
+            new Passo(() => "ESPINHOS TIRAM VIDA.  PULE!",                           31.5f, Conclusao.PassarX,    36.5f),
+            new Passo(() => "FRUTA CURA 1 CORACAO  (SO SE ESTIVER FERIDO)",          36f,  Conclusao.PassarX,     41f),
+            new Passo(() => "CHECKPOINT:  SALVA SEU PROGRESSO",                      45f,  Conclusao.PassarX,     50f),
+            new Passo(() => "BURACO GRANDE:  PULO DUPLO!",                           50.5f, Conclusao.PassarX,    57f),
+            new Passo(() => "TRAMPOLIM:  PULE EM CIMA",                              57f,  Conclusao.PassarX,     63f),
+            new Passo(() => "AGUIA!  PISE NELA OU CORTE",                            68f,  Conclusao.PassarX,     76f),
+            new Passo(() => "LOJA DO RAPOSO:  CHEGUE PERTO E APERTE  " + GameInput.BotaoInteragir, 86f, Conclusao.PassarX, 93.5f),
+            new Passo(() => "DOIS GAMBAS:  HORA DA ESPADA  (" + GameInput.BotaoAtacar + ")", 93.5f, Conclusao.PassarX, 103f),
+            new Passo(() => "CHEGUE AO TROFEU!",                                     103f, Conclusao.PassarX,     999f),
         };
     }
 
@@ -132,6 +133,11 @@ public class TutorialGuide : MonoBehaviour
 
             ComecarPasso(passo);
         }
+        else
+        {
+            // Trocar de teclado para controle no meio do passo troca o botao no balao.
+            AtualizarTexto(passo);
+        }
 
         bool concluido = passo.EhAcao
             ? Verificar(passo.conclusao)
@@ -145,11 +151,13 @@ public class TutorialGuide : MonoBehaviour
     {
         passoAtivo = true;
         tempoAndando = 0f;
-        inimigoMorreu = false;
         moedasNoInicioDoPasso = GameManager.Instance != null ? GameManager.Instance.Moedas : 0;
 
-        if (texto != null)
-            texto.text = passo.texto;
+        // "inimigoMorreu" NAO e zerado aqui de proposito: se o jogador matar o
+        // gamba antes do passo pedir, o passo ja comeca cumprido e a barreira
+        // abre na hora. Zerando, a barreira ficaria travada para sempre.
+
+        AtualizarTexto(passo);
 
         if (balao != null)
             balao.gameObject.SetActive(true);
@@ -171,6 +179,16 @@ public class TutorialGuide : MonoBehaviour
             EsconderBarreira();
             AudioManager.Sfx(RetroSfx.Checkpoint, 0.6f);
         }
+    }
+
+    private void AtualizarTexto(Passo passo)
+    {
+        if (texto == null || passo.texto == null)
+            return;
+
+        string novo = passo.texto();
+        if (texto.text != novo)
+            texto.text = novo;
     }
 
     private bool Verificar(Conclusao conclusao)

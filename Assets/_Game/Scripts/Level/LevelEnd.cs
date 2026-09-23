@@ -25,6 +25,12 @@ public class LevelEnd : MonoBehaviour
         if (controlador != null)
             controlador.DefinirControle(false);
 
+        // A fase acabou: nada mais pode machucar (inimigo encostando, espinho,
+        // bola de fogo no ar). Sem isso da para morrer no instante da vitoria.
+        PlayerHealth vida = outro.GetComponent<PlayerHealth>();
+        if (vida != null)
+            vida.TornarImune();
+
         Animator animator = GetComponentInChildren<Animator>();
         if (animator != null)
             animator.SetTrigger("Ativar");

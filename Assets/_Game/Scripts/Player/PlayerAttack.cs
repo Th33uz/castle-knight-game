@@ -44,11 +44,8 @@ public class PlayerAttack : MonoBehaviour
             Atacar();
     }
 
-    /// <summary>L e a tecla principal; J e o botao esquerdo do mouse (Fire1) tambem valem.</summary>
-    public static bool ApertouAtaque()
-    {
-        return Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.J) || Input.GetButtonDown("Fire1");
-    }
+    /// <summary>L / J no teclado, X ou Y no controle, ou o botao esquerdo do mouse.</summary>
+    public static bool ApertouAtaque() => GameInput.AtacouAgora;
 
     private void Atacar()
     {

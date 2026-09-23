@@ -9,7 +9,7 @@ using UnityEngine;
 public static class GameSetupWizard
 {
     // Camadas personalizadas comecam no indice 8; de 0 a 7 sao reservadas pela Unity.
-    private static readonly string[] CamadasPersonalizadas = { "Ground", "Player", "Enemy", "Hazard", "OneWayPlatform" };
+    private static readonly string[] CamadasPersonalizadas = { "Ground", "Player", "Enemy", "Hazard", "OneWayPlatform", "Companion" };
     private static readonly string[] TagsNecessarias = { "Collectible", "Checkpoint", "LevelEnd", "Hazard", "MovingPlatform" };
 
     private static readonly string[] PastasGeradas =

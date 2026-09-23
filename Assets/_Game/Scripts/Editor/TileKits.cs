@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Bioma { Floresta, Caverna, Inverno }
+public enum Bioma { Floresta, Caverna, Inverno, Castelo }
 
 /// <summary>Um tile especifico: qual folha fatiada e qual indice dentro dela.</summary>
 public struct TileRef
@@ -66,6 +66,7 @@ public static class TileKits
     public const string FolhaCaverna = "Assets/_Game/Art/Grotto/Tileset/tileset (16x16).png";
     public const string FolhaCaverna2 = "Assets/_Game/Art/Grotto/Tileset/tileset-2 (16x16).png";
     public const string FolhaInverno = "Assets/_Game/Art/Winter/Tileset/tileset (16x16).png";
+    public const string FolhaCastelo = "Assets/_Game/Art/Castle/Tileset/tileset (16x16).png";
 
     public static TileKit Para(Bioma bioma)
     {
@@ -73,6 +74,7 @@ public static class TileKits
         {
             case Bioma.Caverna: return Caverna();
             case Bioma.Inverno: return Inverno();
+            case Bioma.Castelo: return Castelo();
             default: return Floresta();
         }
     }
@@ -148,6 +150,33 @@ public static class TileKits
             { a(8, 8), a(9, 8), a(10, 8) },
             { a(8, 9), a(9, 9), a(10, 9) },
         }); // pilar
+
+        return kit;
+    }
+
+    // ----------------- Castelo (GothicVania Church, 21 colunas) -----------------
+
+    private static TileKit Castelo()
+    {
+        var t = R(FolhaCastelo, 21);
+        var kit = new TileKit();
+
+        // Este tileset tem DOIS conjuntos de piso. O de pedra clara (linhas 10-12)
+        // esta desenhado com 8 px de deslocamento em relacao a grade de 16, entao
+        // cortaria os blocos ao meio. Os blocos roxos das linhas 7-8 estao
+        // alinhados certinho e sao os usados aqui: linha 7 tem a borda iluminada
+        // em cima, linha 8 e o corpo.
+        TileRef[] topo = { t(1, 7), t(2, 7), t(4, 7), t(5, 7) };
+        TileRef[] corpo = { t(1, 8), t(2, 8), t(4, 8), t(5, 8) };
+
+        kit.topo = new Faixa(Um(t(1, 7)), topo, Um(t(5, 7)), Um(t(2, 7)));
+        kit.linhas.Add(new Faixa(Um(t(1, 8)), corpo, Um(t(5, 8)), Um(t(2, 8))));
+        // Recheio profundo: pedra escura, para o fundo do mundo nao ficar listrado.
+        kit.recheio = new[] { t(7, 7), t(8, 7) };
+
+        kit.alturaPlataforma = 2;
+        kit.plataformaTopo = new Faixa(Um(t(1, 7)), topo, Um(t(5, 7)), Um(t(2, 7)));
+        kit.plataformaBaixo = new Faixa(Um(t(1, 8)), corpo, Um(t(5, 8)), Um(t(2, 8)));
 
         return kit;
     }

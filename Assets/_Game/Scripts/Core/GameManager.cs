@@ -12,7 +12,12 @@ public class GameManager : MonoBehaviour
     [Header("Configuracao")]
     [SerializeField] private int vidasIniciais = 3;
     [SerializeField] private string cenaMenu = "MainMenu";
-    [SerializeField] private string cenaPrimeiraFase = "Tutorial";
+    [Tooltip("Cutscene que toca ao clicar em JOGAR; ela carrega o tutorial no fim.")]
+    [SerializeField] private string cenaCutscene = "Cutscene";
+    [Tooltip("Para onde a cutscene leva. Terminar o tutorial volta ao menu (ele nao esta na ordem abaixo).")]
+    [SerializeField] private string cenaTutorial = "Tutorial";
+    [Tooltip("Ordem das fases de verdade. ProximaFase() anda por esta lista, por nome; quem nao esta nela volta ao menu.")]
+    [SerializeField] private string[] ordemDasFases = { "Fase1", "Fase2", "Fase3", "Fase4" };
     [Tooltip("Segundos entre a morte e o reinicio da fase: da tempo da animacao e do fade.")]
     [SerializeField] private float atrasoParaReiniciar = 1.4f;
 
@@ -150,27 +155,32 @@ public class GameManager : MonoBehaviour
         CarregarCena(SceneManager.GetActiveScene().name, limparCheckpoint: false);
     }
 
-    /// <summary>Carrega a proxima cena do Build Settings. Na ultima, volta ao menu.</summary>
+    /// <summary>
+    /// Vai para a proxima fase da lista. Depois da ultima, volta ao menu.
+    ///
+    /// A busca e por NOME, e nao pelo indice do Build Settings: assim adicionar
+    /// uma cena que nao e fase (cutscene, creditos) nao quebra a progressao.
+    /// </summary>
     public void ProximaFase()
     {
-        int proximoIndice = SceneManager.GetActiveScene().buildIndex + 1;
+        string atual = SceneManager.GetActiveScene().name;
+        int indice = System.Array.IndexOf(ordemDasFases, atual);
 
-        if (proximoIndice < SceneManager.sceneCountInBuildSettings)
-        {
-            LimparCheckpoint();
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(proximoIndice);
-        }
+        if (indice >= 0 && indice + 1 < ordemDasFases.Length)
+            CarregarCena(ordemDasFases[indice + 1], limparCheckpoint: true);
         else
-        {
             VoltarAoMenu();
-        }
     }
 
+    /// <summary>Botao JOGAR: comeca uma partida nova pela cutscene.</summary>
     public void ComecarJogo()
     {
-        IrParaFase(cenaPrimeiraFase);
+        ReiniciarPartida();
+        CarregarCena(cenaCutscene, limparCheckpoint: true);
     }
+
+    /// <summary>Para onde a cutscene vai quando termina.</summary>
+    public string PrimeiraFase => cenaTutorial;
 
     /// <summary>Comeca um jogo novo direto numa fase (menu de selecao de fases).</summary>
     public void IrParaFase(string cena)

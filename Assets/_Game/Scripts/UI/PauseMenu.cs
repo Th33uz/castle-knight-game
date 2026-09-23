@@ -1,12 +1,15 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
-/// Menu de pausa acionado pelo Esc. Congela o jogo com Time.timeScale = 0.
+/// Menu de pausa acionado por Esc (ou Start no controle). Congela o jogo com
+/// Time.timeScale = 0.
 /// </summary>
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject painelPausa;
-    [SerializeField] private KeyCode teclaDePausa = KeyCode.Escape;
+    [Tooltip("Botao que ja nasce com o foco ao pausar, para o controle navegar.")]
+    [SerializeField] private GameObject primeiroBotao;
 
     public bool Pausado { get; private set; }
 
@@ -26,7 +29,7 @@ public class PauseMenu : MonoBehaviour
         if (ShopUI.Aberta)
             return;
 
-        if (Input.GetKeyDown(teclaDePausa))
+        if (GameInput.PausouAgora)
         {
             if (Pausado)
                 Continuar();
@@ -42,6 +45,9 @@ public class PauseMenu : MonoBehaviour
 
         if (painelPausa != null)
             painelPausa.SetActive(true);
+
+        if (EventSystem.current != null && primeiroBotao != null)
+            EventSystem.current.SetSelectedGameObject(primeiroBotao);
     }
 
     public void Continuar()
@@ -51,6 +57,9 @@ public class PauseMenu : MonoBehaviour
 
         if (painelPausa != null)
             painelPausa.SetActive(false);
+
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void ReiniciarFase()

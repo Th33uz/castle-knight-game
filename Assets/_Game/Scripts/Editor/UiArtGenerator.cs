@@ -18,6 +18,7 @@ public static class UiArtGenerator
     public const string CaminhoTeclaEsq = Pasta + "/tecla_esq.png";
     public const string CaminhoTeclaDir = Pasta + "/tecla_dir.png";
     public const string CaminhoTeclaE = Pasta + "/tecla_e.png";
+    public const string CaminhoTeclaY = Pasta + "/tecla_y.png";
 
     private static readonly Color32 Nada = new Color32(0, 0, 0, 0);
 
@@ -56,6 +57,7 @@ public static class UiArtGenerator
         if (!Existe(CaminhoTeclaEsq)) GerarTecla(CaminhoTeclaEsq, "esq");
         if (!Existe(CaminhoTeclaDir)) GerarTecla(CaminhoTeclaDir, "dir");
         if (!Existe(CaminhoTeclaE)) GerarTecla(CaminhoTeclaE, "E");
+        if (!Existe(CaminhoTeclaY)) GerarTecla(CaminhoTeclaY, "Y");
 
         AssetDatabase.Refresh();
     }
@@ -191,10 +193,13 @@ public static class UiArtGenerator
                 px[y * w + x] = cor;
             }
 
-        if (seta == "E")
+        if (seta == "E" || seta == "Y")
         {
-            // Letra E de 5x7 no topo da tecla (usada no aviso da loja, no mundo).
-            string[] glifo = { "11111", "10000", "10000", "11110", "10000", "10000", "11111" };
+            // Letra 5x7 desenhada no topo da tecla (aviso da loja, no mundo).
+            string[] glifo = seta == "E"
+                ? new[] { "11111", "10000", "10000", "11110", "10000", "10000", "11111" }
+                : new[] { "10001", "10001", "01010", "00100", "00100", "00100", "00100" };
+
             for (int linha = 0; linha < glifo.Length; linha++)
                 for (int col = 0; col < 5; col++)
                     if (glifo[linha][col] == '1')

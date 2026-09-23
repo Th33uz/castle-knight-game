@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using UnityEngine.Video;
 
 /// <summary>
 /// Gera as cenas do jogo a partir das definicoes em LevelDesigns: fundo em
@@ -55,7 +56,9 @@ public static class SceneBuilder
             if (existe)
                 AssetDatabase.DeleteAsset(CaminhoDa(nome));
 
-            if (nome == "MainMenu")
+            if (nome == "Cutscene")
+                MontarCutscene(nome);
+            else if (nome == "MainMenu")
                 MontarMenu(nome);
             else
                 MontarFase(LevelDesigns.PorNome(nome));
@@ -81,6 +84,64 @@ public static class SceneBuilder
     }
 
     // =====================================================================
+    // Cutscene (toca ao clicar em JOGAR, antes do Tutorial)
+    // =====================================================================
+
+    private static void MontarCutscene(string nome)
+    {
+        Scene cena = AbrirCopiaDaBase(nome);
+
+        // Cena limpa: so a camera com o video. Tira o que veio do template.
+        foreach (GameObject raiz in cena.GetRootGameObjects())
+        {
+            if (raiz.GetComponent<Camera>() == null)
+                Object.DestroyImmediate(raiz);
+        }
+
+        Camera cam = Camera.main;
+        if (cam == null)
+        {
+            GameObject go = new GameObject("Main Camera");
+            go.tag = "MainCamera";
+            cam = go.AddComponent<Camera>();
+        }
+
+        cam.transform.position = new Vector3(0f, 0f, -10f);
+        cam.orthographic = true;
+        cam.backgroundColor = Color.black;
+        cam.clearFlags = CameraClearFlags.SolidColor;
+
+        VideoClip clipe = AssetDatabase.LoadAssetAtPath<VideoClip>("Assets/_Game/Video/cutscene.mp4");
+        if (clipe == null)
+            Debug.LogWarning("[Setup] Video da cutscene nao encontrado em Assets/_Game/Video/cutscene.mp4");
+
+        // O video e desenhado no plano proximo da camera: sem RenderTexture, sem Canvas.
+        VideoPlayer player = cam.gameObject.AddComponent<VideoPlayer>();
+        player.playOnAwake = false;
+        player.renderMode = VideoRenderMode.CameraNearPlane;
+        player.targetCamera = cam;
+        player.source = VideoSource.VideoClip;
+        player.clip = clipe;
+        player.aspectRatio = VideoAspectRatio.FitInside;   // mantem a proporcao, com barras
+        player.audioOutputMode = VideoAudioOutputMode.Direct;
+        player.waitForFirstFrame = true;
+
+        CutsceneIntro intro = cam.gameObject.AddComponent<CutsceneIntro>();
+        SerializedObject so = new SerializedObject(intro);
+        so.FindProperty("player").objectReferenceValue = player;
+        // Vazio: usa a primeira fase definida no GameManager (Tutorial).
+        so.FindProperty("cenaSeguinte").stringValue = "";
+        so.ApplyModifiedProperties();
+
+        // Aviso discreto no canto: "aperte qualquer tecla para pular".
+        UIBuilder.CriarAvisoDePular();
+
+        EditorSceneManager.MarkSceneDirty(cena);
+        EditorSceneManager.SaveScene(cena);
+        Debug.Log("[Setup] Cena " + nome + " criada (cutscene).");
+    }
+
+    // =====================================================================
     // Menu
     // =====================================================================
 
@@ -94,8 +155,8 @@ public static class SceneBuilder
         var vitrine = new NivelDef { cena = "MainMenu", bioma = Bioma.Floresta, largura = 60, corDoCeu = new Color(0.36f, 0.78f, 0.94f) };
         vitrine.Chao(0, 60).Plataforma(14, 7, 4).Plataforma(22, 10, 3);
         vitrine.Fila("Gema", 22.5f, 11.5f, 3).Fila("Gema", 4.5f, 5.5f, 3);
-        // Em cima da plataforma: patrulha so ali e nunca alcanca o heroi parado.
-        vitrine.NoChao("Gamba", 16f, 8f);
+        // Sem inimigos: um bicho patrulhando faz o menu parecer gameplay rodando
+        // atras. O cenario fica parado, so o heroi respirando e o gato.
         vitrine.Enfeite("Assets/_Game/Art/SunnyLand/Props/tree.png", 4f, 4f, 3)
                .Enfeite("Assets/_Game/Art/SunnyLand/Props/bush.png", 26f, 4f, 6)
                .Enfeite("Assets/_Game/Art/SunnyLand/Props/tree.png", 30f, 4f, 3);
@@ -108,12 +169,19 @@ public static class SceneBuilder
         GameObject heroi = Instanciar("Jogador", new Vector3(9f, 4f, 0f), noChao: true);
         if (heroi != null)
         {
-            // Sem controle nem vida: fica parado respirando, o Animator segue no Idle,
-            // e nada que aconteca na vitrine pode disparar morte/reinicio de cena.
-            PlayerController2D controlador = heroi.GetComponent<PlayerController2D>();
-            if (controlador != null) controlador.enabled = false;
-            PlayerHealth vida = heroi.GetComponent<PlayerHealth>();
-            if (vida != null) vida.enabled = false;
+            // Desliga TODOS os scripts do heroi de uma vez (movimento, vida, ataque).
+            // Feito por tipo, e nao um a um, para nenhum script novo passar batido:
+            // o PlayerAttack tinha escapado e clicar no menu fazia o heroi atacar.
+            // Animator e SpriteRenderer nao sao MonoBehaviour, entao a animacao
+            // de respirar continua rodando.
+            foreach (MonoBehaviour script in heroi.GetComponents<MonoBehaviour>())
+                script.enabled = false;
+
+            // Corpo parado: sem gravidade nem colisao, ele nao "cai" nem reage a nada.
+            Rigidbody2D rb = heroi.GetComponent<Rigidbody2D>();
+            if (rb != null) rb.bodyType = RigidbodyType2D.Kinematic;
+
+            Instanciar("Gato", heroi.transform.position + Vector3.left * 1.3f, noChao: false);
         }
 
         Camera cam = Camera.main;
@@ -150,6 +218,10 @@ public static class SceneBuilder
         GameObject ponto = new GameObject("PontoDeNascimento");
         GameObject jogador = Instanciar("Jogador", nivel.nascimento, noChao: true);
         ponto.transform.position = jogador != null ? jogador.transform.position : (Vector3)nivel.nascimento;
+
+        // O gato se posiciona sozinho ao lado do heroi no Start.
+        if (jogador != null)
+            Instanciar("Gato", jogador.transform.position + Vector3.left * 1.3f, noChao: false);
 
         CriarLimiteDeQueda(nivel.largura);
         CriarParedes(nivel.largura);
@@ -550,7 +622,14 @@ public static class SceneBuilder
 
     private static void CriarMusica(string nome)
     {
-        AudioClip clipe = AssetDatabase.LoadAssetAtPath<AudioClip>(PastaMusica + "/" + nome + ".ogg");
+        // Aceita .ogg, .mp3 ou .wav com o mesmo nome.
+        AudioClip clipe = null;
+        foreach (string extensao in new[] { ".ogg", ".mp3", ".wav" })
+        {
+            clipe = AssetDatabase.LoadAssetAtPath<AudioClip>(PastaMusica + "/" + nome + extensao);
+            if (clipe != null) break;
+        }
+
         if (clipe == null)
         {
             Debug.LogWarning("[Setup] Musica nao encontrada: " + nome);

@@ -25,6 +25,20 @@ public static class PhysicsSetup
         if (inimigo >= 0 && trampolim >= 0)
             Physics2D.IgnoreLayerCollision(inimigo, trampolim, true);
 
+        // O gato so colide com o cenario: atravessa o heroi (sem empurrar), os
+        // inimigos (nao apanha nem atrapalha) e as armadilhas (nao morre).
+        int gato = LayerMask.NameToLayer("Companion");
+        if (gato >= 0)
+        {
+            int jogador = LayerMask.NameToLayer("Player");
+            int perigo = LayerMask.NameToLayer("Hazard");
+
+            if (jogador >= 0) Physics2D.IgnoreLayerCollision(gato, jogador, true);
+            if (inimigo >= 0) Physics2D.IgnoreLayerCollision(gato, inimigo, true);
+            if (perigo >= 0) Physics2D.IgnoreLayerCollision(gato, perigo, true);
+            Physics2D.IgnoreLayerCollision(gato, gato, true);
+        }
+
         SceneManager.sceneLoaded -= AoCarregarCena;
         SceneManager.sceneLoaded += AoCarregarCena;
     }

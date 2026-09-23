@@ -190,6 +190,27 @@ public static class AnimationBuilder
     }
 
     /// <summary>
+    /// Parado / correndo, decidido pelo float "Velocidade" (gato companheiro).
+    /// </summary>
+    public static AnimatorController CriarControllerIdleCorrida(string nome, AnimationClip idle, AnimationClip corrida, float limiar = 0.5f)
+    {
+        AnimatorController c = NovoController(nome);
+        c.AddParameter("Velocidade", AnimatorControllerParameterType.Float);
+        AnimatorStateMachine sm = c.layers[0].stateMachine;
+
+        AnimatorState sIdle = sm.AddState("Idle");
+        sIdle.motion = idle;
+        sm.defaultState = sIdle;
+
+        AnimatorState sRun = sm.AddState("Corrida");
+        sRun.motion = corrida;
+
+        Transicao(sIdle, sRun).AddCondition(AnimatorConditionMode.Greater, limiar, "Velocidade");
+        Transicao(sRun, sIdle).AddCondition(AnimatorConditionMode.Less, limiar, "Velocidade");
+        return c;
+    }
+
+    /// <summary>
     /// Idle ate receber o trigger "Ativar"; toca <paramref name="ativo"/> uma vez e
     /// depois fica em <paramref name="depois"/> (loop) ou volta ao idle.
     /// Checkpoint: bandeira guardada -> hasteando -> tremulando.
@@ -220,6 +241,59 @@ public static class AnimationBuilder
         {
             Transicao(sAtivo, sIdle, comExitTime: true);
         }
+
+        return c;
+    }
+
+    /// <summary>
+    /// Maquina de estados da Bruxa: parada / andando pelo float "Velocidade",
+    /// mais os triggers "Atacar" (carregar + lancar), "Dano" e "Morrer".
+    /// </summary>
+    public static AnimatorController CriarControllerBruxa(string nome,
+        AnimationClip idle, AnimationClip correr, AnimationClip carregar,
+        AnimationClip atacar, AnimationClip dano, AnimationClip morte)
+    {
+        AnimatorController c = NovoController(nome);
+        c.AddParameter("Velocidade", AnimatorControllerParameterType.Float);
+        c.AddParameter("Atacar", AnimatorControllerParameterType.Trigger);
+        c.AddParameter("Dano", AnimatorControllerParameterType.Trigger);
+        c.AddParameter("Morrer", AnimatorControllerParameterType.Trigger);
+
+        AnimatorStateMachine sm = c.layers[0].stateMachine;
+
+        AnimatorState sIdle = sm.AddState("Idle");        sIdle.motion = idle;
+        AnimatorState sCorrer = sm.AddState("Correr");    sCorrer.motion = correr;
+        AnimatorState sCarregar = sm.AddState("Carregar"); sCarregar.motion = carregar;
+        AnimatorState sAtacar = sm.AddState("Atacar");    sAtacar.motion = atacar;
+        AnimatorState sDano = sm.AddState("Dano");        sDano.motion = dano;
+        AnimatorState sMorte = sm.AddState("Morte");      sMorte.motion = morte;
+        sm.defaultState = sIdle;
+
+        Transicao(sIdle, sCorrer).AddCondition(AnimatorConditionMode.Greater, 0.3f, "Velocidade");
+        Transicao(sCorrer, sIdle).AddCondition(AnimatorConditionMode.Less, 0.3f, "Velocidade");
+
+        // Atacar sempre passa por "carregar" antes: da o aviso visual de que a
+        // magia vem, para a luta ser justa.
+        AnimatorStateTransition paraCarregar = sm.AddAnyStateTransition(sCarregar);
+        paraCarregar.AddCondition(AnimatorConditionMode.If, 0f, "Atacar");
+        paraCarregar.hasExitTime = false;
+        paraCarregar.duration = 0f;
+        paraCarregar.canTransitionToSelf = false;
+        Transicao(sCarregar, sAtacar, comExitTime: true);
+        Transicao(sAtacar, sIdle, comExitTime: true);
+
+        AnimatorStateTransition paraDano = sm.AddAnyStateTransition(sDano);
+        paraDano.AddCondition(AnimatorConditionMode.If, 0f, "Dano");
+        paraDano.hasExitTime = false;
+        paraDano.duration = 0f;
+        paraDano.canTransitionToSelf = false;
+        Transicao(sDano, sIdle, comExitTime: true);
+
+        AnimatorStateTransition paraMorte = sm.AddAnyStateTransition(sMorte);
+        paraMorte.AddCondition(AnimatorConditionMode.If, 0f, "Morrer");
+        paraMorte.hasExitTime = false;
+        paraMorte.duration = 0f;
+        paraMorte.canTransitionToSelf = false;
 
         return c;
     }

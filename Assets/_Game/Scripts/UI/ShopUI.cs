@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -35,6 +36,11 @@ public class ShopUI : MonoBehaviour
     private PlayerHealth vidaDoJogador;
     private PlayerController2D controlador;
 
+    // Frame em que a loja abriu. O Shop e a ShopUI leem a mesma tecla no mesmo
+    // frame (GetKeyDown vale o frame inteiro): sem esta trava, o Shop abria e a
+    // ShopUI fechava em seguida, e a loja parecia nao abrir.
+    private int frameQueAbriu = -1;
+
     private void Awake()
     {
         Instance = this;
@@ -67,9 +73,11 @@ public class ShopUI : MonoBehaviour
         }
 
         raiz.SetActive(true);
+        frameQueAbriu = Time.frameCount;
         Time.timeScale = 0f;
         AudioManager.Sfx(RetroSfx.Checkpoint, 0.5f);
         Atualizar();
+        SelecionarPrimeiroBotao();
     }
 
     public void Fechar()
@@ -80,16 +88,45 @@ public class ShopUI : MonoBehaviour
         raiz.SetActive(false);
         Time.timeScale = 1f;
 
+        // Solta o foco, senao o controle continuaria "dentro" da loja fechada.
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+
         if (controlador != null)
             controlador.DefinirControle(true);
     }
 
-    private void Update()
+    /// <summary>
+    /// Poe o foco num botao compravel. Sem isso o controle abre a loja mas nao
+    /// tem em que navegar (o mouse funcionaria, o gamepad nao).
+    /// </summary>
+    private void SelecionarPrimeiroBotao()
     {
-        if (!Aberta)
+        if (EventSystem.current == null || botoesComprar == null)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Escape) || Shop.ApertouInteragir())
+        foreach (Button botao in botoesComprar)
+        {
+            if (botao != null && botao.interactable)
+            {
+                EventSystem.current.SetSelectedGameObject(botao.gameObject);
+                return;
+            }
+        }
+
+        // Nenhum item disponivel: foca o primeiro mesmo assim, para o
+        // direcional conseguir andar ate o botao de fechar.
+        if (botoesComprar.Length > 0 && botoesComprar[0] != null)
+            EventSystem.current.SetSelectedGameObject(botoesComprar[0].gameObject);
+    }
+
+    private void Update()
+    {
+        // Ignora o frame da abertura: a tecla que abriu ainda conta como "pressionada".
+        if (!Aberta || Time.frameCount == frameQueAbriu)
+            return;
+
+        if (GameInput.PausouAgora || Shop.ApertouInteragir())
         {
             Fechar();
             return;
@@ -186,6 +223,17 @@ public class ShopUI : MonoBehaviour
 
             if (textosStatus != null && i < textosStatus.Length && textosStatus[i] != null)
                 textosStatus[i].text = pode ? "COMPRAR  [" + (i + 1) + "]" : motivo;
+        }
+
+        // Comprar pode desativar o botao em que o foco estava (vida cheia,
+        // saldo acabou): sem isto o controle ficaria preso num botao morto.
+        if (EventSystem.current != null)
+        {
+            GameObject focado = EventSystem.current.currentSelectedGameObject;
+            Button botaoFocado = focado != null ? focado.GetComponent<Button>() : null;
+
+            if (botaoFocado == null || !botaoFocado.interactable)
+                SelecionarPrimeiroBotao();
         }
     }
 }

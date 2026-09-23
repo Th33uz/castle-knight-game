@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5011720243200683451
+--- !u!1 &190010582949678815
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,12 +8,12 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3871649757140840723}
-  - component: {fileID: 6418315114143363259}
-  - component: {fileID: 5780149628821981066}
-  - component: {fileID: 3796236635500745693}
-  - component: {fileID: 2827576564724999325}
-  - component: {fileID: 5242817629601570405}
+  - component: {fileID: 6379719999691395331}
+  - component: {fileID: 5105596406979209171}
+  - component: {fileID: 4509984298634426251}
+  - component: {fileID: 990537985271371863}
+  - component: {fileID: 2831175535409016235}
+  - component: {fileID: 4708132173576011289}
   m_Layer: 10
   m_Name: YetiGigante
   m_TagString: Untagged
@@ -21,13 +21,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3871649757140840723
+--- !u!4 &6379719999691395331
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5011720243200683451}
+  m_GameObject: {fileID: 190010582949678815}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -36,14 +36,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &6418315114143363259
+--- !u!212 &5105596406979209171
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5011720243200683451}
+  m_GameObject: {fileID: 190010582949678815}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -95,14 +95,14 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!95 &5780149628821981066
+--- !u!95 &4509984298634426251
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5011720243200683451}
+  m_GameObject: {fileID: 190010582949678815}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: b5c077e30c3fe974abaf4bf6c20dbdd7, type: 2}
@@ -117,14 +117,14 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!50 &3796236635500745693
+--- !u!50 &990537985271371863
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5011720243200683451}
+  m_GameObject: {fileID: 190010582949678815}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -144,13 +144,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &2827576564724999325
+--- !u!61 &2831175535409016235
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5011720243200683451}
+  m_GameObject: {fileID: 190010582949678815}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -190,13 +190,13 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.5, y: 1.6}
   m_EdgeRadius: 0
---- !u!114 &5242817629601570405
+--- !u!114 &4708132173576011289
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5011720243200683451}
+  m_GameObject: {fileID: 190010582949678815}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b4afcac30d870d4d9870257f7f2259d, type: 3}
@@ -220,6 +220,6 @@ MonoBehaviour:
   dano: 1
   alturaMinimaDoPisao: 1.248
   forcaDoQuique: 16
-  efeitoMorte: {fileID: 5201583764090517340, guid: 19d586fa2ec39b242aa2c79f64bbbf88, type: 3}
+  efeitoMorte: {fileID: 8841829227736864328, guid: 19d586fa2ec39b242aa2c79f64bbbf88, type: 3}
   liberarAoMorrer: {fileID: 0}
   desativarAoMorrer: {fileID: 0}
