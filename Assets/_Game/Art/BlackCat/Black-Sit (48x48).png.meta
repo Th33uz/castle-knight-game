@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 84b35163a825b7a419a5ba9d2828df7a
+guid: 3f91237bacecce2418ea9472df946445
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,7 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Black-Idle (48x48)_0
+      name: Black-Sit (48x48)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -138,14 +138,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e62697e48f065774280a7c1c9b2a019f
-      internalID: -1453070403
+      spriteID: 532eddce74c931946921100e7890ed66
+      internalID: 1075342543
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_1
+      name: Black-Sit (48x48)_1
       rect:
         serializedVersion: 2
         x: 48
@@ -160,14 +160,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 42810c73fd961d2449f0ad628e9e0522
-      internalID: -480712265
+      spriteID: d5aff660c9f60874ead95867cb24f6a2
+      internalID: 630655295
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_2
+      name: Black-Sit (48x48)_2
       rect:
         serializedVersion: 2
         x: 96
@@ -182,14 +182,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 816e0eedd2037e54f9eb8c42e17238ba
-      internalID: -1600946776
+      spriteID: 355a27038207b26468bf59cbb29f9fe4
+      internalID: 109334970
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_3
+      name: Black-Sit (48x48)_3
       rect:
         serializedVersion: 2
         x: 144
@@ -204,14 +204,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3ce831d9e3e3c1741ab95639cbd444ca
-      internalID: -651488024
+      spriteID: 7269b98c48c83ef4aa579be2f46f5ad4
+      internalID: 702532298
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_4
+      name: Black-Sit (48x48)_4
       rect:
         serializedVersion: 2
         x: 192
@@ -226,14 +226,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 698597bd4b7af374d9bc41909e5d3c47
-      internalID: 1889928922
+      spriteID: 1214961fc9b9037468ab620213d0758f
+      internalID: 1280989454
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_5
+      name: Black-Sit (48x48)_5
       rect:
         serializedVersion: 2
         x: 240
@@ -248,14 +248,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ed6109f0fa903cc41835fcf7bafddee0
-      internalID: -1118808977
+      spriteID: 18781f93755633948bac32401964777e
+      internalID: 791559859
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_6
+      name: Black-Sit (48x48)_6
       rect:
         serializedVersion: 2
         x: 288
@@ -270,118 +270,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 388fff582d0a1bb4495d2ed5f33bf32b
-      internalID: -1296018274
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Idle (48x48)_7
-      rect:
-        serializedVersion: 2
-        x: 336
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 593cb98676691a24ba430fd00d52d943
-      internalID: 1431597057
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Idle (48x48)_8
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0d0a659a7d083ac4d9475bfcdca77cc6
-      internalID: 582664451
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Idle (48x48)_9
-      rect:
-        serializedVersion: 2
-        x: 432
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8f2443d70e9453a42aaac7cd18b179ca
-      internalID: -1665145613
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Idle (48x48)_10
-      rect:
-        serializedVersion: 2
-        x: 480
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 720c3a83f43ee3b4f8bdd3b2218e91ee
-      internalID: 1768256189
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Idle (48x48)_11
-      rect:
-        serializedVersion: 2
-        x: 528
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a39446a79e5dc1b41afe5b5b8dc0edb1
-      internalID: 1298182846
+      spriteID: ac9630592506f8a4a9d168e6c1d00f87
+      internalID: 1220412638
       vertices: []
       indices: 
       edges: []
@@ -390,7 +280,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5f3309da2c8463e44b594cbf0eb653f9
+    spriteID: a1b88bb71caad4b468e91aaa305493d8
     internalID: 0
     vertices: []
     indices: 
@@ -400,18 +290,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Black-Idle (48x48)_0: -1453070403
-      Black-Idle (48x48)_1: -480712265
-      Black-Idle (48x48)_10: 1768256189
-      Black-Idle (48x48)_11: 1298182846
-      Black-Idle (48x48)_2: -1600946776
-      Black-Idle (48x48)_3: -651488024
-      Black-Idle (48x48)_4: 1889928922
-      Black-Idle (48x48)_5: -1118808977
-      Black-Idle (48x48)_6: -1296018274
-      Black-Idle (48x48)_7: 1431597057
-      Black-Idle (48x48)_8: 582664451
-      Black-Idle (48x48)_9: -1665145613
+      Black-Sit (48x48)_0: 1075342543
+      Black-Sit (48x48)_1: 630655295
+      Black-Sit (48x48)_2: 109334970
+      Black-Sit (48x48)_3: 702532298
+      Black-Sit (48x48)_4: 1280989454
+      Black-Sit (48x48)_5: 791559859
+      Black-Sit (48x48)_6: 1220412638
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

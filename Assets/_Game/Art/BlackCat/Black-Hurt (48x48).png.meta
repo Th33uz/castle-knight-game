@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fdfde3998c6c9f9409eeb74e2a42e4e0
+guid: 6d627b22ce506cc44a7b3433942509d2
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,7 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Black-Run (48x48)_0
+      name: Black-Hurt (48x48)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -138,14 +138,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 38f2294f2b8876247b474877a4d1b0f4
-      internalID: -2118995164
+      spriteID: 8004c3b3fe1bbd34cbf5eabebeda6608
+      internalID: -985957680
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Run (48x48)_1
+      name: Black-Hurt (48x48)_1
       rect:
         serializedVersion: 2
         x: 48
@@ -160,14 +160,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 62e618bcd80401240b090aeea060e3b2
-      internalID: 81001537
+      spriteID: 119e41ccafd41a946b9d8e68afe7b0d5
+      internalID: 1984521875
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Run (48x48)_2
+      name: Black-Hurt (48x48)_2
       rect:
         serializedVersion: 2
         x: 96
@@ -182,74 +182,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1cdf62a3352eda148bd965164753a6cb
-      internalID: -709650350
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Run (48x48)_3
-      rect:
-        serializedVersion: 2
-        x: 144
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2835a6de9eaa72341a7f3d80705edb57
-      internalID: -1353178759
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Run (48x48)_4
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2678e8fbe5cd4564a8d72615f6d0cd88
-      internalID: 1046863913
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Black-Run (48x48)_5
-      rect:
-        serializedVersion: 2
-        x: 240
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 117bfcc7f4094c54aa498a847b2b0ea7
-      internalID: -72865289
+      spriteID: 2c243b6f48d210d44996a983d2247a94
+      internalID: 236180999
       vertices: []
       indices: 
       edges: []
@@ -258,7 +192,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: e34ae1afe7de60e44bf4e97d47b5de41
+    spriteID: 4868e31a75914134c923e5a3acfe97ff
     internalID: 0
     vertices: []
     indices: 
@@ -268,12 +202,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Black-Run (48x48)_0: -2118995164
-      Black-Run (48x48)_1: 81001537
-      Black-Run (48x48)_2: -709650350
-      Black-Run (48x48)_3: -1353178759
-      Black-Run (48x48)_4: 1046863913
-      Black-Run (48x48)_5: -72865289
+      Black-Hurt (48x48)_0: -985957680
+      Black-Hurt (48x48)_1: 1984521875
+      Black-Hurt (48x48)_2: 236180999
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

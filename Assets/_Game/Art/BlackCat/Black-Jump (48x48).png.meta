@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 84b35163a825b7a419a5ba9d2828df7a
+guid: 9281e7357a3384644abccc481ab749b6
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,7 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Black-Idle (48x48)_0
+      name: Black-Jump (48x48)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -138,14 +138,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e62697e48f065774280a7c1c9b2a019f
-      internalID: -1453070403
+      spriteID: e317ce91ddddf7e4792b4f51f9a1560a
+      internalID: 8426775
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_1
+      name: Black-Jump (48x48)_1
       rect:
         serializedVersion: 2
         x: 48
@@ -160,14 +160,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 42810c73fd961d2449f0ad628e9e0522
-      internalID: -480712265
+      spriteID: 24e939ba98df11945b02e5f28701c546
+      internalID: 620490210
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_2
+      name: Black-Jump (48x48)_2
       rect:
         serializedVersion: 2
         x: 96
@@ -182,14 +182,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 816e0eedd2037e54f9eb8c42e17238ba
-      internalID: -1600946776
+      spriteID: 91cda86c64bd2db4c9baf4c8bc1cfadb
+      internalID: -1646440140
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_3
+      name: Black-Jump (48x48)_3
       rect:
         serializedVersion: 2
         x: 144
@@ -204,14 +204,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3ce831d9e3e3c1741ab95639cbd444ca
-      internalID: -651488024
+      spriteID: 4ce670152899b334383ff156467c8feb
+      internalID: 1733581245
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_4
+      name: Black-Jump (48x48)_4
       rect:
         serializedVersion: 2
         x: 192
@@ -226,14 +226,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 698597bd4b7af374d9bc41909e5d3c47
-      internalID: 1889928922
+      spriteID: 15f64cf77c787da48a2c43bdc977bf12
+      internalID: -1006159250
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_5
+      name: Black-Jump (48x48)_5
       rect:
         serializedVersion: 2
         x: 240
@@ -248,14 +248,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ed6109f0fa903cc41835fcf7bafddee0
-      internalID: -1118808977
+      spriteID: 5648f776c6ce49547a0a9bd043fc54eb
+      internalID: -2021293374
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_6
+      name: Black-Jump (48x48)_6
       rect:
         serializedVersion: 2
         x: 288
@@ -270,14 +270,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 388fff582d0a1bb4495d2ed5f33bf32b
-      internalID: -1296018274
+      spriteID: 2608cc5374da45a4fbefe55e5efdb471
+      internalID: -1465513589
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_7
+      name: Black-Jump (48x48)_7
       rect:
         serializedVersion: 2
         x: 336
@@ -292,14 +292,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 593cb98676691a24ba430fd00d52d943
-      internalID: 1431597057
+      spriteID: 872ce3614556004468afb70d5e8bcc34
+      internalID: -531100809
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_8
+      name: Black-Jump (48x48)_8
       rect:
         serializedVersion: 2
         x: 384
@@ -314,14 +314,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0d0a659a7d083ac4d9475bfcdca77cc6
-      internalID: 582664451
+      spriteID: 17830f2c301eea54f85ec23593f17eb5
+      internalID: -950080980
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_9
+      name: Black-Jump (48x48)_9
       rect:
         serializedVersion: 2
         x: 432
@@ -336,14 +336,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8f2443d70e9453a42aaac7cd18b179ca
-      internalID: -1665145613
+      spriteID: 9920095e30681264fb43d7a1a6b964b2
+      internalID: 78458775
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_10
+      name: Black-Jump (48x48)_10
       rect:
         serializedVersion: 2
         x: 480
@@ -358,14 +358,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 720c3a83f43ee3b4f8bdd3b2218e91ee
-      internalID: 1768256189
+      spriteID: 00dbb3f038fca004f9e042639c7aa510
+      internalID: -821510255
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Black-Idle (48x48)_11
+      name: Black-Jump (48x48)_11
       rect:
         serializedVersion: 2
         x: 528
@@ -380,8 +380,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a39446a79e5dc1b41afe5b5b8dc0edb1
-      internalID: 1298182846
+      spriteID: c0d89460282743d4cb4631491a331257
+      internalID: -1466726573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black-Jump (48x48)_12
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89b6346b0b770ae48b7d4f565089f2a4
+      internalID: 1759003797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black-Jump (48x48)_13
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51f635749eb9be541b25c7926be10299
+      internalID: -1131710301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Black-Jump (48x48)_14
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12eeba164fda58e40955ac53ff0a60b0
+      internalID: -1174323858
       vertices: []
       indices: 
       edges: []
@@ -390,7 +456,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5f3309da2c8463e44b594cbf0eb653f9
+    spriteID: e7cba430944e25942a3a71a72a0ac76c
     internalID: 0
     vertices: []
     indices: 
@@ -400,18 +466,21 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Black-Idle (48x48)_0: -1453070403
-      Black-Idle (48x48)_1: -480712265
-      Black-Idle (48x48)_10: 1768256189
-      Black-Idle (48x48)_11: 1298182846
-      Black-Idle (48x48)_2: -1600946776
-      Black-Idle (48x48)_3: -651488024
-      Black-Idle (48x48)_4: 1889928922
-      Black-Idle (48x48)_5: -1118808977
-      Black-Idle (48x48)_6: -1296018274
-      Black-Idle (48x48)_7: 1431597057
-      Black-Idle (48x48)_8: 582664451
-      Black-Idle (48x48)_9: -1665145613
+      Black-Jump (48x48)_0: 8426775
+      Black-Jump (48x48)_1: 620490210
+      Black-Jump (48x48)_10: -821510255
+      Black-Jump (48x48)_11: -1466726573
+      Black-Jump (48x48)_12: 1759003797
+      Black-Jump (48x48)_13: -1131710301
+      Black-Jump (48x48)_14: -1174323858
+      Black-Jump (48x48)_2: -1646440140
+      Black-Jump (48x48)_3: 1733581245
+      Black-Jump (48x48)_4: -1006159250
+      Black-Jump (48x48)_5: -2021293374
+      Black-Jump (48x48)_6: -1465513589
+      Black-Jump (48x48)_7: -531100809
+      Black-Jump (48x48)_8: -950080980
+      Black-Jump (48x48)_9: 78458775
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
