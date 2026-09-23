@@ -82,7 +82,11 @@ public static class GameInput
     public static bool SoltouPulo => Soltou("Jump") && Soltou("Pular2");
 
     public static bool AtacouAgora => Apertou("Atacar") || Input.GetMouseButtonDown(0);
-    public static bool InteragiuAgora => Apertou("Interagir") || Apertou("Submit");
+    // So o botao "Interagir" (E no teclado, Y no controle). NAO vale o eixo
+    // "Submit": ele inclui Espaco e Enter por padrao no Unity, e ai pular na
+    // frente do vendedor abria a loja. O Submit continua valendo para navegar
+    // os menus, que e trabalho do EventSystem, nao deste atalho.
+    public static bool InteragiuAgora => Apertou("Interagir");
     public static bool PausouAgora => Apertou("Pausar");
 
     /// <summary>Qualquer botao de "seguir em frente": pular cutscene, fechar aviso.</summary>

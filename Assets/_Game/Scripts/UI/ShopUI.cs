@@ -41,6 +41,12 @@ public class ShopUI : MonoBehaviour
     // ShopUI fechava em seguida, e a loja parecia nao abrir.
     private int frameQueAbriu = -1;
 
+    // A mesma trava do outro lado: se a ShopUI fechou neste frame, o Shop ainda
+    // ve a tecla apertada e reabriria na hora. Qual dos dois Updates roda
+    // primeiro depende da ordem de execucao dos scripts, entao os dois lados
+    // precisam se proteger.
+    private int frameQueFechou = -1;
+
     private void Awake()
     {
         Instance = this;
@@ -56,7 +62,7 @@ public class ShopUI : MonoBehaviour
 
     public static void Abrir()
     {
-        if (Instance == null || Aberta)
+        if (Instance == null || Aberta || Time.frameCount == Instance.frameQueFechou)
             return;
 
         Instance.AbrirInterno();
@@ -86,6 +92,7 @@ public class ShopUI : MonoBehaviour
             return;
 
         raiz.SetActive(false);
+        frameQueFechou = Time.frameCount;
         Time.timeScale = 1f;
 
         // Solta o foco, senao o controle continuaria "dentro" da loja fechada.

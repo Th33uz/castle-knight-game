@@ -68,7 +68,8 @@ no `RetroSfx`.
 (com a vida cheia, ficam no lugar).
 
 **Loja do Raposo** — uma por fase, logo antes da arena do chefe (no tutorial, depois do 2º
-checkpoint). Chegue perto do raposo, aperte `E` (ou `Enter` / `↑`); o jogo pausa. Compre com
+checkpoint). Chegue perto do raposo e aperte `E` (`Y` no controle); o jogo pausa. A mesma
+tecla fecha a loja. Compre com
 clique ou `1` / `2` / `3`:
 
 | Item | Preço | Efeito |
