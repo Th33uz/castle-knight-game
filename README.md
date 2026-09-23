@@ -89,10 +89,11 @@ definição e regere:
 Menu Unity:  Jogo → Reconstruir tudo (cenas, prefabs, animacoes)
 ```
 
-Ou pela linha de comando, com o Unity **fechado** (também tira capturas de tela em `Screenshots/`):
+Ou pela linha de comando, **a partir da pasta do projeto** e com o Unity **fechado**
+(também tira capturas de tela em `Screenshots/`):
 
 ```bash
-"C:\Program Files\Unity\Hub\Editor\6000.3.21f1\Editor\Unity.exe" -batchmode -quit -projectPath "C:\Users\Matheus Abilio\Desktop\TrabThiago" -executeMethod GameSetupWizard.ReconstruirBatch -logFile build.log
+"C:\Program Files\Unity\Hub\Editor\6000.3.21f1\Editor\Unity.exe" -batchmode -quit -projectPath . -executeMethod GameSetupWizard.ReconstruirBatch -logFile build.log
 ```
 
 ### Onde mexer para mudar o jogo
