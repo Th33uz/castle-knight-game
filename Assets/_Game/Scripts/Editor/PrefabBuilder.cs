@@ -831,8 +831,18 @@ public static class PrefabBuilder
     /// <summary>Gato preto (carysaurus) que segue o jogador. Sem fisica: so sprite, animacao e o script.</summary>
     private static void CriarGato()
     {
-        Sprite[] idle = AnimationBuilder.QuadrosFatiados(Art + "/BlackCat/Black-Idle (48x48).png");
-        Sprite[] corrida = AnimationBuilder.QuadrosFatiados(Art + "/BlackCat/Black-Run (48x48).png");
+        string bc = Art + "/BlackCat";
+        Sprite[] idle = AnimationBuilder.QuadrosFatiados(bc + "/Black-Idle (48x48).png");
+        Sprite[] corrida = AnimationBuilder.QuadrosFatiados(bc + "/Black-Run (48x48).png");
+        // A folha de pulo e um salto inteiro: agacha, impulsiona e estica no ar
+        // (0-8), depois pousa e se levanta (9-14). Em loop ela repetiria a
+        // aterrissagem com o gato ainda no ar, entao vira dois clipes.
+        string folhaPulo = bc + "/Black-Jump (48x48).png";
+        Sprite[] pulo = AnimationBuilder.QuadrosFatiados(folhaPulo, 0, 9);
+        Sprite[] aterrissar = AnimationBuilder.QuadrosFatiados(folhaPulo, 9);
+        Sprite[] miado = AnimationBuilder.QuadrosFatiados(bc + "/Black-Meow (48x48).png");
+        Sprite[] sentado = AnimationBuilder.QuadrosFatiados(bc + "/Black-Sit (48x48).png");
+        Sprite[] dormindo = AnimationBuilder.QuadrosFatiados(bc + "/Black-Sleep (48x48).png");
 
         if (idle.Length == 0 || corrida.Length == 0)
         {
@@ -840,9 +850,23 @@ public static class PrefabBuilder
             return;
         }
 
-        AnimationClip clipIdle = AnimationBuilder.CriarClip("Gato_Idle", idle, 6f, true);
-        AnimationClip clipCorrida = AnimationBuilder.CriarClip("Gato_Corrida", corrida, 9f, true);
-        AnimatorController controller = AnimationBuilder.CriarControllerIdleCorrida("Gato", clipIdle, clipCorrida);
+        // O fps acompanha a quantidade de quadros de cada animacao: com fps baixo
+        // demais (12 quadros a 6 fps) a animacao fica travada.
+        AnimationClip clipIdle = AnimationBuilder.CriarClip("Gato_Idle", idle, 10f, true);
+        AnimationClip clipCorrida = AnimationBuilder.CriarClip("Gato_Corrida", corrida, 14f, true);
+        // Sem repetir: a subida termina com o gato esticado e segura essa pose
+        // no ar; a aterrissagem toca uma vez ao encostar.
+        AnimationClip clipPulo = AnimationBuilder.CriarClip("Gato_Pulo", pulo, 20f, false);
+        AnimationClip clipAterrissar = AnimationBuilder.CriarClip("Gato_Aterrissar", aterrissar, 18f, false);
+        // 7 quadros a 7,5 fps = 0,93 s, o mesmo tempo do som do miado: a boca
+        // fecha junto com o fim do "au".
+        AnimationClip clipMiado = AnimationBuilder.CriarClip("Gato_Miado", miado, 7.5f, false);
+        // Sit e Sleep sao ciclos (rabo mexendo, "Z" subindo), entao vao em loop.
+        AnimationClip clipSentado = AnimationBuilder.CriarClip("Gato_Sentado", sentado, 7f, true);
+        AnimationClip clipDormindo = AnimationBuilder.CriarClip("Gato_Dormindo", dormindo, 5f, true);
+
+        AnimatorController controller = AnimationBuilder.CriarControllerGato(
+            "Gato", clipIdle, clipCorrida, clipPulo, clipAterrissar, clipMiado, clipSentado, clipDormindo);
 
         GameObject gato = new GameObject("Gato");
         gato.layer = LayerMask.NameToLayer("Companion");

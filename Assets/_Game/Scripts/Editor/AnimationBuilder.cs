@@ -190,27 +190,6 @@ public static class AnimationBuilder
     }
 
     /// <summary>
-    /// Parado / correndo, decidido pelo float "Velocidade" (gato companheiro).
-    /// </summary>
-    public static AnimatorController CriarControllerIdleCorrida(string nome, AnimationClip idle, AnimationClip corrida, float limiar = 0.5f)
-    {
-        AnimatorController c = NovoController(nome);
-        c.AddParameter("Velocidade", AnimatorControllerParameterType.Float);
-        AnimatorStateMachine sm = c.layers[0].stateMachine;
-
-        AnimatorState sIdle = sm.AddState("Idle");
-        sIdle.motion = idle;
-        sm.defaultState = sIdle;
-
-        AnimatorState sRun = sm.AddState("Corrida");
-        sRun.motion = corrida;
-
-        Transicao(sIdle, sRun).AddCondition(AnimatorConditionMode.Greater, limiar, "Velocidade");
-        Transicao(sRun, sIdle).AddCondition(AnimatorConditionMode.Less, limiar, "Velocidade");
-        return c;
-    }
-
-    /// <summary>
     /// Idle ate receber o trigger "Ativar"; toca <paramref name="ativo"/> uma vez e
     /// depois fica em <paramref name="depois"/> (loop) ou volta ao idle.
     /// Checkpoint: bandeira guardada -> hasteando -> tremulando.
@@ -241,6 +220,78 @@ public static class AnimationBuilder
         {
             Transicao(sAtivo, sIdle, comExitTime: true);
         }
+
+        return c;
+    }
+
+    /// <summary>
+    /// Maquina de estados do gato companheiro: anda, pula, e quando fica parado
+    /// mia, senta e por fim dorme.
+    /// </summary>
+    public static AnimatorController CriarControllerGato(string nome,
+        AnimationClip idle, AnimationClip corrida, AnimationClip pulo, AnimationClip aterrissar,
+        AnimationClip miado, AnimationClip sentado, AnimationClip dormindo)
+    {
+        AnimatorController c = NovoController(nome);
+        c.AddParameter("Velocidade", AnimatorControllerParameterType.Float);
+        c.AddParameter("NoChao", AnimatorControllerParameterType.Bool);
+        c.AddParameter("Miar", AnimatorControllerParameterType.Trigger);
+        c.AddParameter("Sentar", AnimatorControllerParameterType.Trigger);
+        c.AddParameter("Dormir", AnimatorControllerParameterType.Trigger);
+
+        AnimatorStateMachine sm = c.layers[0].stateMachine;
+
+        AnimatorState sIdle = sm.AddState("Idle");         sIdle.motion = idle;
+        AnimatorState sRun = sm.AddState("Corrida");       sRun.motion = corrida;
+        AnimatorState sPulo = sm.AddState("Pulo");         sPulo.motion = pulo;
+        AnimatorState sPouso = sm.AddState("Aterrissar");  sPouso.motion = aterrissar;
+        AnimatorState sMiado = sm.AddState("Miado");       sMiado.motion = miado;
+        AnimatorState sSentado = sm.AddState("Sentado");   sSentado.motion = sentado;
+        AnimatorState sDormindo = sm.AddState("Dormindo"); sDormindo.motion = dormindo;
+        sm.defaultState = sIdle;
+
+        const float limiar = 0.3f;
+
+        Transicao(sIdle, sRun).AddCondition(AnimatorConditionMode.Greater, limiar, "Velocidade");
+        Transicao(sRun, sIdle).AddCondition(AnimatorConditionMode.Less, limiar, "Velocidade");
+
+        // Saiu do chao: toca a subida, que termina no gato esticado e segura essa
+        // pose (o clipe nao repete) ate ele encostar de novo.
+        foreach (AnimatorState noChao in new[] { sIdle, sRun, sPouso, sMiado, sSentado, sDormindo })
+            Transicao(noChao, sPulo).AddCondition(AnimatorConditionMode.IfNot, 0f, "NoChao");
+
+        Transicao(sPulo, sPouso).AddCondition(AnimatorConditionMode.If, 0f, "NoChao");
+
+        // A aterrissagem so aparece inteira se ele pousar parado; pousando em
+        // movimento ele ja emenda na corrida.
+        Transicao(sPouso, sRun).AddCondition(AnimatorConditionMode.Greater, limiar, "Velocidade");
+        Transicao(sPouso, sIdle, comExitTime: true);
+
+        // Ocio: miar (uma vez), sentar e dormir (ciclos).
+        AnimatorStateTransition paraMiado = sm.AddAnyStateTransition(sMiado);
+        paraMiado.AddCondition(AnimatorConditionMode.If, 0f, "Miar");
+        paraMiado.hasExitTime = false;
+        paraMiado.duration = 0f;
+        paraMiado.canTransitionToSelf = false;
+        Transicao(sMiado, sIdle, comExitTime: true);
+        // Se o jogador sair andando no meio do miado, o gato larga o miado e vai.
+        Transicao(sMiado, sRun).AddCondition(AnimatorConditionMode.Greater, limiar, "Velocidade");
+
+        AnimatorStateTransition paraSentado = sm.AddAnyStateTransition(sSentado);
+        paraSentado.AddCondition(AnimatorConditionMode.If, 0f, "Sentar");
+        paraSentado.hasExitTime = false;
+        paraSentado.duration = 0.15f;
+        paraSentado.canTransitionToSelf = false;
+
+        AnimatorStateTransition paraDormindo = sm.AddAnyStateTransition(sDormindo);
+        paraDormindo.AddCondition(AnimatorConditionMode.If, 0f, "Dormir");
+        paraDormindo.hasExitTime = false;
+        paraDormindo.duration = 0.3f;
+        paraDormindo.canTransitionToSelf = false;
+
+        // Voltar a andar levanta o gato.
+        Transicao(sSentado, sRun).AddCondition(AnimatorConditionMode.Greater, limiar, "Velocidade");
+        Transicao(sDormindo, sRun).AddCondition(AnimatorConditionMode.Greater, limiar, "Velocidade");
 
         return c;
     }
