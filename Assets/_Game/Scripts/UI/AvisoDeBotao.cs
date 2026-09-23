@@ -3,38 +3,65 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Rotulo de um botao na interface que se ajusta ao dispositivo em uso: mostra
-/// a tecla quando o jogador esta no teclado e o botao quando esta no controle.
-/// Usado no aviso de pular a cutscene.
+/// Aviso de um comando na tela que se ajusta ao dispositivo em uso: mostra a
+/// tecla enquanto o jogador esta no teclado e o botao do controle assim que ele
+/// pega o gamepad.
+///
+/// Usa os icones do pack Input Prompts (Kenney). Antes isto escrevia o nome do
+/// botao ("ESPACO", "A") num keycap desenhado; o desenho do teclado e do Xbox
+/// se reconhece de imediato, sem ler.
 /// </summary>
 public class AvisoDeBotao : MonoBehaviour
 {
     public enum Acao { Pular, Atacar, Interagir, Pausar, Andar }
 
     [SerializeField] private Acao acao = Acao.Pular;
-    [Tooltip("Texto onde o nome do botao e escrito.")]
-    [SerializeField] private TMP_Text rotulo;
-    [Tooltip("Fundo do keycap: fica largo para caber ESPACO e estreito para A.")]
-    [SerializeField] private RectTransform fundo;
-    [SerializeField] private float larguraTeclado = 200f;
-    [SerializeField] private float larguraControle = 90f;
 
-    private string ultimoNome;
+    [Header("Icone")]
+    [SerializeField] private Image icone;
+    [SerializeField] private Sprite spriteTeclado;
+    [SerializeField] private Sprite spriteControle;
+    [Tooltip("Largura do icone. A tecla ESPACO e bem mais larga que o botao A.")]
+    [SerializeField] private float larguraTeclado = 160f;
+    [SerializeField] private float larguraControle = 76f;
+    [SerializeField] private float altura = 76f;
+
+    [Header("Texto (opcional, para quem nao tem icone)")]
+    [SerializeField] private TMP_Text rotulo;
+    [SerializeField] private RectTransform fundo;
+
+    private bool? ultimoDispositivo;
 
     private void Update()
     {
-        string nome = NomeAtual();
-        if (nome == ultimoNome)
+        bool controle = GameInput.UsandoControle;
+
+        // So mexe na interface quando o dispositivo realmente muda.
+        if (ultimoDispositivo.HasValue && ultimoDispositivo.Value == controle)
             return;
 
-        ultimoNome = nome;
+        ultimoDispositivo = controle;
+        Aplicar(controle);
+    }
+
+    private void Aplicar(bool controle)
+    {
+        if (icone != null)
+        {
+            Sprite sprite = controle ? spriteControle : spriteTeclado;
+            if (sprite != null)
+                icone.sprite = sprite;
+
+            float largura = controle ? larguraControle : larguraTeclado;
+            icone.rectTransform.sizeDelta = new Vector2(largura, altura);
+        }
 
         if (rotulo != null)
-            rotulo.text = nome;
+            rotulo.text = NomeAtual();
 
         if (fundo != null)
         {
-            float largura = GameInput.UsandoControle ? larguraControle : larguraTeclado;
+            float largura = controle ? larguraControle : larguraTeclado;
             fundo.sizeDelta = new Vector2(largura, fundo.sizeDelta.y);
         }
     }

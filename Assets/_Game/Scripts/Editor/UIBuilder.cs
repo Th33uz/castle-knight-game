@@ -709,33 +709,34 @@ public static class UIBuilder
     /// Keycap cujo rotulo e largura acompanham o dispositivo em uso
     /// (ESPACO no teclado, A no controle).
     /// </summary>
+    /// <summary>
+    /// Icone do comando que troca sozinho entre a tecla e o botao do controle.
+    /// Os dois sprites vem prontos do Input Prompts, entao aqui e so escolher
+    /// qual mostrar; quem faz a troca em tempo real e o AvisoDeBotao.
+    /// </summary>
     private static GameObject CriarTeclaAjustavel(Transform pai, Vector2 posicao)
     {
-        GameObject go = new GameObject("TeclaPular", typeof(RectTransform));
+        GameObject go = new GameObject("IconePular", typeof(RectTransform));
         go.transform.SetParent(pai, false);
 
+        Sprite teclado = Carregar(UiKit.TeclaEspaco);
+        Sprite controle = Carregar(UiKit.BotaoA);
+
         Image imagem = go.AddComponent<Image>();
-        imagem.sprite = Carregar(UiArtGenerator.CaminhoTecla);
-        imagem.type = Image.Type.Sliced;
-        imagem.pixelsPerUnitMultiplier = 2f;
+        imagem.sprite = teclado;
         imagem.raycastTarget = false;
+        imagem.preserveAspect = true;
 
         RectTransform rect = go.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
         rect.anchoredPosition = posicao;
-        rect.sizeDelta = new Vector2(200f, 76f);
-
-        TMP_Text texto = CriarTexto(go.transform, "Rotulo", "ESPACO", new Vector2(0.5f, 0.5f), new Vector2(0f, 8f),
-            TextAlignmentOptions.Center, 20f, new Color(0.17f, 0.16f, 0.24f));
-        texto.rectTransform.anchorMin = Vector2.zero;
-        texto.rectTransform.anchorMax = Vector2.one;
-        texto.rectTransform.offsetMin = Vector2.zero;
-        texto.rectTransform.offsetMax = Vector2.zero;
+        rect.sizeDelta = new Vector2(160f, 76f);
 
         AvisoDeBotao aviso = go.AddComponent<AvisoDeBotao>();
         SerializedObject so = new SerializedObject(aviso);
-        so.FindProperty("rotulo").objectReferenceValue = texto;
-        so.FindProperty("fundo").objectReferenceValue = rect;
+        so.FindProperty("icone").objectReferenceValue = imagem;
+        so.FindProperty("spriteTeclado").objectReferenceValue = teclado;
+        so.FindProperty("spriteControle").objectReferenceValue = controle;
         so.ApplyModifiedProperties();
 
         return go;
