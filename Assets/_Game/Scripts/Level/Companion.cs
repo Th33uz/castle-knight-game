@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -8,19 +9,29 @@ using UnityEngine;
 /// que precisa vencer e enxerga o buraco antes de cair nele. O teleporte existe
 /// so como ultimo recurso, e so acontece fora da tela, para nunca se ver o gato
 /// "piscando" de um lugar para outro.
+///
+/// Parado, ele tem vida propria: mia, depois senta e por fim dorme.
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class Companion : MonoBehaviour
 {
     [Header("Seguir")]
-    [Tooltip("Distancia que ele tenta manter atras do jogador.")]
-    [SerializeField] private float distanciaAtras = 1.6f;
-    [Tooltip("Folga: dentro disso ele considera que ja chegou e para.")]
-    [SerializeField] private float tolerancia = 0.6f;
-    [SerializeField] private float velocidade = 7.5f;
-    [SerializeField] private float aceleracao = 30f;
+    [Tooltip("Distancia que ele tenta manter atras do jogador. Bem curta: ele atravessa o heroi, entao pode colar sem empurrar.")]
+    [SerializeField] private float distanciaAtras = 0.5f;
+    [Tooltip("Atraso com que ele persegue o alvo. E so o respiro para nao ficar sincronizado demais - nao e a lentidao dele.")]
+    [SerializeField] private float atrasoParaSeguir = 0.05f;
+    [Tooltip("Folga: dentro disso ele considera que ja chegou e para. Pequena, para nao ficar arrancando e parando.")]
+    [SerializeField] private float tolerancia = 0.2f;
+    [Tooltip("Teto de velocidade. Bem acima da do heroi (8) para ele recuperar terreno depois de um pulo.")]
+    [SerializeField] private float velocidade = 12f;
+    [Tooltip("Quanto ele acelera e freia. Alto porque o heroi arranca quase instantaneo (SmoothDamp de 0,05 s).")]
+    [SerializeField] private float aceleracao = 75f;
+    [Tooltip("Forca com que ele corrige a distancia ate o alvo. Maior = cola mais; menor = chegada mais macia.")]
+    [SerializeField] private float correcaoDeDistancia = 14f;
 
     [Header("Pulo")]
+    [Tooltip("Impulso para a frente ao saltar. Separado da velocidade de corrida, que e so para alcancar o heroi.")]
+    [SerializeField] private float velocidadeNoPulo = 9f;
     [Tooltip("Pulo minimo, usado para degraus e obstaculos pequenos.")]
     [SerializeField] private float puloMinimo = 13f;
     [Tooltip("Limite do pulo. Acima disto ele nao alcanca e espera o jogador voltar.")]
@@ -41,6 +52,24 @@ public class Companion : MonoBehaviour
     [Tooltip("Altura absoluta abaixo da qual ele caiu do mapa.")]
     [SerializeField] private float alturaDeQueda = -4f;
 
+    [Header("Ocio (quando o jogador para)")]
+    [Tooltip("Segundos parado antes de dar um miadinho.")]
+    [SerializeField] private float segundosParaMiar = 7f;
+    [Tooltip("Continuando parado, ele senta.")]
+    [SerializeField] private float segundosParaSentar = 12f;
+    [Tooltip("E por fim dorme, com os Z subindo.")]
+    [SerializeField] private float segundosParaDormir = 26f;
+    [Tooltip("Ainda em pe depois do primeiro miado, solta outro de vez em quando.")]
+    [SerializeField] private float intervaloEntreMiados = 14f;
+    [SerializeField] [Range(0f, 1f)] private float volumeDoMiado = 0.5f;
+
+    [Header("Passinhos")]
+    [Tooltip("Patadas por segundo andando devagar e correndo. O ciclo de corrida tem 2 apoios.")]
+    [SerializeField] private float passosDevagar = 3f;
+    [SerializeField] private float passosCorrendo = 5.5f;
+    [Tooltip("Baixinho de proposito: e patinha de gato, nao bota.")]
+    [SerializeField] [Range(0f, 1f)] private float volumeDosPassos = 0.16f;
+
     [Header("Sprite")]
     [SerializeField] private bool spriteOlhaParaDireita = true;
 
@@ -51,8 +80,31 @@ public class Companion : MonoBehaviour
 
     private Transform jogador;
     private PlayerController2D controlador;
+    private Rigidbody2D jogadorRb;
     private float proximoPulo;
     private float tempoLonge;
+    private bool seguindo;
+    private float[] historicoDoAlvo;
+    private int posicaoNoHistorico;
+    private float tempoAteOProximoPasso;
+    private int passoAtual;
+
+    /// <summary>Onde o heroi bateu o pe para pular, e que altura ele venceu.</summary>
+    private struct MarcaDePulo
+    {
+        public float x;
+        public float altura;
+        public float direcao;   // 0 = pulou parado
+        public float momento;
+    }
+
+    private readonly List<MarcaDePulo> marcasDePulo = new List<MarcaDePulo>();
+    private bool heroiEstavaSubindo;
+
+    // Ocio: 0 = acordado, 1 = ja miou, 2 = sentado, 3 = dormindo.
+    private float tempoParado;
+    private int etapaDeOcio;
+    private float proximoMiado;
 
     private void Awake()
     {
@@ -78,6 +130,7 @@ public class Companion : MonoBehaviour
 
         jogador = go.transform;
         controlador = go.GetComponent<PlayerController2D>();
+        jogadorRb = go.GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
@@ -91,6 +144,8 @@ public class Companion : MonoBehaviour
         if (CuidarDaRecuperacao())
             return;
 
+        AnotarPuloDoHeroi();
+
         float alvoX = CalcularAlvoX();
         float distancia = alvoX - transform.position.x;
         bool noChao = NoChao();
@@ -103,17 +158,34 @@ public class Companion : MonoBehaviour
         float desnivel = jogador.position.y - transform.position.y;
         bool precisaSubir = desnivel > alturaParaPular;
 
-        bool podePular = noChao && querAndar && Time.time >= proximoPulo;
-        bool vaiPular = podePular && (precisaSubir || temParede || temBuraco);
+        bool podePular = noChao && Time.time >= proximoPulo;
+        int marca = podePular ? MarcaAlcancada(direcao) : -1;
+
+        // Repetir o salto do heroi tem prioridade: os sensores de parede e buraco
+        // sao a rede de seguranca, e sozinhos so disparam quando ele ja esta
+        // encostando no obstaculo - tarde demais para acompanhar o pulo.
+        bool vaiPular = podePular && (marca >= 0 || (querAndar && (precisaSubir || temParede || temBuraco)));
 
         if (vaiPular)
-            Pular(direcao, desnivel, temBuraco);
+        {
+            float alturaPedida = -1f;
+
+            if (marca >= 0)
+            {
+                alturaPedida = marcasDePulo[marca].altura;
+                marcasDePulo.RemoveAt(marca);
+            }
+
+            Pular(direcao, desnivel, temBuraco, alturaPedida);
+        }
         else if (temBuraco)
             PararNaBorda();          // pulo em recarga: espera, nao anda para dentro
         else
             Mover(distancia, noChao);
 
-        AtualizarVisual();
+        CuidarDoOcio(noChao);
+        CuidarDosPassos(noChao);
+        AtualizarVisual(noChao);
     }
 
     /// <summary>Devolve true se teleportou (e o resto do frame deve ser ignorado).</summary>
@@ -157,39 +229,165 @@ public class Companion : MonoBehaviour
     {
         bool jogadorOlhaDireita = controlador == null || controlador.OlhandoParaDireita;
         float lado = jogadorOlhaDireita ? -1f : 1f;
-        return jogador.position.x + lado * distanciaAtras;
+        return AlvoAtrasado(jogador.position.x + lado * distanciaAtras);
+    }
+
+    /// <summary>
+    /// Guarda o alvo de cada passo e devolve o de alguns quadros atras. E esse
+    /// respiro que faz o gato parecer que segue o heroi, e nao que esta preso
+    /// nele: ele pode andar colado sem ficar sincronizado demais.
+    /// </summary>
+    private float AlvoAtrasado(float alvoAgora)
+    {
+        int quadros = Mathf.Max(1, Mathf.RoundToInt(atrasoParaSeguir / Time.fixedDeltaTime));
+
+        if (historicoDoAlvo == null || historicoDoAlvo.Length != quadros)
+        {
+            historicoDoAlvo = new float[quadros];
+            for (int i = 0; i < quadros; i++)
+                historicoDoAlvo[i] = alvoAgora;
+            posicaoNoHistorico = 0;
+        }
+
+        float antigo = historicoDoAlvo[posicaoNoHistorico];
+        historicoDoAlvo[posicaoNoHistorico] = alvoAgora;
+        posicaoNoHistorico = (posicaoNoHistorico + 1) % quadros;
+        return antigo;
     }
 
     private void Mover(float distancia, bool noChao)
     {
-        float alvoVelocidade = Mathf.Abs(distancia) > tolerancia
-            ? Mathf.Sign(distancia) * velocidade
-            : 0f;
+        float absoluta = Mathf.Abs(distancia);
+
+        // Histerese: so sai andando quando passa da tolerancia e so considera que
+        // chegou bem mais perto. Sem essa folga ele fica ligando e desligando em
+        // cima do limite.
+        if (absoluta > tolerancia)
+            seguindo = true;
+        else if (absoluta < tolerancia * 0.4f)
+            seguindo = false;
+
+        // Ele copia a velocidade do heroi e so CORRIGE a distancia por cima disso.
+        // Corrigindo sozinha, a correcao precisaria de um erro grande para dar
+        // velocidade de corrida, e o gato viveria mais de um metro atrasado.
+        float velocidadeDoHeroi = jogadorRb != null ? jogadorRb.linearVelocity.x : 0f;
+        float alvoVelocidade = Mathf.Clamp(
+            velocidadeDoHeroi + distancia * correcaoDeDistancia, -velocidade, velocidade);
+
+        // Chegou, e o heroi tambem parou: para de vez, em vez de ficar se
+        // ajustando em cima do ponto.
+        if (!seguindo && Mathf.Abs(velocidadeDoHeroi) < 0.2f)
+            alvoVelocidade = 0f;
 
         // No ar ele quase nao corrige a direcao: o pulo ja foi dado, deixa a
-        // fisica levar (senao ele "nada" no ar e erra o salto).
-        float controle = noChao ? aceleracao : aceleracao * 0.3f;
+        // fisica levar (senao ele "nada" no ar e erra o salto). A fracao e baixa
+        // justamente porque a aceleracao de chao e alta.
+        float controle = noChao ? aceleracao : aceleracao * 0.15f;
         float novaVelocidadeX = Mathf.MoveTowards(rb.linearVelocity.x, alvoVelocidade, controle * Time.fixedDeltaTime);
 
         rb.linearVelocity = new Vector2(novaVelocidadeX, rb.linearVelocity.y);
     }
 
-    private void Pular(float direcao, float desnivel, bool atravessandoBuraco)
+    /// <summary>
+    /// Anota onde o heroi bateu o pe para pular. O gato repete o salto no MESMO
+    /// PONTO, e nao no mesmo instante: como ele anda um passo atras, pular junto
+    /// o faria saltar cedo demais e bater na quina da plataforma.
+    /// </summary>
+    private void AnotarPuloDoHeroi()
+    {
+        if (jogadorRb == null)
+            return;
+
+        float vy = jogadorRb.linearVelocity.y;
+        bool subindo = vy > 1f;
+
+        if (subindo && !heroiEstavaSubindo)
+        {
+            float gravidadeDoHeroi = Mathf.Abs(Physics2D.gravity.y) * jogadorRb.gravityScale;
+            float altura = gravidadeDoHeroi > 0.01f ? (vy * vy) / (2f * gravidadeDoHeroi) : 1.5f;
+
+            int ultima = marcasDePulo.Count - 1;
+
+            // Pulo duplo: o gato so tem um pulo, entao em vez de anotar um segundo
+            // salto ele soma a altura na marca de onde o heroi saiu do chao.
+            if (ultima >= 0 && Time.time - marcasDePulo[ultima].momento < 0.6f)
+            {
+                MarcaDePulo anterior = marcasDePulo[ultima];
+                anterior.altura += altura;
+                marcasDePulo[ultima] = anterior;
+            }
+            else
+            {
+                float vx = jogadorRb.linearVelocity.x;
+
+                marcasDePulo.Add(new MarcaDePulo
+                {
+                    x = jogador.position.x,
+                    altura = altura,
+                    direcao = Mathf.Abs(vx) > 0.5f ? Mathf.Sign(vx) : 0f,
+                    momento = Time.time
+                });
+
+                if (marcasDePulo.Count > 4)
+                    marcasDePulo.RemoveAt(0);
+            }
+        }
+
+        heroiEstavaSubindo = subindo;
+
+        // Marca velha nao serve mais: aquele salto ja passou.
+        marcasDePulo.RemoveAll(m => Time.time - m.momento > 2f);
+    }
+
+    /// <summary>Indice da marca que o gato acabou de alcancar, ou -1 se nenhuma.</summary>
+    private int MarcaAlcancada(float direcao)
+    {
+        for (int i = 0; i < marcasDePulo.Count; i++)
+        {
+            MarcaDePulo m = marcasDePulo[i];
+            float ateAMarca = m.x - transform.position.x;
+
+            if (m.direcao != 0f)
+            {
+                if (Mathf.Sign(direcao) != m.direcao)
+                    continue;
+
+                // Projetado no sentido da corrida: positivo = ainda nao chegou.
+                float avanco = ateAMarca * m.direcao;
+                if (avanco > 0.35f || avanco < -1.5f)
+                    continue;
+            }
+            else if (Mathf.Abs(ateAMarca) > 0.5f)
+            {
+                continue;   // heroi pulou parado: so vale bem em cima do ponto
+            }
+
+            return i;
+        }
+
+        return -1;
+    }
+
+    private void Pular(float direcao, float desnivel, bool atravessandoBuraco, float alturaPedida = -1f)
     {
         // Forca pela altura a vencer: v = raiz(2 * g * h), com folga de 1,3 tile.
         // Assim nao pula de menos numa plataforma alta nem exagera num degrau.
-        float alturaAlvo = Mathf.Max(desnivel, 0f) + 1.3f;
+        // Repetindo o salto do heroi, a altura ja vem pronta.
+        float alturaAlvo = alturaPedida > 0f
+            ? alturaPedida
+            : Mathf.Max(desnivel, 0f) + 1.3f;
+
         float gravidade = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
         float forca = Mathf.Sqrt(2f * gravidade * alturaAlvo);
 
         // Sobre buraco o salto precisa de altura E de impulso para a frente:
         // quanto mais tempo no ar, mais longe ele chega.
-        float impulsoHorizontal = velocidade;
+        float impulsoHorizontal = velocidadeNoPulo;
 
         if (atravessandoBuraco)
         {
             forca = Mathf.Max(forca, puloMinimo * 1.25f);
-            impulsoHorizontal = velocidade * 1.5f;
+            impulsoHorizontal = velocidadeNoPulo * 1.5f;
         }
 
         forca = Mathf.Clamp(forca, puloMinimo, puloMaximo);
@@ -259,12 +457,115 @@ public class Companion : MonoBehaviour
         transform.position = jogador.position + new Vector3(lado * distanciaAtras, 0.5f, 0f);
         rb.linearVelocity = Vector2.zero;
         tempoLonge = 0f;
+        seguindo = false;
+        historicoDoAlvo = null;   // recomeca o rastro do zero no novo lugar
+        marcasDePulo.Clear();     // os saltos anotados eram de outro trecho da fase
+        AcordarDoOcio();
     }
 
-    private void AtualizarVisual()
+    /// <summary>
+    /// Enquanto o jogador fica parado, o gato vai relaxando: primeiro um miado,
+    /// depois senta e por fim dorme. Qualquer movimento zera tudo e ele levanta.
+    /// </summary>
+    private void CuidarDoOcio(bool noChao)
+    {
+        bool parado = noChao && Mathf.Abs(rb.linearVelocity.x) < 0.2f;
+
+        if (!parado)
+        {
+            AcordarDoOcio();
+            return;
+        }
+
+        tempoParado += Time.fixedDeltaTime;
+
+        if (etapaDeOcio == 0 && tempoParado >= segundosParaMiar)
+        {
+            etapaDeOcio = 1;
+            Miar();
+        }
+        else if (etapaDeOcio == 1 && tempoParado >= segundosParaSentar)
+        {
+            etapaDeOcio = 2;
+            Disparar("Sentar");
+        }
+        else if (etapaDeOcio == 2 && tempoParado >= segundosParaDormir)
+        {
+            etapaDeOcio = 3;
+            Disparar("Dormir");
+        }
+        else if (etapaDeOcio == 1 && tempoParado >= proximoMiado)
+        {
+            // Ainda em pe: mia de novo antes de resolver sentar.
+            Miar();
+        }
+    }
+
+    /// <summary>
+    /// Patinhas no chao enquanto ele anda. A cadencia acompanha a velocidade,
+    /// para o som bater com a animacao em vez de ficar solto.
+    /// </summary>
+    private void CuidarDosPassos(bool noChao)
+    {
+        float rapidez = Mathf.Abs(rb.linearVelocity.x);
+
+        if (!noChao || rapidez < 0.8f)
+        {
+            tempoAteOProximoPasso = 0f;
+            return;
+        }
+
+        tempoAteOProximoPasso -= Time.fixedDeltaTime;
+        if (tempoAteOProximoPasso > 0f)
+            return;
+
+        // A referencia e a velocidade de passeio (8), nao o teto: correndo acima
+        // disso ele ja esta na cadencia maxima.
+        float cadencia = Mathf.Lerp(passosDevagar, passosCorrendo, Mathf.InverseLerp(0.8f, 8f, rapidez));
+        tempoAteOProximoPasso = 1f / cadencia;
+
+        AudioManager.Sfx(RetroSfx.Passinho(passoAtual), volumeDosPassos);
+        passoAtual++;
+    }
+
+    private void Miar()
+    {
+        AudioManager.Sfx(RetroSfx.Miado, volumeDoMiado);
+        Disparar("Miar");
+        proximoMiado = tempoParado + intervaloEntreMiados;
+    }
+
+    private void AcordarDoOcio()
+    {
+        tempoParado = 0f;
+        etapaDeOcio = 0;
+        proximoMiado = 0f;
+    }
+
+    private void Disparar(string trigger)
+    {
+        if (animator != null && TemParametro(trigger))
+            animator.SetTrigger(trigger);
+    }
+
+    private bool TemParametro(string nome)
+    {
+        foreach (AnimatorControllerParameter p in animator.parameters)
+            if (p.name == nome)
+                return true;
+
+        return false;
+    }
+
+    private void AtualizarVisual(bool noChao)
     {
         if (animator != null)
+        {
             animator.SetFloat("Velocidade", Mathf.Abs(rb.linearVelocity.x));
+
+            if (TemParametro("NoChao"))
+                animator.SetBool("NoChao", noChao);
+        }
 
         if (sprite != null && Mathf.Abs(rb.linearVelocity.x) > 0.3f)
         {
