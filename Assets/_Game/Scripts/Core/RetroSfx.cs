@@ -12,7 +12,63 @@ public static class RetroSfx
     private const int TaxaDeAmostragem = 22050;
 
     private static AudioClip pulo, puloDuplo, moeda, dano, pisao, morte, checkpoint, vitoria, trampolim, cura, vidaExtra;
-    private static AudioClip espada, golpe, chefeDano, chefeMorte, compra, recusado;
+    private static AudioClip espada, golpe, chefeDano, chefeMorte, compra, recusado, miado;
+    private static AudioClip[] passinhos;
+
+    private const float DuracaoDoMiado = 0.95f;
+
+    /// <summary>
+    /// Miado do gatinho: um "mi-au" de duas silabas, agudo e arrastado. Sobe
+    /// depressa, segura no alto e desce devagar, com vibrato leve e um harmonico
+    /// por cima - e isso que tira o som de "bip" e deixa com cara de filhote.
+    /// </summary>
+    public static AudioClip Miado => miado ??= Gerar("sfx_miado", DuracaoDoMiado, t =>
+    {
+        float progresso = t / DuracaoDoMiado;
+
+        // "mi" sobe ate 1/4 do tempo, segura ate a metade, e o "au" desce o resto.
+        float frequencia;
+        if (progresso < 0.22f)
+            frequencia = Mathf.Lerp(620f, 1180f, progresso / 0.22f);
+        else if (progresso < 0.48f)
+            frequencia = Mathf.Lerp(1180f, 1080f, (progresso - 0.22f) / 0.26f);
+        else
+            frequencia = Mathf.Lerp(1080f, 660f, (progresso - 0.48f) / 0.52f);
+
+        float vibrato = 1f + Mathf.Sin(t * 26f) * 0.045f;
+        float f = frequencia * vibrato;
+
+        // Ataque suave (sem estalo no comeco) e cauda longa no fim.
+        float entrada = Mathf.Min(1f, t / 0.10f);
+        float saida = Mathf.Pow(1f - progresso, 1.4f);
+
+        // Fundamental gordinha + um pouco do harmonico: som mais doce que a onda pura.
+        float onda = Triangular(t, f) * 0.78f + Triangular(t, f * 2f) * 0.22f;
+        return onda * entrada * saida * 0.55f;
+    });
+
+    /// <summary>
+    /// Patinha no chao: bem curto, abafado e baixinho. Sao tres variacoes para o
+    /// andar nao virar um tique-taque igualzinho.
+    /// </summary>
+    public static AudioClip Passinho(int variacao)
+    {
+        passinhos ??= new AudioClip[3];
+
+        int i = ((variacao % 3) + 3) % 3;
+        if (passinhos[i] != null)
+            return passinhos[i];
+
+        float grave = 150f + i * 35f;          // cada passo com um tom um pouco diferente
+        float duracao = 0.06f + i * 0.008f;
+
+        return passinhos[i] = Gerar("sfx_passinho_" + i, duracao, t =>
+        {
+            float queda = Decair(t, duracao);
+            // Quase so ruido abafado: patinha de gato nao "bate", ela toca o chao.
+            return (Ruido(t) * 0.75f + Triangular(t, grave) * 0.25f) * queda * queda * 0.5f;
+        });
+    }
 
     // Caixa registradora: duas notas rapidas e altas.
     public static AudioClip Compra => compra ??= Gerar("sfx_compra", 0.3f, t =>
