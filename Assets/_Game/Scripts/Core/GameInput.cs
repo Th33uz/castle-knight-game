@@ -47,6 +47,18 @@ public static class GameInput
 
         frameVerificado = Time.frameCount;
 
+        // Analogico e direcional primeiro: mexer neles NAO dispara anyKeyDown, e
+        // e justamente assim que se navega um menu. Sem isto, quem pega o
+        // controle e sobe/desce nos botoes continuava vendo as teclas do teclado.
+        bool eixoMexido = Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.5f
+                       || Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.5f;
+
+        if (eixoMexido && !TeclaDeDirecaoPressionada())
+        {
+            usandoControle = true;
+            return;
+        }
+
         if (!Input.anyKeyDown)
             return;
 
@@ -61,6 +73,18 @@ public static class GameInput
         }
 
         usandoControle = false;
+    }
+
+    /// <summary>
+    /// Os eixos "Horizontal"/"Vertical" somam teclado e controle. Para saber de
+    /// onde veio o movimento, checa se alguma tecla de direcao esta pressionada.
+    /// </summary>
+    private static bool TeclaDeDirecaoPressionada()
+    {
+        return Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)
+            || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow)
+            || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)
+            || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S);
     }
 
     /// <summary>-1 a 1. Analogico esquerdo, direcional do controle, setas ou A/D.</summary>
@@ -89,9 +113,16 @@ public static class GameInput
     public static bool InteragiuAgora => Apertou("Interagir");
     public static bool PausouAgora => Apertou("Pausar");
 
-    /// <summary>Qualquer botao de "seguir em frente": pular cutscene, fechar aviso.</summary>
+    /// <summary>
+    /// Botao de "seguir em frente": pular cutscene, fechar aviso.
+    ///
+    /// Antes isto terminava em Input.anyKeyDown, e ai QUALQUER tecla pulava -
+    /// inclusive a que o jogador aperta so para o jogo perceber que ele esta no
+    /// controle. O aviso "ESPACO" trocava para "A", mas ninguem chegava a ver,
+    /// porque o mesmo toque ja tinha pulado o video.
+    /// </summary>
     public static bool ConfirmouAgora =>
-        PulouAgora || InteragiuAgora || AtacouAgora || PausouAgora || Input.anyKeyDown;
+        PulouAgora || InteragiuAgora || AtacouAgora || PausouAgora || Apertou("Submit");
 
     // GetButtonDown lanca excecao se o eixo nao existir no Input Manager; como os
     // eixos sao criados junto com o projeto, um try/catch aqui evita que um
