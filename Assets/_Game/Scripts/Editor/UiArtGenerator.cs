@@ -19,7 +19,6 @@ public static class UiArtGenerator
     public const string CaminhoTeclaDir = Pasta + "/tecla_dir.png";
     public const string CaminhoTeclaE = Pasta + "/tecla_e.png";
     public const string CaminhoTeclaY = Pasta + "/tecla_y.png";
-    public const string CaminhoMoldura = Pasta + "/moldura_selecao.png";
     public const string CaminhoSetaSelecao = Pasta + "/seta_selecao.png";
 
     private static readonly Color32 Nada = new Color32(0, 0, 0, 0);
@@ -65,7 +64,6 @@ public static class UiArtGenerator
         if (!Existe(CaminhoTeclaDir)) GerarTecla(CaminhoTeclaDir, "dir");
         if (!Existe(CaminhoTeclaE)) GerarTecla(CaminhoTeclaE, "E");
         if (!Existe(CaminhoTeclaY)) GerarTecla(CaminhoTeclaY, "Y");
-        if (!Existe(CaminhoMoldura)) GerarMoldura();
         if (!Existe(CaminhoSetaSelecao)) GerarSetaDeSelecao();
 
         AssetDatabase.Refresh();
@@ -246,35 +244,6 @@ public static class UiArtGenerator
     // ----------------- Realce de selecao -----------------
 
     /// <summary>
-    /// Moldura dourada vazada, desenhada POR CIMA do botao selecionado. O centro
-    /// e transparente para o botao continuar aparecendo; so a borda entra em
-    /// 9-slice, entao ela acompanha qualquer tamanho de botao.
-    /// </summary>
-    private static void GerarMoldura()
-    {
-        const int w = 24, h = 24, chanfro = 3;
-        Color32[] px = new Color32[w * h];
-
-        for (int y = 0; y < h; y++)
-            for (int x = 0; x < w; x++)
-            {
-                int dx = Mathf.Min(x, w - 1 - x);
-                int dy = Mathf.Min(y, h - 1 - y);
-                int daBorda = Mathf.Min(dx, dy);
-
-                Color32 cor;
-                if (dx + dy < chanfro) cor = Nada;              // canto chanfrado
-                else if (daBorda == 0) cor = DouradoEscuro;     // contorno externo
-                else if (daBorda == 1) cor = DouradoClaro;      // brilho
-                else if (daBorda == 2) cor = Dourado;
-                else if (daBorda == 3) cor = DouradoEscuro;     // contorno interno
-                else cor = Nada;                                // miolo vazado
-
-                px[y * w + x] = cor;
-            }
-
-        Salvar(CaminhoMoldura, w, h, px, new Vector4(6, 6, 6, 6));
-    }
 
     /// <summary>Seta cheia apontando para a direita, colada a esquerda do botao selecionado.</summary>
     private static void GerarSetaDeSelecao()

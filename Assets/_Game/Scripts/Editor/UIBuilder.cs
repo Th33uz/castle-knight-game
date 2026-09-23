@@ -19,6 +19,8 @@ public static class UIBuilder
     private static readonly Color CorBotao = new Color(0.16f, 0.36f, 0.24f, 1f);
     private static readonly Color CorBotaoRealce = new Color(0.24f, 0.52f, 0.34f, 1f);
     private static readonly Color CorTexto = new Color(0.98f, 0.96f, 0.86f, 1f);
+    // Para escrever em cima do creme dos botoes e das caixas do Kenney.
+    private static readonly Color CorTextoEscuro = new Color(0.27f, 0.17f, 0.11f, 1f);
     private static readonly Color CorTitulo = new Color(1f, 0.85f, 0.3f, 1f);
 
     private static TMP_FontAsset fonte;
@@ -57,6 +59,7 @@ public static class UIBuilder
     {
         fonte = FontBuilder.Garantir();
         UiArtGenerator.Garantir();
+        UiKit.Garantir();
 
         GameObject go = new GameObject(nome);
         Canvas canvas = go.AddComponent<Canvas>();
@@ -279,6 +282,7 @@ public static class UIBuilder
     private static void CriarGuiaDoTutorial(Canvas canvas)
     {
         UiArtGenerator.Garantir();
+        UiKit.Garantir();
         Color corDoTexto = new Color(0.23f, 0.16f, 0.10f);
 
         GameObject balao = new GameObject("BalaoTutorial", typeof(RectTransform));
@@ -637,11 +641,13 @@ public static class UIBuilder
         GameObject caixa = new GameObject(nome, typeof(RectTransform));
         caixa.transform.SetParent(pai, false);
 
+        // Madeira com cantos de metal (Kenney). O sprite e 32x32 e so cresce pelo
+        // 9-slice, entao o multiplicador baixo mantem a moldura grossa e legivel.
         Image fundo = caixa.AddComponent<Image>();
-        fundo.sprite = Carregar(UiArtGenerator.CaminhoPainel);
+        fundo.sprite = Carregar(UiKit.Caixa);
         fundo.type = Image.Type.Sliced;
-        fundo.pixelsPerUnitMultiplier = 2f;   // 1 px do sprite ~ 3 px de tela
-        fundo.color = new Color(1f, 1f, 1f, 0.96f);
+        fundo.pixelsPerUnitMultiplier = 1.9f;
+        fundo.color = Color.white;
 
         RectTransform rect = caixa.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
@@ -809,11 +815,12 @@ public static class UIBuilder
         GameObject go = new GameObject(nome, typeof(RectTransform));
         go.transform.SetParent(pai, false);
 
-        // Sprite de botao com bisel; as cores do ColorBlock so tingem (branco = cor original).
+        // Botao creme do Kenney: contrasta com a madeira escura da caixa. As
+        // cores do ColorBlock so tingem (branco = cor original do sprite).
         Image fundo = go.AddComponent<Image>();
-        fundo.sprite = Carregar(UiArtGenerator.CaminhoBotao);
+        fundo.sprite = Carregar(UiKit.Botao);
         fundo.type = Image.Type.Sliced;
-        fundo.pixelsPerUnitMultiplier = 2f;
+        fundo.pixelsPerUnitMultiplier = 2.6f;
 
         Button botao = go.AddComponent<Button>();
         botao.targetGraphic = fundo;
@@ -824,10 +831,12 @@ public static class UIBuilder
         rect.anchoredPosition = posicao;
         rect.sizeDelta = new Vector2(420f, 80f);
 
-        // Texto com sombra, deslocado 3 px para cima para ficar no "topo" do bisel.
-        TMP_Text sombra = CriarTexto(go.transform, "Sombra", rotulo, new Vector2(0.5f, 0.5f), new Vector2(2f, 1f), TextAlignmentOptions.Center, 30f, new Color(0f, 0f, 0f, 0.5f));
-        sombra.rectTransform.sizeDelta = rect.sizeDelta;
-        TMP_Text texto = CriarTexto(go.transform, "Texto", rotulo, new Vector2(0.5f, 0.5f), new Vector2(0f, 3f), TextAlignmentOptions.Center, 30f);
+        // Texto escuro: o botao agora e creme, e o branco com sombra preta que
+        // funcionava no botao verde ficaria ilegivel aqui. O realce claro por
+        // baixo do texto faz o papel da antiga sombra.
+        TMP_Text brilho = CriarTexto(go.transform, "Brilho", rotulo, new Vector2(0.5f, 0.5f), new Vector2(0f, -2f), TextAlignmentOptions.Center, 30f, new Color(1f, 1f, 1f, 0.55f));
+        brilho.rectTransform.sizeDelta = rect.sizeDelta;
+        TMP_Text texto = CriarTexto(go.transform, "Texto", rotulo, new Vector2(0.5f, 0.5f), new Vector2(0f, 1f), TextAlignmentOptions.Center, 30f, CorTextoEscuro);
         texto.rectTransform.sizeDelta = rect.sizeDelta;
 
         AdicionarRealce(botao);
@@ -863,10 +872,13 @@ public static class UIBuilder
         GameObject moldura = new GameObject("Moldura", typeof(RectTransform));
         moldura.transform.SetParent(botao.transform, false);
         Image molduraImagem = moldura.AddComponent<Image>();
-        molduraImagem.sprite = Carregar(UiArtGenerator.CaminhoMoldura);
+        molduraImagem.sprite = Carregar(UiKit.Moldura);
         molduraImagem.type = Image.Type.Sliced;
-        molduraImagem.pixelsPerUnitMultiplier = 2f;
+        molduraImagem.pixelsPerUnitMultiplier = 3f;
         molduraImagem.raycastTarget = false;
+        // Tingida de dourado: a moldura crua e marrom e sumia sobre o creme do
+        // botao. O dourado conversa com o titulo e salta aos olhos.
+        molduraImagem.color = new Color(1f, 0.78f, 0.2f);
 
         RectTransform molduraRect = moldura.GetComponent<RectTransform>();
         molduraRect.anchorMin = Vector2.zero;

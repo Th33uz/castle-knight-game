@@ -772,6 +772,7 @@ public static class PrefabBuilder
     private static void CriarLoja()
     {
         UiArtGenerator.Garantir();
+        UiKit.Garantir();
 
         Sprite[] quadros = AnimationBuilder.QuadrosDaPasta(Art + "/SunnyLand/NPC/Foxy", "f-");
         AnimationClip idle = AnimationBuilder.CriarClip("Loja_Raposo_Idle", quadros, 6f, true);
