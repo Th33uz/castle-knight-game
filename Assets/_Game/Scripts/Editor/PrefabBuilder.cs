@@ -382,15 +382,20 @@ public static class PrefabBuilder
         CriarInimigo("Fantasma", AnimationBuilder.QuadrosDaPasta(gr + "/Ghost", "ghost"), 8f,
             new Vector2(1.2f, 1.3f), Vector2.zero, 2f, voador: true, pisavel: false, fxMorte);
 
-        // Castelo (GothicVania). Sprites grandes, entao a escala desce.
-        string ca = Art + "/Castle/Enemies";
-
-        CriarInimigo("Ghoul", AnimationBuilder.QuadrosFatiados(ca + "/Ghoul/run (57x60).png"), 12f,
-            new Vector2(1.4f, 2.2f), new Vector2(0f, -0.3f), 3.5f, voador: false, pisavel: true, fxMorte, olhaEsquerda: true, escala: 0.6f);
-        CriarInimigo("Anjo", AnimationBuilder.QuadrosFatiados(ca + "/Angel/idle (122x117).png"), 10f,
-            new Vector2(2.4f, 2.6f), new Vector2(0f, 0f), 2.5f, voador: true, pisavel: true, fxMorte, olhaEsquerda: true, escala: 0.45f);
-        CriarInimigo("MagoEsqueleto", AnimationBuilder.QuadrosFatiados(ca + "/Wizard/idle (81x66).png"), 8f,
-            new Vector2(1.2f, 2.4f), new Vector2(0f, -0.2f), 1.6f, voador: false, pisavel: true, fxMorte, olhaEsquerda: true, escala: 0.6f);
+        // Castelo. Os inimigos vem do mesmo pack da caverna, e nao do pack de
+        // castelo, por causa da densidade de pixel: o Anjo tinha 117 px de altura
+        // contra 37 do heroi, o Mago 66 e o Ghoul 60. Encolher pela escala nao
+        // resolvia - so deixava os pixels DELES menores que os do resto do jogo,
+        // que e o que saltava aos olhos. Estes tem 32 px, como o heroi e o gamba.
+        //
+        // Sao variantes mais rapidas e duras das criaturas da caverna, para a
+        // fase final nao ficar igual a fase 2.
+        CriarInimigo("Ghoul", AnimationBuilder.QuadrosDaPasta(gr + "/Skeleton", "skeleton-walk"), 12f,
+            new Vector2(0.8f, 1.6f), new Vector2(0.05f, -0.2f), 3.2f, voador: false, pisavel: true, fxMorte, olhaEsquerda: false);
+        CriarInimigo("Anjo", AnimationBuilder.QuadrosDaPasta(gr + "/Ghost", "ghost"), 8f,
+            new Vector2(1.2f, 1.3f), Vector2.zero, 2.6f, voador: true, pisavel: false, fxMorte);
+        CriarInimigo("MagoEsqueleto", AnimationBuilder.QuadrosDaPasta(gr + "/MiniDemon", "run"), 10f,
+            new Vector2(1.6f, 1.9f), new Vector2(0f, -0.15f), 2.2f, voador: false, pisavel: true, fxMorte);
 
         // Inverno
         CriarInimigo("Raposa", AnimationBuilder.QuadrosDaPasta(wi + "/Fox", "fox-"), 12f,
