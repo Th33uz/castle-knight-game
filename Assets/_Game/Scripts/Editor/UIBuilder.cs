@@ -354,17 +354,33 @@ public static class UIBuilder
 
         TMP_Text nome = CriarTexto(raiz.transform, "Nome", "CHEFE", new Vector2(0.5f, 1f), new Vector2(0f, 0f), TextAlignmentOptions.Center, 30f, CorTitulo);
 
-        // A barra em si (preenche da esquerda) e a moldura decorada por cima.
-        Image preenchimento = CriarImagem(raiz.transform, "Preenchimento",
-            Carregar(Art + "/UI/Hearts/health_bar.png"), new Vector2(0.5f, 1f), new Vector2(0f, -56f), new Vector2(392f, 104f));
+        // Montada em pecas separadas. Antes eram dois sprites do pack de
+        // coracoes: o health_bar_decoration, porem, NAO e uma moldura vazada -
+        // e o trilho preto ja com o coracao embutido. Desenhado por cima, ele
+        // tapava a barra vermelha inteira, e esticar 64x17 ate 512x104 ainda
+        // deformava o coracao, que saia enorme e achatado.
+        const float larguraDaBarra = 500f;
+        const float alturaDaBarra = 42f;
+        const float centroDaBarra = 34f;   // deslocada para abrir espaco ao coracao
+
+        // Coracao com a proporcao original (17x17, quadrado).
+        CriarImagem(raiz.transform, "Icone", Carregar(Art + "/UI/Hearts/heart.png"),
+            new Vector2(0.5f, 1f), new Vector2(-282f, -62f), new Vector2(54f, 54f));
+
+        Image trilho = CriarImagem(raiz.transform, "Trilho", Carregar(UiKit.BarraMeio),
+            new Vector2(0.5f, 1f), new Vector2(centroDaBarra, -62f), new Vector2(larguraDaBarra, alturaDaBarra));
+        trilho.color = new Color(0.12f, 0.10f, 0.15f);
+        trilho.preserveAspect = false;
+
+        // Por ULTIMO, para ficar na frente do trilho. O segmento do meio da barra
+        // e uniforme na horizontal, entao estica sem deformar.
+        Image preenchimento = CriarImagem(raiz.transform, "Preenchimento", Carregar(UiKit.BarraMeio),
+            new Vector2(0.5f, 1f), new Vector2(centroDaBarra, -62f), new Vector2(larguraDaBarra, alturaDaBarra));
         preenchimento.preserveAspect = false;
+        preenchimento.color = new Color(1f, 0.62f, 0.58f);   // encorpa o vermelho do pack
         preenchimento.type = Image.Type.Filled;
         preenchimento.fillMethod = Image.FillMethod.Horizontal;
         preenchimento.fillOrigin = (int)Image.OriginHorizontal.Left;
-
-        Image moldura = CriarImagem(raiz.transform, "Moldura",
-            Carregar(Art + "/UI/Hearts/health_bar_decoration.png"), new Vector2(0.5f, 1f), new Vector2(0f, -56f), new Vector2(512f, 104f));
-        moldura.preserveAspect = false;
 
         BossHealthBar barra = canvas.gameObject.AddComponent<BossHealthBar>();
         SerializedObject so = new SerializedObject(barra);
