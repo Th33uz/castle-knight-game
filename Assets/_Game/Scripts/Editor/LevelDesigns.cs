@@ -339,7 +339,10 @@ public static class LevelDesigns
         n.Enfeite(PropsCaverna + "/plant-big.png", 6f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 30f, 4f, 6)
          .Enfeite(PropsCaverna + "/plant.png", 60f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 74f, 4f, 6)
          .Enfeite(PropsCaverna + "/plant-big.png", 106f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 126f, 4f, 6)
-         .Enfeite(PropsCaverna + "/crate.png", 17f, 4f, 6).Enfeite(PropsCaverna + "/big-crate.png", 44f, 4f, 6)
+         // Nada de caixote: crate e big-crate sao os unicos props de madeira
+         // marrom do pack, e destoavam da caverna, que e toda azul cristalina
+         // com maquinario cinza. Terminal e console tem o mesmo porte deles.
+         .Enfeite(PropsCaverna + "/terminal.png", 17f, 4f, 6).Enfeite(PropsCaverna + "/console.png", 44f, 4f, 6)
          .Enfeite(PropsCaverna + "/palm.png", 155f, 4f, 6).Enfeite(PropsCaverna + "/plant-big.png", 178f, 4f, 6)
          .Enfeite(PropsCaverna + "/plant.png", 192f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 204f, 4f, 6);
 
