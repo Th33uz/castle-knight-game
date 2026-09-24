@@ -40,6 +40,12 @@ public class PlayerController2D : MonoBehaviour
     [SerializeField] private float raioChecagem = 0.15f;
     [SerializeField] private LayerMask camadaChao;
 
+    [Header("Passos")]
+    [Tooltip("Passos por segundo andando devagar e correndo. O ciclo de corrida tem 2 apoios.")]
+    [SerializeField] private float passosDevagar = 2.6f;
+    [SerializeField] private float passosCorrendo = 4.6f;
+    [SerializeField] [Range(0f, 1f)] private float volumeDosPassos = 0.22f;
+
     [Header("Queda (deixa o pulo com peso)")]
     [Tooltip("Multiplica a gravidade enquanto o jogador esta caindo.")]
     [SerializeField] private float multiplicadorQueda = 2.2f;
@@ -49,6 +55,8 @@ public class PlayerController2D : MonoBehaviour
 
     private float entradaHorizontal;
     private float velocidadeSuavizada;
+    private float tempoAteOProximoPasso;
+    private int passoAtual;
     private float contadorCoyote;
     private float contadorBuffer;
     private int pulosRestantes;
@@ -106,6 +114,32 @@ public class PlayerController2D : MonoBehaviour
         Mover();
         Pular();
         AplicarPesoNaQueda();
+        CuidarDosPassos();
+    }
+
+    /// <summary>
+    /// Passos enquanto ele corre no chao. A cadencia acompanha a velocidade,
+    /// para o som bater com a animacao de corrida em vez de ficar solto.
+    /// </summary>
+    private void CuidarDosPassos()
+    {
+        float rapidez = Mathf.Abs(rb.linearVelocity.x);
+
+        if (!NoChao || rapidez < 0.8f)
+        {
+            tempoAteOProximoPasso = 0f;
+            return;
+        }
+
+        tempoAteOProximoPasso -= Time.fixedDeltaTime;
+        if (tempoAteOProximoPasso > 0f)
+            return;
+
+        float cadencia = Mathf.Lerp(passosDevagar, passosCorrendo, Mathf.InverseLerp(0.8f, velocidade, rapidez));
+        tempoAteOProximoPasso = 1f / cadencia;
+
+        AudioManager.Sfx(RetroSfx.PassoDeBota(passoAtual), volumeDosPassos);
+        passoAtual++;
     }
 
     // ----------------- Movimento -----------------

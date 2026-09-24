@@ -14,6 +14,7 @@ public static class RetroSfx
     private static AudioClip pulo, puloDuplo, moeda, dano, pisao, morte, checkpoint, vitoria, trampolim, cura, vidaExtra;
     private static AudioClip espada, golpe, chefeDano, chefeMorte, compra, recusado, miado, navegar;
     private static AudioClip[] passinhos;
+    private static AudioClip[] passosDeBota;
 
     private const float DuracaoDoMiado = 0.95f;
 
@@ -67,6 +68,31 @@ public static class RetroSfx
             float queda = Decair(t, duracao);
             // Quase so ruido abafado: patinha de gato nao "bate", ela toca o chao.
             return (Ruido(t) * 0.75f + Triangular(t, grave) * 0.25f) * queda * queda * 0.5f;
+        });
+    }
+
+    /// <summary>
+    /// Passo do heroi: bota no chao. Mais grave e encorpado que a patinha do
+    /// gato, com um estalo curto de couro por cima. Tres variacoes, para o andar
+    /// nao virar um metronomo.
+    /// </summary>
+    public static AudioClip PassoDeBota(int variacao)
+    {
+        passosDeBota ??= new AudioClip[3];
+
+        int i = ((variacao % 3) + 3) % 3;
+        if (passosDeBota[i] != null)
+            return passosDeBota[i];
+
+        float grave = 92f + i * 16f;
+        float duracao = 0.1f + i * 0.01f;
+
+        return passosDeBota[i] = Gerar("sfx_passo_bota_" + i, duracao, t =>
+        {
+            float queda = Decair(t, duracao);
+            float corpo = Triangular(t, grave) * 0.6f;          // peso da bota
+            float estalo = Ruido(t) * Decair(t, 0.035f) * 0.5f; // couro batendo
+            return (corpo + estalo) * queda * 0.75f;
         });
     }
 

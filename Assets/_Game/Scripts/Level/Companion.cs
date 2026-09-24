@@ -17,11 +17,11 @@ public class Companion : MonoBehaviour
 {
     [Header("Seguir")]
     [Tooltip("Distancia que ele tenta manter atras do jogador. Bem curta: ele atravessa o heroi, entao pode colar sem empurrar.")]
-    [SerializeField] private float distanciaAtras = 0.5f;
-    [Tooltip("Atraso com que ele persegue o alvo. E so o respiro para nao ficar sincronizado demais - nao e a lentidao dele.")]
-    [SerializeField] private float atrasoParaSeguir = 0.05f;
+    [SerializeField] private float distanciaAtras = 0.32f;
+    [Tooltip("Atraso com que ele persegue o alvo. So o respiro para o gato nao parecer preso ao heroi por uma barra.")]
+    [SerializeField] private float atrasoParaSeguir = 0.03f;
     [Tooltip("Folga: dentro disso ele considera que ja chegou e para. Pequena, para nao ficar arrancando e parando.")]
-    [SerializeField] private float tolerancia = 0.2f;
+    [SerializeField] private float tolerancia = 0.14f;
     [Tooltip("Teto de velocidade. Bem acima da do heroi (8) para ele recuperar terreno depois de um pulo.")]
     [SerializeField] private float velocidade = 12f;
     [Tooltip("Quanto ele acelera e freia. Alto porque o heroi arranca quase instantaneo (SmoothDamp de 0,05 s).")]
@@ -284,10 +284,20 @@ public class Companion : MonoBehaviour
         float alvoVelocidade = Mathf.Clamp(
             velocidadeDoHeroi + distancia * correcaoDeDistancia, -velocidade, velocidade);
 
-        // Chegou, e o heroi tambem parou: para de vez, em vez de ficar se
-        // ajustando em cima do ponto.
-        if (!seguindo && Mathf.Abs(velocidadeDoHeroi) < 0.2f)
+        // Heroi parado e gato ja perto: assenta de vez.
+        //
+        // A janela e a tolerancia inteira, e nao um pedaco dela, porque a
+        // correcao e forte: a 0,05 do alvo ela ja pede 0,7 de velocidade. Isso
+        // basta para o Animator continuar achando que o gato corre (o limiar la
+        // e 0,3) e a animacao de parado nunca aparecer, mesmo com ele
+        // praticamente imovel na tela.
+        bool heroiParado = Mathf.Abs(velocidadeDoHeroi) < 0.5f;
+
+        if (heroiParado && absoluta < tolerancia)
+        {
             alvoVelocidade = 0f;
+            seguindo = false;
+        }
 
         // No ar ele quase nao corrige a direcao: o pulo ja foi dado, deixa a
         // fisica levar (senao ele "nada" no ar e erra o salto). A fracao e baixa

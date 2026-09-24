@@ -878,7 +878,7 @@ public static class PrefabBuilder
         SpriteRenderer sr = gato.AddComponent<SpriteRenderer>();
         sr.sprite = idle[0];
         sr.sortingLayerName = "Player";
-        sr.sortingOrder = 4; // logo atras do heroi (5)
+        sr.sortingOrder = 6; // na FRENTE do heroi (5): colado nele, atras o gato sumia
         gato.AddComponent<Animator>().runtimeAnimatorController = controller;
 
         // Fisica propria: cai, anda e pula como qualquer personagem.
