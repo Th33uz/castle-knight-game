@@ -69,19 +69,19 @@ public class TutorialGuide : MonoBehaviour
             new Passo(() => "PULAR:  " + GameInput.BotaoPular,                       0f,   Conclusao.Pular,       13f),
             new Passo(() => "PULO DUPLO:  " + GameInput.BotaoPular + " DE NOVO NO AR", 0f, Conclusao.PuloDuplo,   17f),
             new Passo(() => "ATACAR:  " + GameInput.BotaoAtacar,                     0f,   Conclusao.Atacar,      19.5f),
-            new Passo(() => "GAMBA A FRENTE!  PISE NELE OU CORTE COM  " + GameInput.BotaoAtacar, 17f, Conclusao.MatarInimigo, 28f),
+            new Passo(() => "GAMBÁ À FRENTE!  PISE NELE OU CORTE COM  " + GameInput.BotaoAtacar, 17f, Conclusao.MatarInimigo, 28f),
 
             // Dicas: aparecem em xInicio e somem em xLimite.
             new Passo(() => "BURACO!  USE O PULO DUPLO",                             25f,  Conclusao.PassarX,     32f),
             new Passo(() => "ESPINHOS TIRAM VIDA.  PULE!",                           31.5f, Conclusao.PassarX,    36.5f),
-            new Passo(() => "FRUTA CURA 1 CORACAO  (SO SE ESTIVER FERIDO)",          36f,  Conclusao.PassarX,     41f),
+            new Passo(() => "FRUTA CURA 1 CORAÇÃO  (SÓ SE ESTIVER FERIDO)",          36f,  Conclusao.PassarX,     41f),
             new Passo(() => "CHECKPOINT:  SALVA SEU PROGRESSO",                      45f,  Conclusao.PassarX,     50f),
             new Passo(() => "BURACO GRANDE:  PULO DUPLO!",                           50.5f, Conclusao.PassarX,    57f),
             new Passo(() => "TRAMPOLIM:  PULE EM CIMA",                              57f,  Conclusao.PassarX,     63f),
-            new Passo(() => "AGUIA!  PISE NELA OU CORTE",                            68f,  Conclusao.PassarX,     76f),
+            new Passo(() => "ÁGUIA!  PISE NELA OU CORTE",                            68f,  Conclusao.PassarX,     76f),
             new Passo(() => "LOJA DO RAPOSO:  CHEGUE PERTO E APERTE  " + GameInput.BotaoInteragir, 86f, Conclusao.PassarX, 93.5f),
-            new Passo(() => "DOIS GAMBAS:  HORA DA ESPADA  (" + GameInput.BotaoAtacar + ")", 93.5f, Conclusao.PassarX, 103f),
-            new Passo(() => "CHEGUE AO TROFEU!",                                     103f, Conclusao.PassarX,     999f),
+            new Passo(() => "DOIS GAMBÁS:  HORA DA ESPADA  (" + GameInput.BotaoAtacar + ")", 93.5f, Conclusao.PassarX, 103f),
+            new Passo(() => "CHEGUE AO TROFÉU!",                                     103f, Conclusao.PassarX,     999f),
         };
     }
 

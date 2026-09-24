@@ -300,10 +300,11 @@ public static class UIBuilder
         GameObject caixa = new GameObject("Caixa", typeof(RectTransform));
         caixa.transform.SetParent(balao.transform, false);
         Image fundo = caixa.AddComponent<Image>();
-        fundo.sprite = Carregar(UiArtGenerator.CaminhoBalao);
+        // Mesma familia da caixa do menu, na versao clara: o balao passa a ter os
+        // cantos de metal em vez do retangulo creme liso que eu tinha gerado.
+        fundo.sprite = Carregar(UiKit.Balao);
         fundo.type = Image.Type.Sliced;
-        // Borda do 9-slice em 12 px x (100/16) daria 75 px na tela; /4 deixa ~19 px.
-        fundo.pixelsPerUnitMultiplier = 4f;
+        fundo.pixelsPerUnitMultiplier = 2.6f;
         fundo.raycastTarget = false;
         RectTransform rc = caixa.GetComponent<RectTransform>();
         rc.anchorMin = new Vector2(0f, 0f);
@@ -405,7 +406,7 @@ public static class UIBuilder
         Button jogar = CriarBotao(caixa.transform, "BotaoJogar", "JOGAR", new Vector2(0f, 200f));
         Button fases = CriarBotao(caixa.transform, "BotaoFases", "FASES", new Vector2(0f, 100f));
         Button controles = CriarBotao(caixa.transform, "BotaoControles", "CONTROLES", new Vector2(0f, 0f));
-        Button creditos = CriarBotao(caixa.transform, "BotaoCreditos", "CREDITOS", new Vector2(0f, -100f));
+        Button creditos = CriarBotao(caixa.transform, "BotaoCreditos", "CRÉDITOS", new Vector2(0f, -100f));
         Button sair = CriarBotao(caixa.transform, "BotaoSair", "SAIR", new Vector2(0f, -200f));
 
         // Selecao de fases: um cartao por fase, com o sprite do bioma.
@@ -476,14 +477,14 @@ public static class UIBuilder
         CriarRotulo(caixaControles.transform, "DIAMANTE = PONTOS  (50 = VIDA EXTRA)", new Vector2(xTeclas + 60f, y), 20f);
         y = -312f;
         CriarImagem(caixaControles.transform, "IconeCereja", Carregar(Art + "/SunnyLand/Items/Cherry/cherry-1.png"), new Vector2(0.5f, 0.5f), new Vector2(xTeclas + 20f, y), new Vector2(56f, 56f));
-        CriarRotulo(caixaControles.transform, "FRUTA = CURA 1 CORACAO  (SO SE FERIDO)", new Vector2(xTeclas + 60f, y), 20f);
+        CriarRotulo(caixaControles.transform, "FRUTA = CURA 1 CORAÇÃO  (SÓ SE FERIDO)", new Vector2(xTeclas + 60f, y), 20f);
 
         Button voltar1 = CriarBotao(caixaControles.transform, "BotaoVoltar", "VOLTAR", new Vector2(0f, -335f));
 
         // Painel de creditos
         GameObject painelCreditos = CriarPainelEscuro(canvas.transform, "PainelCreditos");
         GameObject caixaCreditos = CriarCaixa(painelCreditos.transform, "Caixa", new Vector2(1100f, 700f));
-        CriarTexto(caixaCreditos.transform, "Titulo", "CREDITOS", new Vector2(0.5f, 1f), new Vector2(0f, -60f), TextAlignmentOptions.Center, 52f, CorTitulo);
+        CriarTexto(caixaCreditos.transform, "Titulo", "CRÉDITOS", new Vector2(0.5f, 1f), new Vector2(0f, -60f), TextAlignmentOptions.Center, 52f, CorTitulo);
         TMP_Text textoCreditos = CriarTexto(caixaCreditos.transform, "Texto",
             "Personagem: Animated Pixel Adventurer - rvros\n\n" +
             "Cenarios e inimigos: SunnyLand, SunnyLand Winter,\nSuper Grotto Escape, GothicVania Church - ansimuz\n\n" +
@@ -666,6 +667,15 @@ public static class UIBuilder
 
         TMP_Text titulo = CriarTexto(pai, "Titulo", conteudo, new Vector2(0.5f, 1f), posicao, TextAlignmentOptions.Center, tamanho, CorTitulo);
         titulo.rectTransform.sizeDelta = new Vector2(1600f, 160f);
+
+        // So o titulo do jogo fica na Press Start 2P, pelo ar de arcade.
+        TMP_FontAsset fonteDoTitulo = FontBuilder.GarantirTitulo();
+        if (fonteDoTitulo != null)
+        {
+            sombra.font = fonteDoTitulo;
+            titulo.font = fonteDoTitulo;
+        }
+
         titulo.enableVertexGradient = true;
         titulo.colorGradient = new VertexGradient(
             new Color(1f, 0.95f, 0.6f),  // topo esquerdo

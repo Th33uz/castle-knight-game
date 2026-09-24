@@ -17,6 +17,7 @@ public static class UiKit
     public const string Caixa = Pasta + "/caixa.png";       // madeira com cantos de metal
     public const string Botao = Pasta + "/botao.png";       // creme, contrasta com a caixa
     public const string Moldura = Pasta + "/moldura.png";   // vazada, para o botao em foco
+    public const string Balao = Pasta + "/balao.png";       // caixa clara, para o balao do tutorial
     public const string BarraEsq = Pasta + "/barra_esq.png";
     public const string BarraMeio = Pasta + "/barra_meio.png";
     public const string BarraDir = Pasta + "/barra_dir.png";
@@ -48,6 +49,7 @@ public static class UiKit
     public static void Garantir()
     {
         DefinirBorda(Caixa, 12f);     // os cantos de metal sao grandes
+        DefinirBorda(Balao, 12f);
         DefinirBorda(Botao, 8f);
         DefinirBorda(Moldura, 12f);
         DefinirBorda(BarraMeio, 6f);

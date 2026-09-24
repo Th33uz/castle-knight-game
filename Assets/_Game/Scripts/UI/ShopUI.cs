@@ -20,9 +20,9 @@ public class ShopUI : MonoBehaviour
 
     public static readonly ItemDaLoja[] Itens =
     {
-        new ItemDaLoja { nome = "FRUTA",          descricao = "recupera 1 coracao",            preco = 15, tipo = TipoDeItem.Fruta },
+        new ItemDaLoja { nome = "FRUTA",          descricao = "recupera 1 coração",            preco = 15, tipo = TipoDeItem.Fruta },
         new ItemDaLoja { nome = "VIDA EXTRA",     descricao = "+1 tentativa",                  preco = 40, tipo = TipoDeItem.VidaExtra },
-        new ItemDaLoja { nome = "CORACAO EXTRA",  descricao = "+1 na vida maxima (ate 5)",     preco = 70, tipo = TipoDeItem.CoracaoExtra },
+        new ItemDaLoja { nome = "CORAÇÃO EXTRA",  descricao = "+1 na vida máxima (até 5)",     preco = 70, tipo = TipoDeItem.CoracaoExtra },
     };
 
     public static ShopUI Instance { get; private set; }
@@ -200,7 +200,7 @@ public class ShopUI : MonoBehaviour
 
         if (item.tipo == TipoDeItem.CoracaoExtra && GameManager.Instance.CoracoesExtras >= GameManager.MaximoDeCoracoesExtras)
         {
-            motivo = "MAXIMO";
+            motivo = "MÁXIMO";
             return false;
         }
 

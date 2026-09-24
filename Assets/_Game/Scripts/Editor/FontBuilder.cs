@@ -4,25 +4,47 @@ using UnityEngine;
 using UnityEngine.TextCore.LowLevel;
 
 /// <summary>
-/// Cria o TMP_FontAsset da fonte pixel (Press Start 2P) a partir do .ttf, para a
-/// interface nao usar a fonte padrao lisa do TextMesh Pro.
+/// Cria os TMP_FontAssets a partir dos .ttf, para a interface nao cair na fonte
+/// lisa padrao do TextMesh Pro.
+///
+/// Sao duas: a Press Start 2P no titulo, pelo ar de arcade, e a Kenney Pixel
+/// Square em todo o resto. A troca no corpo do texto nao e so estetica - a Press
+/// Start 2P nao tem o til, entao "ACAO" e "CREDITOS" viviam sem acento; a Kenney
+/// desenha o portugues inteiro.
 /// </summary>
 public static class FontBuilder
 {
-    private const string CaminhoTtf = "Assets/_Game/Fonts/PressStart2P-Regular.ttf";
-    private const string CaminhoAsset = "Assets/_Game/Fonts/PressStart2P SDF.asset";
+    private const string Pasta = "Assets/_Game/Fonts";
 
-    /// <summary>Devolve a fonte pixel, criando o asset na primeira vez. Null se o .ttf nao existir.</summary>
+    private const string TtfTitulo = Pasta + "/PressStart2P-Regular.ttf";
+    private const string AssetTitulo = Pasta + "/PressStart2P SDF.asset";
+
+    private const string TtfTexto = Pasta + "/KenneyPixelSquare.ttf";
+    private const string AssetTexto = Pasta + "/KenneyPixelSquare SDF.asset";
+
+    /// <summary>Fonte do corpo do texto: botoes, tutorial, loja, creditos.</summary>
     public static TMP_FontAsset Garantir()
     {
-        TMP_FontAsset existente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(CaminhoAsset);
+        return Criar(TtfTexto, AssetTexto, "KenneyPixelSquare SDF")
+            ?? Criar(TtfTitulo, AssetTitulo, "PressStart2P SDF");
+    }
+
+    /// <summary>Fonte do titulo do jogo e dos cabecalhos de tela.</summary>
+    public static TMP_FontAsset GarantirTitulo()
+    {
+        return Criar(TtfTitulo, AssetTitulo, "PressStart2P SDF") ?? Garantir();
+    }
+
+    private static TMP_FontAsset Criar(string caminhoTtf, string caminhoAsset, string nome)
+    {
+        TMP_FontAsset existente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(caminhoAsset);
         if (existente != null)
             return existente;
 
-        Font ttf = AssetDatabase.LoadAssetAtPath<Font>(CaminhoTtf);
+        Font ttf = AssetDatabase.LoadAssetAtPath<Font>(caminhoTtf);
         if (ttf == null)
         {
-            Debug.LogWarning("[Setup] Fonte " + CaminhoTtf + " nao encontrada; a UI usa a fonte padrao.");
+            Debug.LogWarning("[Setup] Fonte " + caminhoTtf + " nao encontrada.");
             return null;
         }
 
@@ -33,12 +55,12 @@ public static class FontBuilder
 
         if (fonte == null)
         {
-            Debug.LogWarning("[Setup] Nao consegui gerar o TMP_FontAsset da fonte pixel.");
+            Debug.LogWarning("[Setup] Nao consegui gerar o TMP_FontAsset de " + nome + ".");
             return null;
         }
 
-        fonte.name = "PressStart2P SDF";
-        AssetDatabase.CreateAsset(fonte, CaminhoAsset);
+        fonte.name = nome;
+        AssetDatabase.CreateAsset(fonte, caminhoAsset);
 
         // Material e atlas precisam virar sub-assets, senao somem ao recarregar.
         fonte.material.name = fonte.name + " Material";
@@ -51,7 +73,7 @@ public static class FontBuilder
         }
 
         AssetDatabase.SaveAssets();
-        Debug.Log("[Setup] Fonte pixel criada em " + CaminhoAsset);
+        Debug.Log("[Setup] Fonte criada em " + caminhoAsset);
         return fonte;
     }
 }
