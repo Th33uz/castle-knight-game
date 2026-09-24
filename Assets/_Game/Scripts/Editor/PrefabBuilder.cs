@@ -873,7 +873,7 @@ public static class PrefabBuilder
         GameObject gato = new GameObject("Gato");
         gato.layer = LayerMask.NameToLayer("Companion");
         // O quadro de 48 px deixaria o gato do tamanho do heroi; 0,65 da um gato de gato.
-        gato.transform.localScale = Vector3.one * 0.65f;
+        gato.transform.localScale = Vector3.one * 0.55f;
 
         SpriteRenderer sr = gato.AddComponent<SpriteRenderer>();
         sr.sprite = idle[0];

@@ -28,6 +28,8 @@ public class Companion : MonoBehaviour
     [SerializeField] private float aceleracao = 75f;
     [Tooltip("Forca com que ele corrige a distancia ate o alvo. Maior = cola mais; menor = chegada mais macia.")]
     [SerializeField] private float correcaoDeDistancia = 14f;
+    [Tooltip("Fracao da aceleracao que vale no ar. So acelera, nunca freia, entao pode ser generosa.")]
+    [SerializeField] [Range(0f, 1f)] private float controleNoAr = 0.5f;
 
     [Header("Pulo")]
     [Tooltip("Impulso para a frente ao saltar. Separado da velocidade de corrida, que e so para alcancar o heroi.")]
@@ -299,10 +301,21 @@ public class Companion : MonoBehaviour
             seguindo = false;
         }
 
-        // No ar ele quase nao corrige a direcao: o pulo ja foi dado, deixa a
-        // fisica levar (senao ele "nada" no ar e erra o salto). A fracao e baixa
-        // justamente porque a aceleracao de chao e alta.
-        float controle = noChao ? aceleracao : aceleracao * 0.15f;
+        // No ar ele SO ACELERA para alcancar o heroi, nunca freia.
+        //
+        // Deixar a correcao agir inteira no ar o fazia frear no meio do salto
+        // quando o heroi ja tinha pousado e parado - e ai ele caia no buraco que
+        // estava atravessando. Limitando a um sentido, ele cola no heroi durante
+        // o pulo sem nunca perder o impulso que o tirou do chao.
+        if (!noChao)
+        {
+            float atual = rb.linearVelocity.x;
+            alvoVelocidade = atual >= 0f
+                ? Mathf.Max(alvoVelocidade, atual)
+                : Mathf.Min(alvoVelocidade, atual);
+        }
+
+        float controle = noChao ? aceleracao : aceleracao * controleNoAr;
         float novaVelocidadeX = Mathf.MoveTowards(rb.linearVelocity.x, alvoVelocidade, controle * Time.fixedDeltaTime);
 
         rb.linearVelocity = new Vector2(novaVelocidadeX, rb.linearVelocity.y);
@@ -404,12 +417,16 @@ public class Companion : MonoBehaviour
 
         // Sobre buraco o salto precisa de altura E de impulso para a frente:
         // quanto mais tempo no ar, mais longe ele chega.
-        float impulsoHorizontal = velocidadeNoPulo;
+        // Sai no ritmo do heroi, com uma folga para recuperar o terreno que ele
+        // ganhou entre os dois saltos. Um impulso fixo deixava o gato para tras
+        // sempre que o heroi pulava correndo.
+        float ritmoDoHeroi = jogadorRb != null ? Mathf.Abs(jogadorRb.linearVelocity.x) : 0f;
+        float impulsoHorizontal = Mathf.Max(velocidadeNoPulo, ritmoDoHeroi + 1.5f);
 
         if (atravessandoBuraco)
         {
             forca = Mathf.Max(forca, puloMinimo * 1.25f);
-            impulsoHorizontal = velocidadeNoPulo * 1.5f;
+            impulsoHorizontal = Mathf.Max(impulsoHorizontal, velocidadeNoPulo * 1.5f);
         }
 
         forca = Mathf.Clamp(forca, puloMinimo, puloMaximo);
