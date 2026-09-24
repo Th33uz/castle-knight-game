@@ -31,6 +31,10 @@ public static class UiKit
     public const string TeclaD = PastaTeclas + "/tecla_d.png";
     public const string TeclaW = PastaTeclas + "/tecla_w.png";
     public const string TeclaS = PastaTeclas + "/tecla_s.png";
+    public const string TeclaSetaEsq = PastaTeclas + "/tecla_seta_left.png";
+    public const string TeclaSetaDir = PastaTeclas + "/tecla_seta_right.png";
+    public const string TeclaSetaCima = PastaTeclas + "/tecla_seta_up.png";
+    public const string TeclaSetaBaixo = PastaTeclas + "/tecla_seta_down.png";
 
     // Controle (Xbox)
     public const string BotaoA = PastaTeclas + "/xbox_a.png";

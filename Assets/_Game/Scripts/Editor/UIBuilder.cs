@@ -440,33 +440,34 @@ public static class UIBuilder
         CriarTexto(caixaControles.transform, "CabecalhoTeclado", "TECLADO", new Vector2(0.5f, 0.5f), new Vector2(xTeclas + 60f, 285f), TextAlignmentOptions.Center, 18f, new Color(0.7f, 0.7f, 0.75f));
         CriarTexto(caixaControles.transform, "CabecalhoControle", "CONTROLE", new Vector2(0.5f, 0.5f), new Vector2(xControle, 285f), TextAlignmentOptions.Center, 18f, new Color(0.7f, 0.7f, 0.75f));
 
-        // Andar: setas e A / D
+        // Andar: setas, A / D e o analogico
         float y = 210f;
-        CriarTeclaSeta(caixaControles.transform, esquerda: true, new Vector2(xTeclas, y));
-        CriarTeclaSeta(caixaControles.transform, esquerda: false, new Vector2(xTeclas + 80f, y));
-        CriarTecla(caixaControles.transform, "A", new Vector2(xTeclas + 176f, y));
-        CriarTecla(caixaControles.transform, "D", new Vector2(xTeclas + 252f, y));
-        CriarBotaoDoControle(caixaControles.transform, "ANALOG", new Vector2(xControle, y), 150f);
+        CriarIcone(caixaControles.transform, "SetaEsq", UiKit.TeclaSetaEsq, new Vector2(xTeclas, y));
+        CriarIcone(caixaControles.transform, "SetaDir", UiKit.TeclaSetaDir, new Vector2(xTeclas + 78f, y));
+        CriarIcone(caixaControles.transform, "TeclaA", UiKit.TeclaA, new Vector2(xTeclas + 176f, y));
+        CriarIcone(caixaControles.transform, "TeclaD", UiKit.TeclaD, new Vector2(xTeclas + 254f, y));
+        CriarIcone(caixaControles.transform, "Analogico", UiKit.Analogico, new Vector2(xControle - 40f, y));
+        CriarIcone(caixaControles.transform, "Direcional", UiKit.Direcional, new Vector2(xControle + 40f, y));
         CriarRotulo(caixaControles.transform, "ANDAR", new Vector2(xRotulo, y));
 
         y = 110f;
-        CriarTecla(caixaControles.transform, "ESPACO", new Vector2(xTeclas + 66f, y), 210f);
-        CriarBotaoDoControle(caixaControles.transform, "A", new Vector2(xControle, y));
+        CriarIcone(caixaControles.transform, "TeclaEspaco", UiKit.TeclaEspaco, new Vector2(xTeclas, y));
+        CriarIcone(caixaControles.transform, "BotaoA", UiKit.BotaoA, new Vector2(xControle, y));
         CriarRotulo(caixaControles.transform, "PULAR  (de novo no ar: pulo duplo)", new Vector2(xRotulo, y), 22f);
 
         y = 10f;
-        CriarTecla(caixaControles.transform, "L", new Vector2(xTeclas, y));
-        CriarBotaoDoControle(caixaControles.transform, "B", new Vector2(xControle, y));
+        CriarIcone(caixaControles.transform, "TeclaL", UiKit.TeclaL, new Vector2(xTeclas, y));
+        CriarIcone(caixaControles.transform, "BotaoB", UiKit.BotaoB, new Vector2(xControle, y));
         CriarRotulo(caixaControles.transform, "GOLPE DE ESPADA", new Vector2(xRotulo, y));
 
         y = -90f;
-        CriarTecla(caixaControles.transform, "E", new Vector2(xTeclas, y));
-        CriarBotaoDoControle(caixaControles.transform, "Y", new Vector2(xControle, y));
+        CriarIcone(caixaControles.transform, "TeclaE", UiKit.TeclaE, new Vector2(xTeclas, y));
+        CriarIcone(caixaControles.transform, "BotaoY", UiKit.BotaoY, new Vector2(xControle, y));
         CriarRotulo(caixaControles.transform, "FALAR COM A LOJA", new Vector2(xRotulo, y));
 
         y = -180f;
-        CriarTecla(caixaControles.transform, "ESC", new Vector2(xTeclas + 24f, y), 124f);
-        CriarBotaoDoControle(caixaControles.transform, "START", new Vector2(xControle, y), 130f);
+        CriarIcone(caixaControles.transform, "TeclaEsc", UiKit.TeclaEsc, new Vector2(xTeclas, y));
+        CriarIcone(caixaControles.transform, "BotaoStart", UiKit.BotaoStart, new Vector2(xControle, y));
         CriarRotulo(caixaControles.transform, "PAUSAR", new Vector2(xRotulo, y));
 
         // Legenda dos itens, com os proprios sprites.
@@ -672,47 +673,6 @@ public static class UIBuilder
             new Color(0.95f, 0.55f, 0.15f), // base esquerda
             new Color(0.95f, 0.55f, 0.15f)); // base direita
     }
-
-    /// <summary>Keycap com o nome da tecla escrito em cima.</summary>
-    private static void CriarTecla(Transform pai, string rotulo, Vector2 posicao, float largura = 76f)
-    {
-        GameObject go = new GameObject("Tecla" + rotulo, typeof(RectTransform));
-        go.transform.SetParent(pai, false);
-
-        Image imagem = go.AddComponent<Image>();
-        imagem.sprite = Carregar(UiArtGenerator.CaminhoTecla);
-        imagem.type = Image.Type.Sliced;
-        imagem.pixelsPerUnitMultiplier = 2f;
-        imagem.raycastTarget = false;
-
-        RectTransform rect = go.GetComponent<RectTransform>();
-        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.anchoredPosition = posicao;
-        rect.sizeDelta = new Vector2(largura, 76f);
-
-        // O topo da tecla ocupa os 2/3 de cima; o texto fica centrado nele.
-        float tamanhoFonte = rotulo.Length > 1 ? 20f : 28f;
-        TMP_Text texto = CriarTexto(go.transform, "Rotulo", rotulo, new Vector2(0.5f, 0.5f), new Vector2(0f, 8f), TextAlignmentOptions.Center, tamanhoFonte, new Color(0.17f, 0.16f, 0.24f));
-        texto.rectTransform.sizeDelta = new Vector2(largura, 50f);
-    }
-
-    /// <summary>Keycap de seta (esquerda ou direita), com a seta ja desenhada no sprite.</summary>
-    private static void CriarTeclaSeta(Transform pai, bool esquerda, Vector2 posicao)
-    {
-        Image imagem = CriarImagem(pai, esquerda ? "TeclaEsq" : "TeclaDir",
-            Carregar(esquerda ? UiArtGenerator.CaminhoTeclaEsq : UiArtGenerator.CaminhoTeclaDir),
-            new Vector2(0.5f, 0.5f), posicao, new Vector2(76f, 76f));
-        imagem.preserveAspect = true;
-    }
-
-    /// <summary>
-    /// Keycap cujo rotulo e largura acompanham o dispositivo em uso
-    /// (ESPACO no teclado, A no controle).
-    /// </summary>
-    /// <summary>
-    /// Icone do comando que troca sozinho entre a tecla e o botao do controle.
-    /// Os dois sprites vem prontos do Input Prompts, entao aqui e so escolher
-    /// qual mostrar; quem faz a troca em tempo real e o AvisoDeBotao.
     /// </summary>
     private static GameObject CriarTeclaAjustavel(Transform pai, Vector2 posicao)
     {
@@ -742,27 +702,26 @@ public static class UIBuilder
         return go;
     }
 
-    /// <summary>Botao do controle: pastilha redonda escura com a letra (A, B, Y, START).</summary>
-    private static void CriarBotaoDoControle(Transform pai, string rotulo, Vector2 posicao, float largura = 76f)
+    /// <summary>
+    /// Icone pronto de tecla ou de botao do controle (Input Prompts). Todos sao
+    /// 64x64, entao saem quadrados e alinhados sem nenhum ajuste por icone.
+    /// </summary>
+    private static Image CriarIcone(Transform pai, string nome, string caminho, Vector2 posicao, float lado = 72f)
     {
-        GameObject go = new GameObject("Botao" + rotulo, typeof(RectTransform));
+        GameObject go = new GameObject(nome, typeof(RectTransform));
         go.transform.SetParent(pai, false);
 
-        Image fundo = go.AddComponent<Image>();
-        fundo.sprite = Carregar(UiArtGenerator.CaminhoBotao);
-        fundo.type = Image.Type.Sliced;
-        fundo.pixelsPerUnitMultiplier = 2f;
-        fundo.color = new Color(0.30f, 0.34f, 0.46f);  // cinza-azulado, diferente dos botoes verdes
-        fundo.raycastTarget = false;
+        Image imagem = go.AddComponent<Image>();
+        imagem.sprite = Carregar(caminho);
+        imagem.raycastTarget = false;
+        imagem.preserveAspect = true;
 
         RectTransform rect = go.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
         rect.anchoredPosition = posicao;
-        rect.sizeDelta = new Vector2(largura, 64f);
+        rect.sizeDelta = new Vector2(lado, lado);
 
-        TMP_Text texto = CriarTexto(go.transform, "Rotulo", rotulo, new Vector2(0.5f, 0.5f), new Vector2(0f, 3f),
-            TextAlignmentOptions.Center, rotulo.Length > 1 ? 18f : 26f);
-        texto.rectTransform.sizeDelta = rect.sizeDelta;
+        return imagem;
     }
 
     private static void CriarRotulo(Transform pai, string conteudo, Vector2 posicao, float tamanho = 26f)
