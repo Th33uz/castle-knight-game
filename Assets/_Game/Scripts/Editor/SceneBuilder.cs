@@ -150,46 +150,17 @@ public static class SceneBuilder
         Scene cena = AbrirCopiaDaBase(nome);
         ConfigurarLuzGlobal();
 
-        // Um pedacinho de floresta ao fundo, com o heroi parado e um inimigo
-        // passeando, para o menu ja ter a cara do jogo.
-        var vitrine = new NivelDef { cena = "MainMenu", bioma = Bioma.Floresta, largura = 60, corDoCeu = new Color(0.36f, 0.78f, 0.94f) };
-        vitrine.Chao(0, 60).Plataforma(14, 7, 4).Plataforma(22, 10, 3);
-        vitrine.Fila("Gema", 22.5f, 11.5f, 3).Fila("Gema", 4.5f, 5.5f, 3);
-        // Sem inimigos: um bicho patrulhando faz o menu parecer gameplay rodando
-        // atras. O cenario fica parado, so o heroi respirando e o gato.
-        vitrine.Enfeite("Assets/_Game/Art/SunnyLand/Props/tree.png", 4f, 4f, 3)
-               .Enfeite("Assets/_Game/Art/SunnyLand/Props/bush.png", 26f, 4f, 6)
-               .Enfeite("Assets/_Game/Art/SunnyLand/Props/tree.png", 30f, 4f, 3);
-
-        CriarFundo(vitrine);
-        PintarTerreno(vitrine);
-        ColocarProps(vitrine);
-        ColocarObjetos(vitrine);
-
-        GameObject heroi = Instanciar("Jogador", new Vector3(9f, 4f, 0f), noChao: true);
-        if (heroi != null)
-        {
-            // Desliga TODOS os scripts do heroi de uma vez (movimento, vida, ataque).
-            // Feito por tipo, e nao um a um, para nenhum script novo passar batido:
-            // o PlayerAttack tinha escapado e clicar no menu fazia o heroi atacar.
-            // Animator e SpriteRenderer nao sao MonoBehaviour, entao a animacao
-            // de respirar continua rodando.
-            foreach (MonoBehaviour script in heroi.GetComponents<MonoBehaviour>())
-                script.enabled = false;
-
-            // Corpo parado: sem gravidade nem colisao, ele nao "cai" nem reage a nada.
-            Rigidbody2D rb = heroi.GetComponent<Rigidbody2D>();
-            if (rb != null) rb.bodyType = RigidbodyType2D.Kinematic;
-
-            Instanciar("Gato", heroi.transform.position + Vector3.left * 1.3f, noChao: false);
-        }
-
+        // O fundo agora e uma arte unica, desenhada para o jogo (o titulo ja vem
+        // nela). Antes havia aqui um pedaco de floresta montado com tiles, mais o
+        // heroi e o gato parados: dava trabalho, ficava atras da interface e era
+        // o que fazia o menu parecer gameplay rodando. A arte fixa e mais bonita
+        // e nao tem nada vivo para dar problema.
         Camera cam = Camera.main;
         if (cam != null)
         {
             cam.orthographicSize = TamanhoDaCamera;
-            cam.backgroundColor = vitrine.corDoCeu;
-            cam.transform.position = new Vector3(12f, 7.5f, -10f);
+            cam.backgroundColor = new Color(0.04f, 0.03f, 0.08f);
+            cam.transform.position = new Vector3(0f, 0f, -10f);
         }
 
         CriarMusica("menu");

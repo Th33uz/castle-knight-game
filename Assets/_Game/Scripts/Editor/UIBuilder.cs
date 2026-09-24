@@ -160,7 +160,7 @@ public static class UIBuilder
         GameObject painel = CriarPainelEscuro(canvas.transform, "PainelLoja");
         GameObject caixa = CriarCaixa(painel.transform, "Caixa", new Vector2(1000f, 720f));
 
-        CriarTexto(caixa.transform, "Titulo", "LOJA DO RAPOSO", new Vector2(0.5f, 1f), new Vector2(0f, -50f), TextAlignmentOptions.Center, 44f, CorTitulo)
+        FonteDeCabecalho(CriarTexto(caixa.transform, "Titulo", "LOJA DO RAPOSO", new Vector2(0.5f, 1f), new Vector2(0f, -50f), TextAlignmentOptions.Center, 44f, CorTitulo))
             .rectTransform.sizeDelta = new Vector2(900f, 70f);
 
         // Saldo: diamante + numero, no canto superior direito da caixa.
@@ -367,7 +367,7 @@ public static class UIBuilder
         GameObject painel = CriarPainelEscuro(canvas.transform, "PainelPausa");
         GameObject caixa = CriarCaixa(painel.transform, "Caixa", new Vector2(700f, 560f));
 
-        CriarTexto(caixa.transform, "Titulo", "PAUSA", new Vector2(0.5f, 1f), new Vector2(0f, -60f), TextAlignmentOptions.Center, 56f, CorTitulo);
+        FonteDeCabecalho(CriarTexto(caixa.transform, "Titulo", "PAUSA", new Vector2(0.5f, 1f), new Vector2(0f, -60f), TextAlignmentOptions.Center, 56f, CorTitulo));
 
         Button continuar = CriarBotao(caixa.transform, "BotaoContinuar", "CONTINUAR", new Vector2(0f, 40f));
         Button reiniciar = CriarBotao(caixa.transform, "BotaoReiniciar", "REINICIAR", new Vector2(0f, -60f));
@@ -396,23 +396,31 @@ public static class UIBuilder
         Canvas canvas = CriarCanvas("Canvas Menu");
         MainMenuController controlador = canvas.gameObject.AddComponent<MainMenuController>();
 
-        // Painel principal: titulo em cima, botoes numa caixa no centro.
+        CriarFundoDoMenu(canvas.transform);
+
+        // Painel principal: so a coluna de botoes. O titulo nao e mais texto -
+        // "CASTLE KNIGHT" ja vem desenhado na arte de fundo.
         GameObject principal = CriarPainelTransparente(canvas.transform, "PainelPrincipal");
 
-        CriarTitulo(principal.transform, "CASTLE KNIGHT", new Vector2(0f, -110f), 104f);
+        // A coluna fica a esquerda de proposito: centralizada, ela tapava o
+        // cavaleiro e o gato, que sao o melhor da ilustracao.
+        const float x = -234f;
+        const float espacoEntreBotoes = 80f;
+        const float y0 = -92f;
 
-        GameObject caixa = CriarCaixa(principal.transform, "CaixaBotoes", new Vector2(560f, 600f));
-        caixa.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -140f);
+        Button jogar = CriarBotao(principal.transform, "BotaoJogar", "JOGAR", new Vector2(x, y0));
+        Button fases = CriarBotao(principal.transform, "BotaoFases", "FASES", new Vector2(x, y0 - espacoEntreBotoes));
+        Button controles = CriarBotao(principal.transform, "BotaoControles", "CONTROLES", new Vector2(x, y0 - espacoEntreBotoes * 2));
+        Button creditos = CriarBotao(principal.transform, "BotaoCreditos", "CRÉDITOS", new Vector2(x, y0 - espacoEntreBotoes * 3));
+        Button sair = CriarBotao(principal.transform, "BotaoSair", "SAIR", new Vector2(x, y0 - espacoEntreBotoes * 4));
 
-        Button jogar = CriarBotao(caixa.transform, "BotaoJogar", "JOGAR", new Vector2(0f, 200f));
-        Button fases = CriarBotao(caixa.transform, "BotaoFases", "FASES", new Vector2(0f, 100f));
-        Button controles = CriarBotao(caixa.transform, "BotaoControles", "CONTROLES", new Vector2(0f, 0f));
-        Button creditos = CriarBotao(caixa.transform, "BotaoCreditos", "CRÉDITOS", new Vector2(0f, -100f));
-        Button sair = CriarBotao(caixa.transform, "BotaoSair", "SAIR", new Vector2(0f, -200f));
+        // Menores que o padrao: a arte e que tem de dominar a tela.
+        foreach (Button b in new[] { jogar, fases, controles, creditos, sair })
+            RedimensionarBotao(b, new Vector2(380f, 64f), 26f);
 
         // Selecao de fases: um cartao por fase, com o sprite do bioma.
         GameObject painelFases = CriarPainelEscuro(canvas.transform, "PainelFases");
-        CriarTexto(painelFases.transform, "Titulo", "ESCOLHA A FASE", new Vector2(0.5f, 1f), new Vector2(0f, -90f), TextAlignmentOptions.Center, 56f, CorTitulo)
+        FonteDeCabecalho(CriarTexto(painelFases.transform, "Titulo", "ESCOLHA A FASE", new Vector2(0.5f, 1f), new Vector2(0f, -90f), TextAlignmentOptions.Center, 56f, CorTitulo))
             .rectTransform.sizeDelta = new Vector2(1400f, 90f);
 
         List<NivelDef> niveis = LevelDesigns.Todas();
@@ -432,7 +440,7 @@ public static class UIBuilder
         // Painel de controles: teclas desenhadas como keycaps, uma linha por acao.
         GameObject painelControles = CriarPainelEscuro(canvas.transform, "PainelControles");
         GameObject caixaControles = CriarCaixa(painelControles.transform, "Caixa", new Vector2(1000f, 760f));
-        CriarTexto(caixaControles.transform, "Titulo", "CONTROLES", new Vector2(0.5f, 1f), new Vector2(0f, -50f), TextAlignmentOptions.Center, 48f, CorTitulo);
+        FonteDeCabecalho(CriarTexto(caixaControles.transform, "Titulo", "CONTROLES", new Vector2(0.5f, 1f), new Vector2(0f, -50f), TextAlignmentOptions.Center, 48f, CorTitulo));
 
         // Tres colunas: teclado | controle | o que faz.
         const float xTeclas = -420f;
@@ -485,7 +493,7 @@ public static class UIBuilder
         // Painel de creditos
         GameObject painelCreditos = CriarPainelEscuro(canvas.transform, "PainelCreditos");
         GameObject caixaCreditos = CriarCaixa(painelCreditos.transform, "Caixa", new Vector2(1100f, 700f));
-        CriarTexto(caixaCreditos.transform, "Titulo", "CRÉDITOS", new Vector2(0.5f, 1f), new Vector2(0f, -60f), TextAlignmentOptions.Center, 52f, CorTitulo);
+        FonteDeCabecalho(CriarTexto(caixaCreditos.transform, "Titulo", "CRÉDITOS", new Vector2(0.5f, 1f), new Vector2(0f, -60f), TextAlignmentOptions.Center, 52f, CorTitulo));
         TMP_Text textoCreditos = CriarTexto(caixaCreditos.transform, "Texto",
             "Personagem: Animated Pixel Adventurer - rvros\n\n" +
             "Cenarios e inimigos: SunnyLand, SunnyLand Winter,\nSuper Grotto Escape, GothicVania Church - ansimuz\n\n" +
@@ -660,30 +668,10 @@ public static class UIBuilder
         return caixa;
     }
 
-    /// <summary>Titulo do jogo: gradiente dourado com sombra deslocada.</summary>
-    private static void CriarTitulo(Transform pai, string conteudo, Vector2 posicao, float tamanho)
-    {
-        TMP_Text sombra = CriarTexto(pai, "TituloSombra", conteudo, new Vector2(0.5f, 1f), posicao + new Vector2(7f, -7f), TextAlignmentOptions.Center, tamanho, new Color(0.1f, 0.06f, 0.02f, 0.85f));
-        sombra.rectTransform.sizeDelta = new Vector2(1600f, 160f);
-
-        TMP_Text titulo = CriarTexto(pai, "Titulo", conteudo, new Vector2(0.5f, 1f), posicao, TextAlignmentOptions.Center, tamanho, CorTitulo);
-        titulo.rectTransform.sizeDelta = new Vector2(1600f, 160f);
-
-        // So o titulo do jogo fica na Press Start 2P, pelo ar de arcade.
-        TMP_FontAsset fonteDoTitulo = FontBuilder.GarantirTitulo();
-        if (fonteDoTitulo != null)
-        {
-            sombra.font = fonteDoTitulo;
-            titulo.font = fonteDoTitulo;
-        }
-
-        titulo.enableVertexGradient = true;
-        titulo.colorGradient = new VertexGradient(
-            new Color(1f, 0.95f, 0.6f),  // topo esquerdo
-            new Color(1f, 0.95f, 0.6f),  // topo direito
-            new Color(0.95f, 0.55f, 0.15f), // base esquerda
-            new Color(0.95f, 0.55f, 0.15f)); // base direita
-    }
+    /// <summary>
+    /// Icone do comando que troca sozinho entre a tecla e o botao do controle.
+    /// Os dois sprites vem prontos do Input Prompts, entao aqui e so escolher
+    /// qual mostrar; quem faz a troca em tempo real e o AvisoDeBotao.
     /// </summary>
     private static GameObject CriarTeclaAjustavel(Transform pai, Vector2 posicao)
     {
@@ -812,6 +800,69 @@ public static class UIBuilder
 
         AdicionarRealce(botao);
         return botao;
+    }
+
+    /// <summary>
+    /// Fundo do menu, em duas camadas.
+    ///
+    /// A arte e retrato (928x1150) e a tela e 16:9: ela nao cabe inteira sem
+    /// sobrar espaco dos lados. Cortar para preencher comeria o titulo, que esta
+    /// no alto. Entao a mesma imagem entra duas vezes: atras, ampliada ate cobrir
+    /// a tela e bem escurecida, so para nao haver tarja preta; na frente, inteira
+    /// e nitida, ajustada pela altura.
+    /// </summary>
+    private static void CriarFundoDoMenu(Transform pai)
+    {
+        Sprite arte = Carregar(Art + "/UI/Menu/fundo_menu.jpg");
+        if (arte == null)
+        {
+            Debug.LogWarning("[Setup] Arte do menu nao encontrada; o fundo fica liso.");
+            return;
+        }
+
+        float proporcao = arte.rect.width / arte.rect.height;   // 0,807
+        float alturaDaTela = ResolucaoDeReferencia.y;            // 1080
+        float larguraDaTela = ResolucaoDeReferencia.x;           // 1920
+
+        // Camada de tras: cresce ate a largura da tela, transbordando em cima e
+        // embaixo. O que passa da borda simplesmente nao aparece.
+        float alturaCoberta = larguraDaTela / proporcao;
+        Image fundo = CriarImagem(pai, "FundoPreenchido", arte, new Vector2(0.5f, 0.5f),
+            Vector2.zero, new Vector2(larguraDaTela, alturaCoberta));
+        fundo.color = new Color(0.32f, 0.30f, 0.40f);   // escurece e esfria
+        fundo.raycastTarget = false;
+
+        // Camada da frente: a arte inteira, ajustada pela altura.
+        Image frente = CriarImagem(pai, "ArteDoMenu", arte, new Vector2(0.5f, 0.5f),
+            Vector2.zero, new Vector2(alturaDaTela * proporcao, alturaDaTela));
+        frente.raycastTarget = false;
+    }
+
+    /// <summary>
+    /// Poe o cabecalho da tela na Press Start 2P. Ela ficou sem uso quando o
+    /// titulo do jogo passou a vir desenhado na arte do menu, e e boa justamente
+    /// para texto curto e grande: da o ar de arcade sem prejudicar a leitura,
+    /// que e onde ela perde para a Kenney (e onde nem tem o til).
+    /// </summary>
+    private static TMP_Text FonteDeCabecalho(TMP_Text texto)
+    {
+        TMP_FontAsset titulo = FontBuilder.GarantirTitulo();
+        if (titulo != null && texto != null)
+            texto.font = titulo;
+
+        return texto;
+    }
+
+    /// <summary>Muda o tamanho de um botao pronto e o de todos os textos dentro dele.</summary>
+    private static void RedimensionarBotao(Button botao, Vector2 tamanho, float tamanhoDoTexto)
+    {
+        botao.GetComponent<RectTransform>().sizeDelta = tamanho;
+
+        foreach (TMP_Text t in botao.GetComponentsInChildren<TMP_Text>(true))
+        {
+            t.rectTransform.sizeDelta = tamanho;
+            t.fontSize = tamanhoDoTexto;
+        }
     }
 
     /// <summary>
