@@ -183,9 +183,16 @@ public static class UIBuilder
             ShopUI.ItemDaLoja item = ShopUI.Itens[i];
             float y = 80f - i * 130f;
 
-            // Faixa de fundo da linha, para separar os itens.
-            Image faixa = CriarImagem(caixa.transform, "Faixa" + i, null, new Vector2(0.5f, 0.5f), new Vector2(0f, y), new Vector2(900f, 110f));
-            faixa.color = new Color(1f, 1f, 1f, 0.05f);
+            // Cada item numa moldura propria, para as tres linhas nao virarem um
+            // bloco so. A mesma moldura do foco, sem tingir: ela e vazada, entao
+            // desenha so o contorno e deixa a madeira da caixa aparecer dentro.
+            Image faixa = CriarImagem(caixa.transform, "Faixa" + i, null, new Vector2(0.5f, 0.5f), new Vector2(0f, y), new Vector2(900f, 118f));
+            faixa.color = new Color(0f, 0f, 0f, 0.22f);
+
+            Image borda = CriarImagem(caixa.transform, "Borda" + i, Carregar(UiKit.Moldura), new Vector2(0.5f, 0.5f), new Vector2(0f, y), new Vector2(900f, 118f));
+            borda.type = Image.Type.Sliced;
+            borda.pixelsPerUnitMultiplier = 3.4f;
+            borda.raycastTarget = false;
 
             CriarImagem(caixa.transform, "Icone" + i, Carregar(icones[i]), new Vector2(0.5f, 0.5f), new Vector2(-390f, y), new Vector2(84f, 84f));
 
@@ -202,17 +209,21 @@ public static class UIBuilder
             preco.rectTransform.pivot = new Vector2(0f, 0.5f);
             preco.rectTransform.sizeDelta = new Vector2(100f, 50f);
 
-            Button botao = CriarBotao(caixa.transform, "BotaoComprar" + i, "COMPRAR  [" + (i + 1) + "]", new Vector2(330f, y));
-            botao.GetComponent<RectTransform>().sizeDelta = new Vector2(260f, 72f);
-            Transform textoDoBotao = botao.transform.Find("Texto");
-            foreach (TMP_Text t in botao.GetComponentsInChildren<TMP_Text>())
-            {
-                t.rectTransform.sizeDelta = new Vector2(260f, 72f);
-                t.fontSize = 20f;
-            }
+            // Botao pequeno, com rotulo FIXO. Antes o motivo de nao poder comprar
+            // era escrito por cima deste texto, mas o botao tem duas camadas (o
+            // texto e o brilho atras dele) e so uma era trocada: "FALTAM 20"
+            // aparecia embaralhado com o "COMPRAR [1]" que ficou embaixo.
+            Button botao = CriarBotao(caixa.transform, "BotaoComprar" + i, "COMPRAR  [" + (i + 1) + "]", new Vector2(330f, y + 18f));
+            RedimensionarBotao(botao, new Vector2(240f, 58f), 19f);
+            LigarAtalho(botao, "COMPRAR", RotuloDeAtalho.Atalho.Comprar, i);
+
+            // O motivo agora vive fora do botao, logo abaixo dele.
+            TMP_Text aviso = CriarTexto(caixa.transform, "Status" + i, "", new Vector2(0.5f, 0.5f),
+                new Vector2(330f, y - 32f), TextAlignmentOptions.Center, 18f, new Color(1f, 0.62f, 0.45f));
+            aviso.rectTransform.sizeDelta = new Vector2(260f, 32f);
 
             botoes[i] = botao;
-            status[i] = textoDoBotao != null ? textoDoBotao.GetComponent<TMP_Text>() : null;
+            status[i] = aviso;
         }
 
         Button fechar = CriarBotao(caixa.transform, "BotaoFechar", "FECHAR", new Vector2(0f, -305f));
@@ -257,11 +268,16 @@ public static class UIBuilder
         Sprite icone = string.IsNullOrEmpty(nivel.icone) ? null : Carregar(nivel.icone);
         Image imagem = CriarImagem(raiz.transform, "Icone", icone, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(320f, 320f));
 
-        TMP_Text titulo = CriarTexto(raiz.transform, "Titulo", nivel.titulo, new Vector2(0.5f, 0.5f), new Vector2(0f, -120f), TextAlignmentOptions.Center, 72f, CorTitulo);
+        // Cartao de abertura na Press Start 2P: sao tres textos curtos e grandes,
+        // exatamente onde ela rende. A Kenney Pixel Square, boa para texto
+        // corrido, fica chapada neste tamanho.
+        TMP_Text titulo = FonteDeCabecalho(CriarTexto(raiz.transform, "Titulo", nivel.titulo, new Vector2(0.5f, 0.5f), new Vector2(0f, -120f), TextAlignmentOptions.Center, 64f, CorTitulo));
         titulo.rectTransform.sizeDelta = new Vector2(1400f, 110f);
-        TMP_Text subtitulo = CriarTexto(raiz.transform, "Subtitulo", nivel.subtitulo, new Vector2(0.5f, 0.5f), new Vector2(0f, -210f), TextAlignmentOptions.Center, 40f);
+
+        TMP_Text subtitulo = FonteDeCabecalho(CriarTexto(raiz.transform, "Subtitulo", nivel.subtitulo, new Vector2(0.5f, 0.5f), new Vector2(0f, -215f), TextAlignmentOptions.Center, 34f));
         subtitulo.rectTransform.sizeDelta = new Vector2(1400f, 80f);
-        CriarTexto(raiz.transform, "Dica", "aperte qualquer tecla", new Vector2(0.5f, 0f), new Vector2(0f, 60f), TextAlignmentOptions.Center, 22f, new Color(0.7f, 0.7f, 0.7f));
+
+        FonteDeCabecalho(CriarTexto(raiz.transform, "Dica", "APERTE QUALQUER TECLA", new Vector2(0.5f, 0f), new Vector2(0f, 60f), TextAlignmentOptions.Center, 18f, new Color(0.72f, 0.70f, 0.66f)));
 
         LevelIntroCard cartao = canvas.gameObject.AddComponent<LevelIntroCard>();
         SerializedObject so = new SerializedObject(cartao);
@@ -403,10 +419,11 @@ public static class UIBuilder
         GameObject principal = CriarPainelTransparente(canvas.transform, "PainelPrincipal");
 
         // A coluna fica a esquerda de proposito: centralizada, ela tapava o
-        // cavaleiro e o gato, que sao o melhor da ilustracao.
-        const float x = -234f;
+        // cavaleiro e o gato, que estao a direita da ilustracao. Comeca abaixo
+        // do titulo, que ocupa o terco de cima.
+        const float x = -430f;
         const float espacoEntreBotoes = 80f;
-        const float y0 = -92f;
+        const float y0 = 60f;
 
         Button jogar = CriarBotao(principal.transform, "BotaoJogar", "JOGAR", new Vector2(x, y0));
         Button fases = CriarBotao(principal.transform, "BotaoFases", "FASES", new Vector2(x, y0 - espacoEntreBotoes));
@@ -803,13 +820,12 @@ public static class UIBuilder
     }
 
     /// <summary>
-    /// Fundo do menu, em duas camadas.
+    /// Fundo do menu: a ilustracao cobrindo a tela inteira.
     ///
-    /// A arte e retrato (928x1150) e a tela e 16:9: ela nao cabe inteira sem
-    /// sobrar espaco dos lados. Cortar para preencher comeria o titulo, que esta
-    /// no alto. Entao a mesma imagem entra duas vezes: atras, ampliada ate cobrir
-    /// a tela e bem escurecida, so para nao haver tarja preta; na frente, inteira
-    /// e nitida, ajustada pela altura.
+    /// A arte e panoramica (1376x768, ou 1,79) e a tela de referencia e 16:9
+    /// (1,78), entao ela cobre praticamente sem sobra. O calculo de cobertura
+    /// continua generico para o jogo nao quebrar numa tela 4:3: cresce pela
+    /// dimensao que falta e deixa o excesso passar da borda, sem deformar.
     /// </summary>
     private static void CriarFundoDoMenu(Transform pai)
     {
@@ -820,22 +836,15 @@ public static class UIBuilder
             return;
         }
 
-        float proporcao = arte.rect.width / arte.rect.height;   // 0,807
-        float alturaDaTela = ResolucaoDeReferencia.y;            // 1080
-        float larguraDaTela = ResolucaoDeReferencia.x;           // 1920
+        float proporcaoDaArte = arte.rect.width / arte.rect.height;
+        float proporcaoDaTela = ResolucaoDeReferencia.x / ResolucaoDeReferencia.y;
 
-        // Camada de tras: cresce ate a largura da tela, transbordando em cima e
-        // embaixo. O que passa da borda simplesmente nao aparece.
-        float alturaCoberta = larguraDaTela / proporcao;
-        Image fundo = CriarImagem(pai, "FundoPreenchido", arte, new Vector2(0.5f, 0.5f),
-            Vector2.zero, new Vector2(larguraDaTela, alturaCoberta));
-        fundo.color = new Color(0.32f, 0.30f, 0.40f);   // escurece e esfria
+        Vector2 tamanho = proporcaoDaArte > proporcaoDaTela
+            ? new Vector2(ResolucaoDeReferencia.y * proporcaoDaArte, ResolucaoDeReferencia.y)
+            : new Vector2(ResolucaoDeReferencia.x, ResolucaoDeReferencia.x / proporcaoDaArte);
+
+        Image fundo = CriarImagem(pai, "ArteDoMenu", arte, new Vector2(0.5f, 0.5f), Vector2.zero, tamanho);
         fundo.raycastTarget = false;
-
-        // Camada da frente: a arte inteira, ajustada pela altura.
-        Image frente = CriarImagem(pai, "ArteDoMenu", arte, new Vector2(0.5f, 0.5f),
-            Vector2.zero, new Vector2(alturaDaTela * proporcao, alturaDaTela));
-        frente.raycastTarget = false;
     }
 
     /// <summary>
@@ -869,7 +878,8 @@ public static class UIBuilder
     /// Faz o rotulo do botao mostrar o atalho do dispositivo em uso, em vez de
     /// uma tecla fixa. Pega os dois TMP_Text do botao (o texto e o brilho atras).
     /// </summary>
-    private static void LigarAtalho(Button botao, string rotulo)
+    private static void LigarAtalho(Button botao, string rotulo,
+        RotuloDeAtalho.Atalho tipo = RotuloDeAtalho.Atalho.Interagir, int indice = 0)
     {
         TMP_Text[] textos = botao.GetComponentsInChildren<TMP_Text>(true);
 
@@ -882,6 +892,8 @@ public static class UIBuilder
             lista.GetArrayElementAtIndex(i).objectReferenceValue = textos[i];
 
         so.FindProperty("rotulo").stringValue = rotulo;
+        so.FindProperty("atalho").enumValueIndex = (int)tipo;
+        so.FindProperty("indice").intValue = indice;
         so.ApplyModifiedProperties();
     }
 

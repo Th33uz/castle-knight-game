@@ -291,10 +291,14 @@ public static class LevelDesigns
          .Lava(87, 10).Chao(97, 14).Lava(111, 5).Chao(116, 24)
          .Lava(140, 6).Chao(146, 16).Lava(162, 8).Chao(170, 40);
 
-        n.Plataforma(19, 7, 3).Plataforma(38, 7, 3).Plataforma(42, 9, 2)
-         .Plataforma(50, 8, 4).Plataforma(62, 7, 4).Plataforma(72, 9, 4).Plataforma(78, 11, 3)
-         .Plataforma(88, 7, 3).Plataforma(93, 9, 3).Plataforma(100, 8, 4).Plataforma(120, 8, 4).Plataforma(128, 10, 3)
-         .Plataforma(141, 7, 4).Plataforma(150, 9, 3).Plataforma(163, 7, 3).Plataforma(166, 9, 3);
+        // Plataformas largas de proposito. A laje da caverna tem DUAS linhas de
+        // altura (alturaPlataforma = 2 no TileKits), ao contrario da floresta,
+        // que tem uma: com 3 de largura ela virava um cubo e sobrava pouco chao
+        // para pousar. Com 5 e 6 a superficie fica proporcional a altura.
+        n.Plataforma(19, 7, 5).Plataforma(38, 7, 5).Plataforma(42, 9, 4)
+         .Plataforma(50, 8, 6).Plataforma(62, 7, 6).Plataforma(72, 9, 6).Plataforma(78, 11, 5)
+         .Plataforma(88, 7, 5).Plataforma(93, 9, 5).Plataforma(100, 8, 6).Plataforma(120, 8, 6).Plataforma(128, 10, 5)
+         .Plataforma(141, 7, 6).Plataforma(150, 9, 5).Plataforma(163, 7, 5).Plataforma(166, 9, 5);
 
         // Diamantes (moeda)
         n.Fila("Gema", 6f, 5.6f, 4).Fila("Gema", 12f, 5.6f, 4).Fila("Gema", 19.5f, 9.6f, 3).Fila("Gema", 27f, 5.6f, 5)

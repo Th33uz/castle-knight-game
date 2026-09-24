@@ -10,9 +10,20 @@ using UnityEngine;
 /// </summary>
 public class RotuloDeAtalho : MonoBehaviour
 {
+    public enum Atalho
+    {
+        /// <summary>E no teclado, Y no controle.</summary>
+        Interagir,
+        /// <summary>Numero do item no teclado; no controle, o A que confirma o foco.</summary>
+        Comprar,
+    }
+
     [Tooltip("Os TMP_Text do botao: o texto e o brilho atras dele.")]
     [SerializeField] private TMP_Text[] textos;
     [SerializeField] private string rotulo = "FECHAR";
+    [SerializeField] private Atalho atalho = Atalho.Interagir;
+    [Tooltip("Indice do item na loja, para o atalho numerico do teclado.")]
+    [SerializeField] private int indice;
 
     private bool? ultimoDispositivo;
 
@@ -29,7 +40,10 @@ public class RotuloDeAtalho : MonoBehaviour
             return;
 
         ultimoDispositivo = controle;
-        string texto = rotulo + "  [" + GameInput.BotaoInteragir + "]";
+
+        string texto = atalho == Atalho.Interagir
+            ? rotulo + "  [" + GameInput.BotaoInteragir + "]"
+            : rotulo + "  [" + (controle ? "A" : (indice + 1).ToString()) + "]";
 
         foreach (TMP_Text t in textos)
         {

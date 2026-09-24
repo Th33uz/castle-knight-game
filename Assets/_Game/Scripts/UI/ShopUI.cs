@@ -131,17 +131,6 @@ public class ShopUI : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(botoesComprar[0].gameObject);
     }
 
-    /// <summary>
-    /// No teclado vale o atalho numerico do item; no controle nao ha numero, o
-    /// jogador navega ate o botao e confirma com A.
-    /// </summary>
-    private static string RotuloDeCompra(int indice)
-    {
-        return GameInput.UsandoControle
-            ? "COMPRAR  [A]"
-            : "COMPRAR  [" + (indice + 1) + "]";
-    }
-
     private void Update()
     {
         // Ignora o frame da abertura: a tecla que abriu ainda conta como "pressionada".
@@ -247,8 +236,12 @@ public class ShopUI : MonoBehaviour
             if (botoesComprar != null && i < botoesComprar.Length && botoesComprar[i] != null)
                 botoesComprar[i].interactable = pode;
 
+            // O aviso fica ABAIXO do botao e so aparece quando ha um impedimento.
+            // O rotulo do botao nunca muda: escrever o motivo por cima dele
+            // sobrepunha os dois textos, porque o botao tem o texto e o brilho
+            // atras, e so um era trocado.
             if (textosStatus != null && i < textosStatus.Length && textosStatus[i] != null)
-                textosStatus[i].text = pode ? RotuloDeCompra(i) : motivo;
+                textosStatus[i].text = pode ? "" : motivo;
         }
 
         dispositivoMostrado = GameInput.UsandoControle;
