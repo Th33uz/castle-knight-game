@@ -47,6 +47,10 @@ public class ShopUI : MonoBehaviour
     // precisam se proteger.
     private int frameQueFechou = -1;
 
+    // Dispositivo com que os rotulos foram escritos, para reescreve-los quando
+    // o jogador troca de teclado para controle com a loja aberta.
+    private bool? dispositivoMostrado;
+
     private void Awake()
     {
         Instance = this;
@@ -127,11 +131,26 @@ public class ShopUI : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(botoesComprar[0].gameObject);
     }
 
+    /// <summary>
+    /// No teclado vale o atalho numerico do item; no controle nao ha numero, o
+    /// jogador navega ate o botao e confirma com A.
+    /// </summary>
+    private static string RotuloDeCompra(int indice)
+    {
+        return GameInput.UsandoControle
+            ? "COMPRAR  [A]"
+            : "COMPRAR  [" + (indice + 1) + "]";
+    }
+
     private void Update()
     {
         // Ignora o frame da abertura: a tecla que abriu ainda conta como "pressionada".
         if (!Aberta || Time.frameCount == frameQueAbriu)
             return;
+
+        // Pegar o controle com a loja ja aberta tem de trocar os atalhos na hora.
+        if (dispositivoMostrado != GameInput.UsandoControle)
+            Atualizar();
 
         if (GameInput.PausouAgora || Shop.ApertouInteragir())
         {
@@ -229,8 +248,10 @@ public class ShopUI : MonoBehaviour
                 botoesComprar[i].interactable = pode;
 
             if (textosStatus != null && i < textosStatus.Length && textosStatus[i] != null)
-                textosStatus[i].text = pode ? "COMPRAR  [" + (i + 1) + "]" : motivo;
+                textosStatus[i].text = pode ? RotuloDeCompra(i) : motivo;
         }
+
+        dispositivoMostrado = GameInput.UsandoControle;
 
         // Comprar pode desativar o botao em que o foco estava (vida cheia,
         // saldo acabou): sem isto o controle ficaria preso num botao morto.

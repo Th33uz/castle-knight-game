@@ -123,6 +123,20 @@ public class TutorialGuide : MonoBehaviour
         if (jogador == null || indice >= passos.Count)
             return;
 
+        // Loja ou pausa abertas cobrem a tela inteira: o balao ficava por cima
+        // delas, atrapalhando a leitura. Ele some enquanto durar, e o passo fica
+        // congelado onde estava (o jogo tambem esta parado, entao nada se perde).
+        if (TelaNaFrente())
+        {
+            if (balao != null && balao.gameObject.activeSelf)
+                balao.gameObject.SetActive(false);
+
+            return;
+        }
+
+        if (passoAtivo && balao != null && !balao.gameObject.activeSelf)
+            balao.gameObject.SetActive(true);
+
         Passo passo = passos[indice];
         float x = jogador.position.x;
 
@@ -273,6 +287,12 @@ public class TutorialGuide : MonoBehaviour
     }
 
     // ----------------- Visual -----------------
+
+    /// <summary>Alguma tela modal esta aberta por cima do jogo?</summary>
+    private static bool TelaNaFrente()
+    {
+        return ShopUI.Aberta || Time.timeScale == 0f;
+    }
 
     private void LateUpdate()
     {

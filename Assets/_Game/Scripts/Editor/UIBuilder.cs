@@ -215,7 +215,8 @@ public static class UIBuilder
             status[i] = textoDoBotao != null ? textoDoBotao.GetComponent<TMP_Text>() : null;
         }
 
-        Button fechar = CriarBotao(caixa.transform, "BotaoFechar", "FECHAR  [E]", new Vector2(0f, -305f));
+        Button fechar = CriarBotao(caixa.transform, "BotaoFechar", "FECHAR", new Vector2(0f, -305f));
+        LigarAtalho(fechar, "FECHAR");
 
         ShopUI loja = canvas.gameObject.AddComponent<ShopUI>();
         SerializedObject so = new SerializedObject(loja);
@@ -811,6 +812,26 @@ public static class UIBuilder
 
         AdicionarRealce(botao);
         return botao;
+    }
+
+    /// <summary>
+    /// Faz o rotulo do botao mostrar o atalho do dispositivo em uso, em vez de
+    /// uma tecla fixa. Pega os dois TMP_Text do botao (o texto e o brilho atras).
+    /// </summary>
+    private static void LigarAtalho(Button botao, string rotulo)
+    {
+        TMP_Text[] textos = botao.GetComponentsInChildren<TMP_Text>(true);
+
+        RotuloDeAtalho componente = botao.gameObject.AddComponent<RotuloDeAtalho>();
+        SerializedObject so = new SerializedObject(componente);
+
+        SerializedProperty lista = so.FindProperty("textos");
+        lista.arraySize = textos.Length;
+        for (int i = 0; i < textos.Length; i++)
+            lista.GetArrayElementAtIndex(i).objectReferenceValue = textos[i];
+
+        so.FindProperty("rotulo").stringValue = rotulo;
+        so.ApplyModifiedProperties();
     }
 
     /// <summary>
