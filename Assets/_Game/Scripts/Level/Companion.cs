@@ -38,7 +38,8 @@ public class Companion : MonoBehaviour
     [SerializeField] private float puloMaximo = 24f;
     [Tooltip("Se o jogador estiver ao menos isto acima, ele tenta subir.")]
     [SerializeField] private float alturaParaPular = 1.2f;
-    [SerializeField] private float intervaloEntrePulos = 0.45f;
+    [Tooltip("Recarga entre pulos. Curta para ele nao perder o salto seguinte do heroi.")]
+    [SerializeField] private float intervaloEntrePulos = 0.28f;
 
     [Header("Chao e obstaculos")]
     [SerializeField] private LayerMask camadaChao;
@@ -158,8 +159,17 @@ public class Companion : MonoBehaviour
         float desnivel = jogador.position.y - transform.position.y;
         bool precisaSubir = desnivel > alturaParaPular;
 
+        // Para casar com a marca de pulo vale a direcao do MOVIMENTO, nao a do
+        // erro de posicao: colado no alvo, o erro troca de sinal a toda hora, e a
+        // marca era descartada por "ir para o outro lado" mesmo com o gato
+        // correndo para a frente. Ele so pulava depois, quando o sensor de parede
+        // disparava - e era esse o pulo atrasado.
+        float direcaoDoMovimento = Mathf.Abs(rb.linearVelocity.x) > 0.5f
+            ? Mathf.Sign(rb.linearVelocity.x)
+            : direcao;
+
         bool podePular = noChao && Time.time >= proximoPulo;
-        int marca = podePular ? MarcaAlcancada(direcao) : -1;
+        int marca = podePular ? MarcaAlcancada(direcaoDoMovimento) : -1;
 
         // Repetir o salto do heroi tem prioridade: os sensores de parede e buraco
         // sao a rede de seguranca, e sozinhos so disparam quando ele ja esta
@@ -353,8 +363,10 @@ public class Companion : MonoBehaviour
                     continue;
 
                 // Projetado no sentido da corrida: positivo = ainda nao chegou.
+                // A folga para frente e generosa de proposito: pular um pouco
+                // antes da marca fica bem melhor do que pular depois dela.
                 float avanco = ateAMarca * m.direcao;
-                if (avanco > 0.35f || avanco < -1.5f)
+                if (avanco > 0.6f || avanco < -1.5f)
                     continue;
             }
             else if (Mathf.Abs(ateAMarca) > 0.5f)
