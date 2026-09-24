@@ -26,7 +26,7 @@ public class FocoDeMenu : MonoBehaviour
 
         // So devolve o foco quando o jogador demonstra que quer navegar; senao,
         // quem esta no mouse veria uma moldura aparecer do nada.
-        if (Mathf.Abs(GameInput.Horizontal) > 0.1f || Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.5f)
+        if (Mathf.Abs(GameInput.Horizontal) > 0.1f || Mathf.Abs(GameInput.Vertical) > 0.5f)
             Focar();
     }
 

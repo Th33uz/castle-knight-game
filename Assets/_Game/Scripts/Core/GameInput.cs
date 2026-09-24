@@ -50,8 +50,8 @@ public static class GameInput
         // Analogico e direcional primeiro: mexer neles NAO dispara anyKeyDown, e
         // e justamente assim que se navega um menu. Sem isto, quem pega o
         // controle e sobe/desce nos botoes continuava vendo as teclas do teclado.
-        bool eixoMexido = Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.5f
-                       || Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.5f;
+        bool eixoMexido = Mathf.Abs(Eixo("Horizontal")) > 0.5f
+                       || Mathf.Abs(Eixo("Vertical")) > 0.5f;
 
         if (eixoMexido && !TeclaDeDirecaoPressionada())
         {
@@ -92,7 +92,7 @@ public static class GameInput
     {
         get
         {
-            float valor = Input.GetAxisRaw("Horizontal");
+            float valor = Eixo("Horizontal");
 
             // O analogico devolve valores intermediarios; o jogo e digital.
             if (Mathf.Abs(valor) < 0.35f)
@@ -102,6 +102,9 @@ public static class GameInput
         }
     }
 
+    /// <summary>Cru, para quem so quer saber se o jogador mexeu para cima ou para baixo.</summary>
+    public static float Vertical => Eixo("Vertical");
+
     public static bool PulouAgora => Apertou("Jump") || Apertou("Pular2");
     public static bool SoltouPulo => Soltou("Jump") && Soltou("Pular2");
 
@@ -110,7 +113,20 @@ public static class GameInput
     // "Submit": ele inclui Espaco e Enter por padrao no Unity, e ai pular na
     // frente do vendedor abria a loja. O Submit continua valendo para navegar
     // os menus, que e trabalho do EventSystem, nao deste atalho.
-    public static bool InteragiuAgora => Apertou("Interagir");
+    /// <summary>
+    /// Abre e fecha a loja. Le o botao virtual E TAMBEM as teclas direto.
+    ///
+    /// Depender so do eixo "Interagir" e arriscado: se o Input Manager nao
+    /// estiver como o codigo espera, GetButtonDown devolve false calado (o
+    /// try/catch de Apertou engole a excecao) e a loja simplesmente para de
+    /// abrir. Antes isso passava despercebido porque havia um "|| Submit" de
+    /// reserva - que era justamente o que fazia o Espaco abrir a loja.
+    /// Espaco continua de fora: aqui so entram E e o Y do controle.
+    /// </summary>
+    public static bool InteragiuAgora =>
+        Apertou("Interagir")
+        || Input.GetKeyDown(KeyCode.E)
+        || Input.GetKeyDown(KeyCode.JoystickButton3);   // Y no padrao Xbox
     public static bool PausouAgora => Apertou("Pausar");
 
     /// <summary>
@@ -131,6 +147,16 @@ public static class GameInput
     {
         try { return Input.GetButtonDown(nome); }
         catch (System.ArgumentException) { return false; }
+    }
+
+    /// <summary>
+    /// Como o Apertou, mas para eixos: um eixo faltando no Input Manager nao
+    /// pode derrubar o Update inteiro de quem chamou.
+    /// </summary>
+    private static float Eixo(string nome)
+    {
+        try { return Input.GetAxisRaw(nome); }
+        catch (System.ArgumentException) { return 0f; }
     }
 
     private static bool Soltou(string nome)

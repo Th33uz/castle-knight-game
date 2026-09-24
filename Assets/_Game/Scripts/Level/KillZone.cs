@@ -19,7 +19,10 @@ public class KillZone : MonoBehaviour
         }
 
         // Inimigos empurrados para fora do mapa somem em vez de cair infinitamente.
-        if (outro.CompareTag("Enemy"))
+        // Pela CAMADA, e nao pela tag: "Enemy" nunca foi criada no projeto (o
+        // Unity so traz Player, MainCamera e afins prontas), entao o CompareTag
+        // enchia o console de "Tag: Enemy is not defined" e nunca era verdadeiro.
+        if (outro.gameObject.layer == LayerMask.NameToLayer("Enemy"))
             Destroy(outro.gameObject);
     }
 }
