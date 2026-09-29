@@ -391,7 +391,7 @@ public static class LevelDesigns
          .NoAr("Cereja", 186f, 12.6f).NoAr("Cereja", 201.5f, 7.6f);
 
         n.NoChao("Yeti", 12f, 4f).NoChao("Raposa", 18f, 4f, true).NoChao("Yeti", 34f, 4f)
-         .NoChao("Raposa", 50f, 6f).NoChao("Yeti", 60f, 4f, true).NoChao("Raposa", 76f, 4f)
+         .NoChao("Raposa", 50f, 6f).NoChao("Yeti", 60f, 4f, true).NoChao("Raposa", 72f, 4f)
          .NoChao("Yeti", 86f, 4f).NoChao("Raposa", 100f, 4f, true).NoChao("Yeti", 112f, 4f)
          .NoChao("Raposa", 126f, 4f).NoChao("Yeti", 136f, 4f, true).NoChao("Raposa", 148f, 4f)
          .NoChao("Raposa", 166f, 4f, true).NoChao("Yeti", 185f, 6f).NoChao("Raposa", 188f, 6f)
@@ -481,13 +481,17 @@ public static class LevelDesigns
          .NoAr("Anjo", 110f, 12f).NoAr("Anjo", 140f, 11f).NoAr("Anjo", 175f, 12f).NoAr("Anjo", 203f, 11f);
 
         // Armadilhas
-        n.NoChao("Espinhos", 28f, 4f).NoChao("Espinhos", 29f, 4f)
-         .NoChao("Espinhos", 68f, 4f).NoChao("Espinhos", 69f, 4f)
-         .NoChao("Espinhos", 110f, 4f).NoChao("Espinhos", 111f, 4f).NoChao("Espinhos", 112f, 4f)
-         .NoChao("Espinhos", 162f, 4f).NoChao("Espinhos", 163f, 4f)
-         .NoChao("Fogo", 24f, 4f).NoChao("Fogo", 76f, 4f).NoChao("Fogo", 128f, 6f).NoChao("Fogo", 186f, 4f)
+        // As armadilhas ficam SOBRE o chao, nunca nos vaos. O chao desta fase e
+        // recortado (0-26, 30-48, 52-66 em y=6, 70-90, 94-110, 114-138 em y=6,
+        // 142-160, 164-184, 188-202, 206-240) e os espinhos estavam justamente
+        // dentro dos buracos, flutuando; o trecho de y=6 pedia y=4 e afundava.
+        n.NoChao("Espinhos", 9f, 4f).NoChao("Espinhos", 10f, 4f)
+         .NoChao("Espinhos", 62f, 6f).NoChao("Espinhos", 63f, 6f)
+         .NoChao("Espinhos", 100f, 4f).NoChao("Espinhos", 101f, 4f).NoChao("Espinhos", 102f, 4f)
+         .NoChao("Espinhos", 170f, 4f).NoChao("Espinhos", 171f, 4f)
+         .NoChao("Fogo", 24f, 4f).NoChao("Fogo", 76f, 4f).NoChao("Fogo", 128f, 6f).NoChao("Fogo", 180f, 4f)
          .NoAr("Serra", 49f, 5f).NoAr("Serra", 92f, 5f).NoAr("Serra", 139f, 5f).NoAr("Serra", 187f, 5f)
-         .NoChao("Trampolim", 65f, 4f).NoChao("Trampolim", 148f, 4f).NoChao("Trampolim", 196f, 4f);
+         .NoChao("Trampolim", 65f, 6f).NoChao("Trampolim", 148f, 4f).NoChao("Trampolim", 196f, 4f);
 
         n.Movel("PlataformaMovelCaverna", 27f, 6f, new Vector2(0f, 5f))
          .Movel("PlataformaMovelCaverna", 48f, 6f, new Vector2(4f, 0f))

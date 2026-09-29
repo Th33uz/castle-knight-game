@@ -64,6 +64,10 @@ public static class GameSetupWizard
         ApagarGerados();
 
         FontBuilder.Garantir();
+
+        // Antes de montar as cenas: avisa se algum objeto de chao caiu num vao.
+        ValidadorDeFases.ValidarTudo();
+
         PrefabBuilder.GerarTodos();
         SceneBuilder.GerarTodas(sobrescrever: true);
         SceneBuilder.AtualizarBuildSettings();
