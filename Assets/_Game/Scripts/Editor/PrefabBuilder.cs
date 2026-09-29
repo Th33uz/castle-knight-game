@@ -48,7 +48,11 @@ public static class PrefabBuilder
 
     private static void CriarJogador()
     {
-        string pasta = Art + "/Adventurer";
+        // O pack do heroi (rvros) nao tem contorno, mas o gato e os bichos do
+        // ansimuz tem: lado a lado, so o heroi se misturava com o fundo. Estes
+        // sao os mesmos quadros com 1 px de contorno desenhado em volta.
+        ContornoDeSprite.Garantir(Art + "/Adventurer", Art + "/Adventurer/ComContorno");
+        string pasta = Art + "/Adventurer/ComContorno";
 
         AnimationClip idle = AnimationBuilder.CriarClip("Jogador_Idle", AnimationBuilder.QuadrosDaPasta(pasta, "adventurer-idle-"), 8f, true);
         AnimationClip corrida = AnimationBuilder.CriarClip("Jogador_Corrida", AnimationBuilder.QuadrosDaPasta(pasta, "adventurer-run-"), 12f, true);
@@ -378,7 +382,7 @@ public static class PrefabBuilder
         CriarInimigo("OlhoVoador", AnimationBuilder.QuadrosDaPasta(gr + "/FlyEye", "fly-eye"), 10f,
             new Vector2(1.4f, 1.4f), Vector2.zero, 2.5f, voador: true, pisavel: true, fxMorte);
         CriarInimigo("DemonioMini", AnimationBuilder.QuadrosDaPasta(gr + "/MiniDemon", "run"), 10f,
-            new Vector2(1.6f, 1.9f), new Vector2(0f, -0.15f), 3.5f, voador: false, pisavel: true, fxMorte);
+            new Vector2(1.6f, 2.1f), new Vector2(0f, -0.26f), 3.5f, voador: false, pisavel: true, fxMorte);
         CriarInimigo("Fantasma", AnimationBuilder.QuadrosDaPasta(gr + "/Ghost", "ghost"), 8f,
             new Vector2(1.2f, 1.3f), Vector2.zero, 2f, voador: true, pisavel: false, fxMorte);
 
@@ -395,11 +399,15 @@ public static class PrefabBuilder
         CriarInimigo("Anjo", AnimationBuilder.QuadrosDaPasta(gr + "/Ghost", "ghost"), 8f,
             new Vector2(1.2f, 1.3f), Vector2.zero, 2.6f, voador: true, pisavel: false, fxMorte);
         CriarInimigo("MagoEsqueleto", AnimationBuilder.QuadrosDaPasta(gr + "/MiniDemon", "run"), 10f,
-            new Vector2(1.6f, 1.9f), new Vector2(0f, -0.15f), 2.2f, voador: false, pisavel: true, fxMorte);
+            new Vector2(1.6f, 2.1f), new Vector2(0f, -0.26f), 2.2f, voador: false, pisavel: true, fxMorte);
 
         // Inverno
+        // O desenho da raposa tem 2 unidades de altura e encosta na base do
+        // quadro. Com o colisor em 1,7 e offset -0,1, a base dele ficava 0,175
+        // acima da base do desenho - e como o objeto e assentado pelo COLISOR,
+        // as patas dela afundavam no chao. Agora os dois terminam no mesmo y.
         CriarInimigo("Raposa", AnimationBuilder.QuadrosDaPasta(wi + "/Fox", "fox-"), 12f,
-            new Vector2(3.0f, 1.7f), new Vector2(0f, -0.1f), 4f, voador: false, pisavel: true, fxMorte, olhaEsquerda: false);
+            new Vector2(3.0f, 2.0f), new Vector2(0f, -0.125f), 4f, voador: false, pisavel: true, fxMorte, olhaEsquerda: false);
         CriarInimigo("Yeti", AnimationBuilder.QuadrosDaPasta(wi + "/Yeti", "yeti-"), 8f,
             new Vector2(1.5f, 1.6f), new Vector2(0f, -0.15f), 1.8f, voador: false, pisavel: true, fxMorte, olhaEsquerda: false);
         CriarInimigo("Coruja", AnimationBuilder.QuadrosDaPasta(wi + "/Owl", "owl-"), 10f,

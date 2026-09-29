@@ -99,7 +99,7 @@ public static class UIBuilder
         TMP_Text textoMoedas = CriarTexto(canvas.transform, "TextoMoedas", "0", new Vector2(0f, 1f), new Vector2(112f, -128f), TextAlignmentOptions.Left, 40f);
 
         // Tentativas
-        Sprite heroi = Carregar(Art + "/Adventurer/adventurer-idle-00.png");
+        Sprite heroi = Carregar(Art + "/Adventurer/ComContorno/adventurer-idle-00.png");
         CriarImagem(canvas.transform, "IconeVidas", heroi, new Vector2(0f, 1f), new Vector2(30f, -200f), new Vector2(100f, 74f));
         TMP_Text textoTentativas = CriarTexto(canvas.transform, "TextoTentativas", "x3", new Vector2(0f, 1f), new Vector2(112f, -212f), TextAlignmentOptions.Left, 40f);
 
@@ -171,7 +171,7 @@ public static class UIBuilder
         string[] icones =
         {
             Art + "/SunnyLand/Items/Cherry/cherry-1.png",
-            Art + "/Adventurer/adventurer-idle-00.png",
+            Art + "/Adventurer/ComContorno/adventurer-idle-00.png",
             Art + "/UI/Hearts/heart.png",
         };
 
