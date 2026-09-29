@@ -369,7 +369,7 @@ public static class LevelDesigns
          .Chao(163, 14).Chao(180, 10, 6).Chao(193, 37);
 
         n.Bloco(30, 4, 3, 3).Bloco(64, 4, 4, 3).Bloco(70, 4, 3, 5).Bloco(104, 4, 3, 4).Bloco(130, 4, 4, 3).Bloco(140, 4, 3, 5)
-         .Bloco(168, 4, 3, 3).Bloco(200, 4, 3, 3);
+         .Bloco(168, 4, 3, 3).Bloco(186, 4, 3, 3);   // 200 ficava colado na arena do Yeti
 
         n.Plataforma(8, 7, 4).Plataforma(14, 10, 3).Plataforma(19, 8, 3)
          .Plataforma(36, 8, 4).Plataforma(48, 10, 4).Plataforma(54, 8, 3)
@@ -443,7 +443,7 @@ public static class LevelDesigns
 
         // Torres e degraus de pedra.
         n.Bloco(36, 4, 3, 4).Bloco(74, 4, 4, 3).Bloco(80, 4, 3, 6).Bloco(120, 6, 3, 4)
-         .Bloco(150, 4, 4, 3).Bloco(172, 4, 3, 5).Bloco(212, 4, 4, 3);
+         .Bloco(150, 4, 4, 3).Bloco(172, 4, 3, 5);   // o bloco em 212 entrava na arena da Bruxa
 
         // Plataformas suspensas: a fase sobe e desce mais que as outras.
         n.Plataforma(8, 8, 4).Plataforma(14, 11, 3).Plataforma(19, 8, 3)
@@ -452,7 +452,7 @@ public static class LevelDesigns
          .Plataforma(84, 9, 4).Plataforma(90, 12, 3).Plataforma(100, 8, 4).Plataforma(106, 11, 3)
          .Plataforma(126, 9, 4).Plataforma(132, 12, 4).Plataforma(146, 8, 3)
          .Plataforma(156, 10, 4).Plataforma(168, 9, 3).Plataforma(178, 11, 4)
-         .Plataforma(192, 8, 4).Plataforma(198, 11, 3).Plataforma(210, 9, 4);
+         .Plataforma(192, 8, 4).Plataforma(198, 11, 3);   // a laje em 210 tambem
 
         // Diamantes
         n.Fila("Gema", 5f, 5.6f, 4).Fila("Gema", 8.5f, 10.6f, 4).Fila("Gema", 14.5f, 13.6f, 3)

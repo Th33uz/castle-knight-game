@@ -22,6 +22,8 @@ public class Boss : MonoBehaviour
     [SerializeField] private float velocidadeInvestida = 9f;
     [SerializeField] private float duracaoInvestida = 1.1f;
     [SerializeField] private float forcaPulo = 16f;
+    [Tooltip("Acima disto o chefe para de investir e vai atras do jogador para cima.")]
+    [SerializeField] private float alturaQueFazSubir = 1.5f;
     [Tooltip("Segundos entre uma acao especial e a proxima, com a vida cheia. Diminui conforme apanha.")]
     [SerializeField] private float intervaloEntreAcoes = 2.4f;
     [SerializeField] private bool spriteOlhaParaEsquerda = true;
@@ -147,6 +149,21 @@ public class Boss : MonoBehaviour
         float fator = Mathf.Lerp(0.55f, 1f, (VidaAtual - 1f) / Mathf.Max(1, vidaMaxima - 1));
         proximaAcao = Time.time + intervaloEntreAcoes * fator;
 
+        // Jogador numa plataforma acima: a investida e horizontal, entao so faz
+        // o chefe correr embaixo dele - era assim que dava para ficar intocavel
+        // em cima de qualquer bloco. Nesse caso ele sobe atras, ou atira.
+        float desnivel = jogador != null ? jogador.position.y - transform.position.y : 0f;
+
+        if (desnivel > alturaQueFazSubir)
+        {
+            if (projetil != null && Random.value < 0.5f)
+                Atirar();
+            else
+                Pular(desnivel);
+
+            return;
+        }
+
         int opcoes = projetil != null ? 3 : 2;
         int sorteio = Random.Range(0, opcoes);
 
@@ -168,9 +185,24 @@ public class Boss : MonoBehaviour
             animator.SetFloat("Velocidade", velocidadeInvestida);
     }
 
-    private void Pular()
+    /// <param name="desnivel">
+    /// Quanto o jogador esta acima. Com zero, e o pulo normal do chefe.
+    /// </param>
+    private void Pular(float desnivel = 0f)
     {
-        rb.linearVelocity = new Vector2(direcao * velocidade * 1.6f, forcaPulo);
+        float forca = forcaPulo;
+
+        if (desnivel > 0f)
+        {
+            // Forca pela altura a vencer: v = raiz(2 * g * h), com folga de 1,5.
+            // Antes o pulo era sempre o mesmo, entao o chefe nunca subia numa
+            // plataforma e o jogador ficava intocavel em cima dela.
+            float gravidade = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
+            float necessaria = Mathf.Sqrt(2f * gravidade * (desnivel + 1.5f));
+            forca = Mathf.Clamp(necessaria, forcaPulo, forcaPulo * 2f);
+        }
+
+        rb.linearVelocity = new Vector2(direcao * velocidade * 1.6f, forca);
     }
 
     private void Atirar()
