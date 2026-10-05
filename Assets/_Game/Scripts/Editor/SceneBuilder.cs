@@ -57,7 +57,9 @@ public static class SceneBuilder
                 AssetDatabase.DeleteAsset(CaminhoDa(nome));
 
             if (nome == "Cutscene")
-                MontarCutscene(nome);
+                MontarCutscene(nome, "Assets/_Game/Video/cutscene.mp4", voltarAoMenu: false);
+            else if (nome == "CutsceneFinal")
+                MontarCutscene(nome, "Assets/_Game/Video/cutscene_final.mp4", voltarAoMenu: true);
             else if (nome == "MainMenu")
                 MontarMenu(nome);
             else
@@ -84,10 +86,11 @@ public static class SceneBuilder
     }
 
     // =====================================================================
-    // Cutscene (toca ao clicar em JOGAR, antes do Tutorial)
+    // Cutscenes: a de abertura (JOGAR -> video -> Tutorial) e a final
+    // (Fase4 -> video -> menu). Mesma cena, so muda o video e o destino.
     // =====================================================================
 
-    private static void MontarCutscene(string nome)
+    private static void MontarCutscene(string nome, string caminhoDoVideo, bool voltarAoMenu)
     {
         Scene cena = AbrirCopiaDaBase(nome);
 
@@ -111,9 +114,9 @@ public static class SceneBuilder
         cam.backgroundColor = Color.black;
         cam.clearFlags = CameraClearFlags.SolidColor;
 
-        VideoClip clipe = AssetDatabase.LoadAssetAtPath<VideoClip>("Assets/_Game/Video/cutscene.mp4");
+        VideoClip clipe = AssetDatabase.LoadAssetAtPath<VideoClip>(caminhoDoVideo);
         if (clipe == null)
-            Debug.LogWarning("[Setup] Video da cutscene nao encontrado em Assets/_Game/Video/cutscene.mp4");
+            Debug.LogWarning("[Setup] Video da cutscene nao encontrado em " + caminhoDoVideo);
 
         // O video e desenhado no plano proximo da camera: sem RenderTexture, sem Canvas.
         VideoPlayer player = cam.gameObject.AddComponent<VideoPlayer>();
@@ -131,6 +134,8 @@ public static class SceneBuilder
         so.FindProperty("player").objectReferenceValue = player;
         // Vazio: usa a primeira fase definida no GameManager (Tutorial).
         so.FindProperty("cenaSeguinte").stringValue = "";
+        // Final: encerra a partida e volta ao menu em vez de seguir para uma fase.
+        so.FindProperty("voltarAoMenu").boolValue = voltarAoMenu;
         so.ApplyModifiedProperties();
 
         // Aviso discreto no canto: "aperte qualquer tecla para pular".

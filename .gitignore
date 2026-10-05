@@ -43,3 +43,7 @@ crashlytics-build.properties
 # Exemplos do TextMesh Pro: 5,6 MB de amostras que o jogo nao usa
 /Assets/TextMesh Pro/Examples & Extras/
 /Assets/TextMesh Pro/Examples & Extras.meta
+
+# Log da reconstrucao em batch e solucao gerada pelo editor
+build.log
+*.slnx

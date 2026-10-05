@@ -30,8 +30,8 @@ public static class ScreenshotTool
             if (cam == null)
                 continue;
 
-            // A Cutscene e so video: nao rende captura util.
-            if (nome == "Cutscene")
+            // As cutscenes (abertura e final) sao so video: nao rendem captura util.
+            if (nome.StartsWith("Cutscene"))
                 continue;
 
             NivelDef nivel = LevelDesigns.PorNome(nome);

@@ -206,7 +206,8 @@ public class TerrainPainter
             tile.sprite = sprite;
             tile.color = Color.white;
             // Colisor da celula inteira: bordas arredondadas nao deixam buracos.
-            tile.colliderType = Tile.ColliderType.Grid;
+            // Excecao: tile que so ocupa parte da celula usa o contorno do desenho.
+            tile.colliderType = t.colisorPeloDesenho ? Tile.ColliderType.Sprite : Tile.ColliderType.Grid;
             AssetDatabase.CreateAsset(tile, caminho);
         }
 

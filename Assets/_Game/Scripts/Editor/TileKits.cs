@@ -9,10 +9,17 @@ public struct TileRef
     public string folha;
     public int indice;
 
-    public TileRef(string folha, int indice)
+    // Por padrao o colisor e a celula inteira (bordas arredondadas nao deixam
+    // buracos). Tiles em que o desenho ocupa so parte da celula (a ponta da
+    // laje da caverna, que tem 9 px de ar a esquerda) usam o contorno do
+    // sprite, senao o jogador fica em pe no vazio.
+    public bool colisorPeloDesenho;
+
+    public TileRef(string folha, int indice, bool colisorPeloDesenho = false)
     {
         this.folha = folha;
         this.indice = indice;
+        this.colisorPeloDesenho = colisorPeloDesenho;
     }
 }
 
@@ -125,13 +132,20 @@ public static class TileKits
         kit.recheio = new[] { b(1, 8), b(2, 8), b(3, 8), b(1, 9), b(2, 9), b(3, 9) };
 
         // Plataformas flutuantes: a laje grande, duas linhas de altura.
+        //
+        // Na folha a laje vai da coluna 12 a 21: a coluna 12 e a borda esquerda
+        // (9 px de ar + a quina iluminada), 13-20 sao o corpo e a 21 e a borda
+        // direita, com a face escura. A coluna 22 e VAZIA - antes ela era usada
+        // como ponta direita, e como o colisor e por celula o jogador pisava num
+        // tile invisivel no fim de toda laje; e a 21 entrava no meio, deixando
+        // um risco escuro no corpo.
         kit.alturaPlataforma = 2;
-        kit.plataformaTopo = new Faixa(Um(a(13, 2)),
-            new[] { a(14, 2), a(15, 2), a(16, 2), a(17, 2), a(18, 2), a(19, 2), a(20, 2), a(21, 2) },
-            Um(a(22, 2)));
-        kit.plataformaBaixo = new Faixa(Um(a(13, 3)),
-            new[] { a(14, 3), a(15, 3), a(16, 3), a(17, 3), a(18, 3), a(19, 3), a(20, 3), a(21, 3) },
-            Um(a(22, 3)));
+        kit.plataformaTopo = new Faixa(Um(new TileRef(FolhaCaverna, 2 * 23 + 12, colisorPeloDesenho: true)),
+            new[] { a(13, 2), a(14, 2), a(15, 2), a(16, 2), a(17, 2), a(18, 2), a(19, 2), a(20, 2) },
+            Um(a(21, 2)));
+        kit.plataformaBaixo = new Faixa(Um(new TileRef(FolhaCaverna, 3 * 23 + 12, colisorPeloDesenho: true)),
+            new[] { a(13, 3), a(14, 3), a(15, 3), a(16, 3), a(17, 3), a(18, 3), a(19, 3), a(20, 3) },
+            Um(a(21, 3)));
 
         kit.temPerigo = true;
         kit.perigoTopo = a(6, 4);
@@ -203,17 +217,23 @@ public static class TileKits
         kit.plataformaTopo = new Faixa(Um(t(1, 1)), new[] { t(2, 1), t(3, 1) }, Um(t(4, 1)), Um(t(17, 1)));
         kit.plataformaBaixo = new Faixa(Um(t(1, 3)), new[] { t(2, 3), t(3, 3) }, Um(t(4, 3)), Um(t(17, 3)));
 
-        // Arvore: copa 3x3 + tronco 2x2 + raizes 2x2 (a coluna do tronco fica no meio da copa).
+        // Arvore, 4 colunas de largura (10 a 13 na folha): a copa ocupa as
+        // linhas 4-7 (a 4 so tem a ponta), o tronco fica centrado na divisa das
+        // colunas 11 e 12 (linhas 9-10) e as raizes abrem nas 4 colunas
+        // (linhas 12-13). A versao anterior comecava na coluna 11 e punha o
+        // tronco nas colunas 12-13: cortava o galho da esquerda, mostrava so a
+        // metade direita do tronco e perdia a raiz esquerda.
         TileRef vazio = new TileRef(null, -1);
         kit.carimbos.Add(new TileRef[,]
         {
-            { t(11, 5), t(12, 5), t(13, 5) },
-            { t(11, 6), t(12, 6), t(13, 6) },
-            { t(11, 7), t(12, 7), t(13, 7) },
-            { vazio,    t(12, 9), t(13, 9) },
-            { vazio,    t(12, 10), t(13, 10) },
-            { vazio,    t(12, 12), t(13, 12) },
-            { vazio,    t(12, 13), t(13, 13) },
+            { vazio,     t(11, 4),  t(12, 4),  vazio },
+            { t(10, 5),  t(11, 5),  t(12, 5),  t(13, 5) },
+            { t(10, 6),  t(11, 6),  t(12, 6),  t(13, 6) },
+            { t(10, 7),  t(11, 7),  t(12, 7),  t(13, 7) },
+            { vazio,     t(11, 9),  t(12, 9),  vazio },
+            { vazio,     t(11, 10), t(12, 10), vazio },
+            { t(10, 12), t(11, 12), t(12, 12), t(13, 12) },
+            { t(10, 13), t(11, 13), t(12, 13), t(13, 13) },
         });
         kit.carimbos.Add(new TileRef[,] { { t(15, 6) } }); // pedra
 

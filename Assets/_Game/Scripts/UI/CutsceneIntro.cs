@@ -6,6 +6,9 @@ using UnityEngine.Video;
 /// Cutscene: toca o video e carrega a cena seguinte quando termina, ou quando o
 /// jogador aperta Espaco / Esc / Enter (ou clica).
 ///
+/// Serve tanto para a abertura (JOGAR -> video -> Tutorial) quanto para o final
+/// (depois da Fase 4 -> video -> menu, com <see cref="voltarAoMenu"/> ligado).
+///
 /// O video e desenhado no plano proximo da camera (CameraNearPlane), entao nao
 /// precisa de RenderTexture nem de Canvas.
 /// </summary>
@@ -14,6 +17,9 @@ public class CutsceneIntro : MonoBehaviour
     [SerializeField] private VideoPlayer player;
     [Tooltip("Deixe vazio para usar a primeira fase definida no GameManager.")]
     [SerializeField] private string cenaSeguinte = "";
+
+    [Tooltip("Cutscene final: ao terminar, encerra a partida e volta ao menu (ignora a cena seguinte).")]
+    [SerializeField] private bool voltarAoMenu;
 
     [Tooltip("Tempo no inicio em que a tecla nao pula o video (evita pular com o clique que veio do menu).")]
     [SerializeField] private float carenciaParaPular = 0.8f;
@@ -79,6 +85,14 @@ public class CutsceneIntro : MonoBehaviour
 
         if (player != null)
             player.Stop();
+
+        // Fim de jogo: o GameManager zera vidas, moedas e coracoes extras antes
+        // de abrir o menu, como em qualquer volta ao menu.
+        if (voltarAoMenu)
+        {
+            GameManager.Garantir().VoltarAoMenu();
+            return;
+        }
 
         string destino = !string.IsNullOrEmpty(cenaSeguinte)
             ? cenaSeguinte

@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string cenaTutorial = "Tutorial";
     [Tooltip("Ordem das fases de verdade. ProximaFase() anda por esta lista, por nome; quem nao esta nela volta ao menu.")]
     [SerializeField] private string[] ordemDasFases = { "Fase1", "Fase2", "Fase3", "Fase4" };
+    [Tooltip("Cutscene que toca ao terminar a ultima fase da lista; ela volta ao menu no fim. Vazio = volta direto ao menu.")]
+    [SerializeField] private string cenaCutsceneFinal = "CutsceneFinal";
     [Tooltip("Segundos entre a morte e o reinicio da fase: da tempo da animacao e do fade.")]
     [SerializeField] private float atrasoParaReiniciar = 1.4f;
 
@@ -156,7 +158,8 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Vai para a proxima fase da lista. Depois da ultima, volta ao menu.
+    /// Vai para a proxima fase da lista. Depois da ultima, toca a cutscene final
+    /// (que volta ao menu). Quem nao esta na lista (tutorial) volta direto ao menu.
     ///
     /// A busca e por NOME, e nao pelo indice do Build Settings: assim adicionar
     /// uma cena que nao e fase (cutscene, creditos) nao quebra a progressao.
@@ -168,6 +171,8 @@ public class GameManager : MonoBehaviour
 
         if (indice >= 0 && indice + 1 < ordemDasFases.Length)
             CarregarCena(ordemDasFases[indice + 1], limparCheckpoint: true);
+        else if (indice == ordemDasFases.Length - 1 && !string.IsNullOrEmpty(cenaCutsceneFinal))
+            CarregarCena(cenaCutsceneFinal, limparCheckpoint: true);
         else
             VoltarAoMenu();
     }

@@ -141,7 +141,8 @@ public static class LevelDesigns
     // A ordem vira a ordem do Build Settings, e a primeira e por onde o .exe abre.
     // A progressao entre fases NAO depende disso: o GameManager anda por nome
     // (ver ordemDasFases la), entao a Cutscene no meio da lista nao atrapalha.
-    public static readonly string[] OrdemDasCenas = { "MainMenu", "Cutscene", "Tutorial", "Fase1", "Fase2", "Fase3", "Fase4" };
+    // CutsceneFinal toca depois da Fase4 e volta ao menu.
+    public static readonly string[] OrdemDasCenas = { "MainMenu", "Cutscene", "Tutorial", "Fase1", "Fase2", "Fase3", "Fase4", "CutsceneFinal" };
 
     public static List<NivelDef> Todas()
     {

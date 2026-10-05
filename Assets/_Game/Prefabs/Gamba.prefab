@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3683601122213752419
+--- !u!1 &572864710128531962
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,44 +8,13 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3844283287731338180}
-  m_Layer: 0
-  m_Name: DetectorBorda
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3844283287731338180
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3683601122213752419}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.90000004, y: -0.59999996, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4343109672794358633}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8164168457636126669
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4343109672794358633}
-  - component: {fileID: 377477327664562492}
-  - component: {fileID: 4069894473785513176}
-  - component: {fileID: 149217512698559958}
-  - component: {fileID: 7488235990307385220}
-  - component: {fileID: 7427667200716540494}
-  - component: {fileID: 837729511900497266}
+  - component: {fileID: 5956193726095358777}
+  - component: {fileID: 7454791199410247332}
+  - component: {fileID: 6054093271869802315}
+  - component: {fileID: 8664689817570077614}
+  - component: {fileID: 4533072260059625021}
+  - component: {fileID: 860876885733150780}
+  - component: {fileID: 1315694520909816665}
   m_Layer: 10
   m_Name: Gamba
   m_TagString: Untagged
@@ -53,30 +22,30 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4343109672794358633
+--- !u!4 &5956193726095358777
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8164168457636126669}
+  m_GameObject: {fileID: 572864710128531962}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3844283287731338180}
+  - {fileID: 1650435748971963455}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &377477327664562492
+--- !u!212 &7454791199410247332
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8164168457636126669}
+  m_GameObject: {fileID: 572864710128531962}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -128,14 +97,14 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!95 &4069894473785513176
+--- !u!95 &6054093271869802315
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8164168457636126669}
+  m_GameObject: {fileID: 572864710128531962}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 4c49808a52cf48140b6a05e53bf176b5, type: 2}
@@ -150,14 +119,14 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!50 &149217512698559958
+--- !u!50 &8664689817570077614
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8164168457636126669}
+  m_GameObject: {fileID: 572864710128531962}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -177,13 +146,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &7488235990307385220
+--- !u!61 &4533072260059625021
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8164168457636126669}
+  m_GameObject: {fileID: 572864710128531962}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -223,13 +192,13 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.6, y: 1.3}
   m_EdgeRadius: 0
---- !u!114 &7427667200716540494
+--- !u!114 &860876885733150780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8164168457636126669}
+  m_GameObject: {fileID: 572864710128531962}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 117324453522b1541903e889bb7b9aa7, type: 3}
@@ -241,19 +210,19 @@ MonoBehaviour:
   voador: 0
   balancoVertical: 0.4
   velocidadeDoBalanco: 2
-  detectorBorda: {fileID: 3844283287731338180}
+  detectorBorda: {fileID: 1650435748971963455}
   alcanceDetector: 0.6
   camadaChao:
     serializedVersion: 2
     m_Bits: 256
   distanciaPatrulha: 3
---- !u!114 &837729511900497266
+--- !u!114 &1315694520909816665
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8164168457636126669}
+  m_GameObject: {fileID: 572864710128531962}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9de796acb1de3d6428f9bd911440ae62, type: 3}
@@ -264,4 +233,35 @@ MonoBehaviour:
   alturaMinimaDoPisao: 0.39000002
   forcaDoQuique: 14
   imuneAEspada: 0
-  efeitoMorte: {fileID: 3856993193061329374, guid: 19d586fa2ec39b242aa2c79f64bbbf88, type: 3}
+  efeitoMorte: {fileID: 2060064320561154141, guid: 19d586fa2ec39b242aa2c79f64bbbf88, type: 3}
+--- !u!1 &4592625557395228327
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1650435748971963455}
+  m_Layer: 0
+  m_Name: DetectorBorda
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1650435748971963455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4592625557395228327}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.90000004, y: -0.59999996, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5956193726095358777}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

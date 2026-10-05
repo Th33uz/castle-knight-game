@@ -15,9 +15,13 @@ Clicar em **JOGAR** toca a cutscene (`Assets/_Game/Video/cutscene.mp4`) e depois
 carrega o Tutorial; `Espaço` pula. Pelo menu **FASES** você entra direto na fase,
 sem cutscene.
 
-Fluxo: `JOGAR → cutscene → Tutorial → (volta ao menu)` e `FASES → Fase 1 → 2 → 3 →
-(volta ao menu)`. O tutorial termina no menu porque não está em `ordemDasFases`
-(no `GameManager`) — quem não está nessa lista volta para o menu ao terminar.
+Fluxo: `JOGAR → cutscene → Tutorial → (volta ao menu)` e `FASES → Fase 1 → 2 → 3 → 4 →
+cutscene final → (volta ao menu)`. O tutorial termina no menu porque não está em
+`ordemDasFases` (no `GameManager`) — quem não está nessa lista volta para o menu ao
+terminar. A **cutscene final** (`Assets/_Game/Video/cutscene_final.mp4`, cena
+`CutsceneFinal`) toca ao derrotar a Bruxa na Fase 4; `Espaço` pula, e no fim o jogo volta
+ao menu. As duas cutscenes usam o mesmo script (`Scripts/UI/CutsceneIntro.cs`), a final com
+`voltarAoMenu` ligado.
 
 Se algum texto aparecer invisível: `Window → TextMeshPro → Import TMP Essential Resources`.
 
