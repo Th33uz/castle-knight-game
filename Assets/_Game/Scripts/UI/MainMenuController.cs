@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,6 +15,32 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject painelCreditos;
     [SerializeField] private GameObject painelFases;
 
+    [Header("Tela FASES")]
+    [Tooltip("Botao que alterna entrar na fase com a vida normal ou ja com todos os coracoes.")]
+    [SerializeField] private Button botaoCoracoes;
+
+    /// <summary>Alterna a opcao de comecar a fase com a vida maxima e atualiza o rotulo do botao.</summary>
+    public void AlternarCoracoesNoMaximo()
+    {
+        GameManager gm = GameManager.Garantir();
+        gm.ComecarComCoracoesNoMaximo = !gm.ComecarComCoracoesNoMaximo;
+        AtualizarRotuloDosCoracoes();
+    }
+
+    private void AtualizarRotuloDosCoracoes()
+    {
+        if (botaoCoracoes == null)
+            return;
+
+        bool maximo = GameManager.Instance != null && GameManager.Instance.ComecarComCoracoesNoMaximo;
+        int total = 3 + GameManager.MaximoDeCoracoesExtras;
+        string rotulo = maximo ? "CORAÇÕES: MÁXIMO (" + total + ")" : "CORAÇÕES: NORMAL (3)";
+
+        // O botao tem dois textos (o rotulo e o brilho por baixo): os dois mudam.
+        foreach (TMP_Text texto in botaoCoracoes.GetComponentsInChildren<TMP_Text>(true))
+            texto.text = rotulo;
+    }
+
     private void Start()
     {
         // O menu tambem precisa de um GameManager, porque e dele que sai o
@@ -24,6 +51,7 @@ public class MainMenuController : MonoBehaviour
             go.AddComponent<GameManager>();
         }
 
+        AtualizarRotuloDosCoracoes();
         MostrarPrincipal();
     }
 

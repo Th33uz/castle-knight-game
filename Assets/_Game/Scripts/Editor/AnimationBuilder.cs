@@ -297,15 +297,40 @@ public static class AnimationBuilder
     }
 
     /// <summary>
-    /// Maquina de estados da Bruxa: parada / andando pelo float "Velocidade",
-    /// mais os triggers "Atacar" (carregar + lancar), "Dano" e "Morrer".
+    /// Nasce com uma animacao unica e depois fica no loop de andar. Sapo
+    /// invocado pela Bruxa: aparece no chao e sai pulando.
     /// </summary>
-    public static AnimatorController CriarControllerBruxa(string nome,
-        AnimationClip idle, AnimationClip correr, AnimationClip carregar,
-        AnimationClip atacar, AnimationClip dano, AnimationClip morte)
+    public static AnimatorController CriarControllerNascerEAndar(string nome, AnimationClip nascer, AnimationClip andar)
     {
         AnimatorController c = NovoController(nome);
         c.AddParameter("Velocidade", AnimatorControllerParameterType.Float);
+        c.AddParameter("Atacar", AnimatorControllerParameterType.Trigger);
+
+        AnimatorStateMachine sm = c.layers[0].stateMachine;
+
+        AnimatorState sNascer = sm.AddState("Nascer");
+        sNascer.motion = nascer;
+        sm.defaultState = sNascer;
+
+        AnimatorState sAndar = sm.AddState("Loop");
+        sAndar.motion = andar;
+        Transicao(sNascer, sAndar, comExitTime: true);
+
+        return c;
+    }
+
+    /// <summary>
+    /// Maquina de estados da Bruxa: parada / andando pelo float "Velocidade",
+    /// no ar (vassoura) pelo bool "NoAr", mais os triggers "Atacar" (carregar +
+    /// lancar), "Dano" e "Morrer".
+    /// </summary>
+    public static AnimatorController CriarControllerBruxa(string nome,
+        AnimationClip idle, AnimationClip correr, AnimationClip carregar,
+        AnimationClip atacar, AnimationClip dano, AnimationClip morte, AnimationClip voar = null)
+    {
+        AnimatorController c = NovoController(nome);
+        c.AddParameter("Velocidade", AnimatorControllerParameterType.Float);
+        c.AddParameter("NoAr", AnimatorControllerParameterType.Bool);
         c.AddParameter("Atacar", AnimatorControllerParameterType.Trigger);
         c.AddParameter("Dano", AnimatorControllerParameterType.Trigger);
         c.AddParameter("Morrer", AnimatorControllerParameterType.Trigger);
@@ -322,6 +347,16 @@ public static class AnimationBuilder
 
         Transicao(sIdle, sCorrer).AddCondition(AnimatorConditionMode.Greater, 0.3f, "Velocidade");
         Transicao(sCorrer, sIdle).AddCondition(AnimatorConditionMode.Less, 0.3f, "Velocidade");
+
+        // No pulo ela monta na vassoura; ao pousar volta ao chao.
+        if (voar != null)
+        {
+            AnimatorState sVoar = sm.AddState("Voar");
+            sVoar.motion = voar;
+            Transicao(sIdle, sVoar).AddCondition(AnimatorConditionMode.If, 0f, "NoAr");
+            Transicao(sCorrer, sVoar).AddCondition(AnimatorConditionMode.If, 0f, "NoAr");
+            Transicao(sVoar, sIdle).AddCondition(AnimatorConditionMode.IfNot, 0f, "NoAr");
+        }
 
         // Atacar sempre passa por "carregar" antes: da o aviso visual de que a
         // magia vem, para a luta ser justa.

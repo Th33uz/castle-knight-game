@@ -148,7 +148,26 @@ public class GameManager : MonoBehaviour
     {
         temCheckpoint = false;
         cenaDoCheckpoint = null;
+        itensColetados.Clear();
     }
+
+    // ----------------- Itens ja pegos -----------------
+    // Morrer recarrega a cena inteira, entao toda gema e fruta renasceria e o
+    // jogador poderia pegar as mesmas de novo a cada vida. Cada item pego fica
+    // anotado por cena + posicao; ao renascer, o Collectible se apaga sozinho
+    // se ja estiver na lista. A lista zera junto com o checkpoint (fase nova,
+    // menu, partida nova).
+
+    private readonly System.Collections.Generic.HashSet<string> itensColetados = new System.Collections.Generic.HashSet<string>();
+
+    private static string ChaveDoItem(Vector3 posicao)
+    {
+        return SceneManager.GetActiveScene().name + ":" + posicao.x.ToString("F1") + ":" + posicao.y.ToString("F1");
+    }
+
+    public void RegistrarItemColetado(Vector3 posicao) => itensColetados.Add(ChaveDoItem(posicao));
+
+    public bool ItemJaColetado(Vector3 posicao) => itensColetados.Contains(ChaveDoItem(posicao));
 
     // ----------------- Troca de cenas -----------------
 
@@ -169,7 +188,10 @@ public class GameManager : MonoBehaviour
         string atual = SceneManager.GetActiveScene().name;
         int indice = System.Array.IndexOf(ordemDasFases, atual);
 
-        if (indice >= 0 && indice + 1 < ordemDasFases.Length)
+        // O tutorial e o comeco da partida: terminou, segue para a Fase 1.
+        if (atual == cenaTutorial && ordemDasFases.Length > 0)
+            CarregarCena(ordemDasFases[0], limparCheckpoint: true);
+        else if (indice >= 0 && indice + 1 < ordemDasFases.Length)
             CarregarCena(ordemDasFases[indice + 1], limparCheckpoint: true);
         else if (indice == ordemDasFases.Length - 1 && !string.IsNullOrEmpty(cenaCutsceneFinal))
             CarregarCena(cenaCutsceneFinal, limparCheckpoint: true);
@@ -184,13 +206,30 @@ public class GameManager : MonoBehaviour
         CarregarCena(cenaCutscene, limparCheckpoint: true);
     }
 
-    /// <summary>Para onde a cutscene vai quando termina.</summary>
+    /// <summary>Para onde a cutscene vai quando o jogador aceita o tutorial.</summary>
     public string PrimeiraFase => cenaTutorial;
+
+    /// <summary>Primeira fase da lista de verdade: para quem pula o tutorial, e para onde o tutorial leva.</summary>
+    public string PrimeiraFaseDeVerdade => ordemDasFases.Length > 0 ? ordemDasFases[0] : cenaMenu;
+
+    /// <summary>
+    /// Opcao da tela FASES: entrar na fase ja com a vida maxima (3 + os coracoes
+    /// extras da loja). Serve para mostrar o jogo sem precisar farmar diamantes.
+    /// Nao vale para JOGAR, que e a partida de verdade.
+    /// </summary>
+    public bool ComecarComCoracoesNoMaximo { get; set; }
 
     /// <summary>Comeca um jogo novo direto numa fase (menu de selecao de fases).</summary>
     public void IrParaFase(string cena)
     {
         ReiniciarPartida();
+
+        if (ComecarComCoracoesNoMaximo)
+        {
+            CoracoesExtras = MaximoDeCoracoesExtras;
+            OnEstadoMudou?.Invoke();
+        }
+
         CarregarCena(cena, limparCheckpoint: true);
     }
 

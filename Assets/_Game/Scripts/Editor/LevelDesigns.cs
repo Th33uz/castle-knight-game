@@ -199,7 +199,7 @@ public static class LevelDesigns
         n.Enfeite(PropsFloresta + "/sign.png", 5f, 4f, 6)
          .Enfeite(PropsFloresta + "/tree.png", 8f, 4f, 3).Enfeite(PropsFloresta + "/bush.png", 14f, 4f, 6)
          .Enfeite(PropsFloresta + "/tree.png", 36f, 4f, 3).Enfeite(PropsFloresta + "/shrooms.png", 40f, 4f, 6)
-         .Enfeite(PropsFloresta + "/bush.png", 52f, 4f, 6).Enfeite(PropsFloresta + "/tree.png", 70f, 4f, 3)
+         .Enfeite(PropsFloresta + "/bush.png", 44f, 4f, 6).Enfeite(PropsFloresta + "/tree.png", 70f, 4f, 3)   // 52 ficava no meio do vao 51-55
          .Enfeite(PropsFloresta + "/house.png", 76f, 4f, 4)
          .Enfeite(PropsFloresta + "/tree.png", 97f, 4f, 3)
          .Enfeite(PropsFloresta + "/bush.png", 105f, 4f, 6);
@@ -255,7 +255,7 @@ public static class LevelDesigns
          .NoChao("Trampolim", 78f, 4f).NoChao("Trampolim", 128f, 4f);
 
         n.Movel("PlataformaMovel", 69f, 5f, new Vector2(5f, 0f))
-         .Movel("PlataformaMovel", 54f, 6f, new Vector2(0f, 4f))
+         .Movel("PlataformaMovel", 55.5f, 6f, new Vector2(0f, 4f))   // em 54 nascia metade dentro do bloco 38-53
          .Movel("PlataformaMovel", 148f, 6f, new Vector2(0f, 3f));
 
         n.NoChao("Checkpoint", 41f, 6f).NoChao("Checkpoint", 86f, 4f).NoChao("Checkpoint", 137f, 4f).NoChao("Checkpoint", 170f, 4f)
@@ -296,21 +296,24 @@ public static class LevelDesigns
         // altura (alturaPlataforma = 2 no TileKits), ao contrario da floresta,
         // que tem uma: com 3 de largura ela virava um cubo e sobrava pouco chao
         // para pousar. Com 5 e 6 a superficie fica proporcional a altura.
-        n.Plataforma(19, 7, 5).Plataforma(38, 7, 5).Plataforma(42, 9, 4)
-         .Plataforma(50, 8, 6).Plataforma(62, 7, 6).Plataforma(72, 9, 6).Plataforma(78, 11, 5)
-         .Plataforma(88, 7, 5).Plataforma(93, 9, 5).Plataforma(100, 8, 6).Plataforma(120, 8, 6).Plataforma(128, 10, 5)
-         .Plataforma(141, 7, 6).Plataforma(150, 9, 5).Plataforma(163, 7, 5).Plataforma(166, 9, 5);
+        //
+        // Lajes em escada ficam com pelo menos uma coluna de ar entre elas: duas
+        // que dividiam uma coluna (38-42 e 42-45) viravam um "L" de pedra colada.
+        n.Plataforma(19, 7, 5).Plataforma(37, 7, 5).Plataforma(43, 9, 4)
+         .Plataforma(50, 8, 6).Plataforma(62, 7, 6).Plataforma(72, 9, 6).Plataforma(79, 11, 5)
+         .Plataforma(88, 7, 5).Plataforma(94, 9, 5).Plataforma(100, 8, 6).Plataforma(120, 8, 6).Plataforma(128, 10, 5)
+         .Plataforma(141, 7, 6).Plataforma(150, 9, 5).Plataforma(163, 7, 5).Plataforma(169, 9, 5);
 
         // Diamantes (moeda)
         n.Fila("Gema", 6f, 5.6f, 4).Fila("Gema", 12f, 5.6f, 4).Fila("Gema", 19.5f, 9.6f, 3).Fila("Gema", 27f, 5.6f, 5)
-         .Fila("Gema", 38.5f, 9.6f, 3).Fila("Gema", 50.5f, 10.6f, 4).Fila("Gema", 55f, 5.6f, 5).Fila("Gema", 62.5f, 9.6f, 4)
-         .Fila("Gema", 72.5f, 11.6f, 4).Fila("Gema", 70f, 5.6f, 6).Fila("Gema", 88.5f, 9.6f, 3).Fila("Gema", 93.5f, 11.6f, 3)
+         .Fila("Gema", 37.5f, 9.6f, 3).Fila("Gema", 50.5f, 10.6f, 4).Fila("Gema", 55f, 5.6f, 5).Fila("Gema", 62.5f, 9.6f, 4)
+         .Fila("Gema", 72.5f, 11.6f, 4).Fila("Gema", 70f, 5.6f, 6).Fila("Gema", 88.5f, 9.6f, 3).Fila("Gema", 94.5f, 11.6f, 3)
          .Fila("Gema", 100.5f, 10.6f, 4).Fila("Gema", 118f, 5.6f, 5).Fila("Gema", 120.5f, 10.6f, 4).Fila("Gema", 128.5f, 12.6f, 3)
          .Fila("Gema", 141.5f, 9.6f, 4).Fila("Gema", 150.5f, 11.6f, 3).Fila("Gema", 152f, 5.6f, 5)
-         .Fila("Gema", 163.5f, 9.6f, 3).Fila("Gema", 166.5f, 11.6f, 3).Fila("Gema", 173f, 5.6f, 5);
+         .Fila("Gema", 163.5f, 9.6f, 3).Fila("Gema", 169.5f, 11.6f, 3).Fila("Gema", 173f, 5.6f, 5);
 
         // Frutas (cura)
-        n.NoAr("Cereja", 42.7f, 11.6f).NoAr("Cereja", 79.5f, 13.6f).NoAr("Cereja", 106f, 5.6f)
+        n.NoAr("Cereja", 44.5f, 11.6f).NoAr("Cereja", 80.5f, 13.6f).NoAr("Cereja", 106f, 5.6f)
          .NoAr("Cereja", 158f, 5.6f).NoAr("Cereja", 179f, 5.6f);
 
         // Inimigos da caverna
@@ -337,17 +340,20 @@ public static class LevelDesigns
         n.NoChao("Loja", 178.5f, 4f);
         n.Chefe("LagartoDeFogo", 198f, 4f, 182f);
 
+        // Pilares (carimbo 3, 3 colunas ate y=9) longe das lajes: em 55 e 124 eles
+        // entravam por baixo da pedra flutuante e pareciam colados nela.
         n.Carimbar(0, 4, 4).Carimbar(1, 12, 6).Carimbar(3, 8, 4).Carimbar(2, 27, 4).Carimbar(0, 33, 4)
-         .Carimbar(3, 55, 4).Carimbar(1, 70, 6).Carimbar(2, 82, 4).Carimbar(0, 104, 4).Carimbar(3, 124, 4).Carimbar(1, 132, 6)
+         .Carimbar(3, 57, 4).Carimbar(1, 70, 6).Carimbar(2, 82, 4).Carimbar(0, 104, 4).Carimbar(3, 134, 4).Carimbar(1, 132, 6)
          .Carimbar(0, 153, 4).Carimbar(3, 186, 4).Carimbar(1, 195, 6).Carimbar(3, 203, 4);
 
         n.Enfeite(PropsCaverna + "/plant-big.png", 6f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 30f, 4f, 6)
-         .Enfeite(PropsCaverna + "/plant.png", 60f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 74f, 4f, 6)
+         .Enfeite(PropsCaverna + "/plant.png", 59f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 74f, 4f, 6)
          .Enfeite(PropsCaverna + "/plant-big.png", 106f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 126f, 4f, 6)
          // Nada de caixote: crate e big-crate sao os unicos props de madeira
          // marrom do pack, e destoavam da caverna, que e toda azul cristalina
          // com maquinario cinza. Terminal e console tem o mesmo porte deles.
-         .Enfeite(PropsCaverna + "/terminal.png", 17f, 4f, 6).Enfeite(PropsCaverna + "/console.png", 44f, 4f, 6)
+         // O console ficava em 44, boiando sobre a lava 37-44.
+         .Enfeite(PropsCaverna + "/terminal.png", 16f, 4f, 6).Enfeite(PropsCaverna + "/console.png", 56f, 4f, 6)
          .Enfeite(PropsCaverna + "/palm.png", 155f, 4f, 6).Enfeite(PropsCaverna + "/plant-big.png", 178f, 4f, 6)
          .Enfeite(PropsCaverna + "/plant.png", 192f, 4f, 6).Enfeite(PropsCaverna + "/palm.png", 204f, 4f, 6);
 
@@ -382,9 +388,9 @@ public static class LevelDesigns
         n.Fila("Gema", 8.5f, 9.5f, 4).Fila("Gema", 19.5f, 10.5f, 3).Fila("Gema", 5f, 5.5f, 4)
          .Fila("Gema", 36.5f, 10.5f, 4).Fila("Gema", 45f, 7.5f, 6).Fila("Gema", 48.5f, 12.6f, 4).Fila("Gema", 54.5f, 10.5f, 3)
          .Fila("Gema", 66f, 8.5f, 3).Fila("Gema", 71.5f, 10.6f, 2).Fila("Gema", 84.5f, 10.5f, 4).Fila("Gema", 90.5f, 12.6f, 4)
-         .Fila("Gema", 100f, 5.5f, 5).Fila("Gema", 108.5f, 11.5f, 4).Fila("Gema", 124.5f, 10.5f, 4).Fila("Gema", 135f, 5.5f, 5)
+         .Fila("Gema", 100f, 5.5f, 4).Fila("Gema", 108.5f, 11.5f, 4).Fila("Gema", 124.5f, 10.5f, 4).Fila("Gema", 135f, 5.5f, 4)   // filas de 5 entravam nos blocos 104 e 140
          .Fila("Gema", 141.5f, 10.6f, 2).Fila("Gema", 146.5f, 11.5f, 4).Fila("Gema", 152.5f, 13.6f, 3)
-         .Fila("Gema", 165f, 5.5f, 4).Fila("Gema", 172.5f, 11.5f, 3).Fila("Gema", 181f, 7.5f, 6).Fila("Gema", 189.5f, 14.6f, 3)
+         .Fila("Gema", 165f, 5.5f, 3).Fila("Gema", 172.5f, 11.5f, 3).Fila("Gema", 181f, 7.5f, 6).Fila("Gema", 189.5f, 14.6f, 3)
          .Fila("Gema", 195f, 5.5f, 5);
 
         // Frutas (cura)
@@ -392,11 +398,14 @@ public static class LevelDesigns
          .NoAr("Cereja", 186f, 12.6f).NoAr("Cereja", 201.5f, 7.6f);
 
         n.NoChao("Yeti", 12f, 4f).NoChao("Raposa", 18f, 4f, true).NoChao("Yeti", 34f, 4f)
-         .NoChao("Raposa", 50f, 6f).NoChao("Yeti", 60f, 4f, true).NoChao("Raposa", 72f, 4f)
+         // Havia uma raposa em 72, dentro do Bloco(70, 4, 3, 5); em 90 ela cruzava a
+         // plataforma movel de 93 (varre 90-96) e subia nela. Saiu: o trecho ja tem Yeti.
+         .NoChao("Raposa", 50f, 6f).NoChao("Yeti", 60f, 4f, true)
          .NoChao("Yeti", 86f, 4f).NoChao("Raposa", 100f, 4f, true).NoChao("Yeti", 112f, 4f)
          .NoChao("Raposa", 126f, 4f).NoChao("Yeti", 136f, 4f, true).NoChao("Raposa", 148f, 4f)
-         .NoChao("Raposa", 166f, 4f, true).NoChao("Yeti", 185f, 6f).NoChao("Raposa", 188f, 6f)
-         .NoAr("Coruja", 24f, 10f).NoAr("Coruja", 56f, 12f).NoAr("Coruja", 94f, 11f).NoAr("Coruja", 118f, 12f).NoAr("Coruja", 144f, 12f)
+         // Em 188 a raposa nascia dentro do Bloco(186, 4, 3, 3); agora fica em cima dele (topo em y=7).
+         .NoChao("Raposa", 166f, 4f, true).NoChao("Yeti", 185f, 6f).NoChao("Raposa", 187.5f, 7f)
+         .NoAr("Coruja", 24f, 10f).NoAr("Coruja", 56f, 12f).NoAr("Coruja", 94f, 13.5f).NoAr("Coruja", 118f, 12f).NoAr("Coruja", 144f, 12f)
          .NoAr("Coruja", 178f, 11f).NoAr("Coruja", 197f, 12f);
 
         n.NoChao("Espinhos", 27f, 4f).NoChao("Espinhos", 28f, 4f)
@@ -417,9 +426,15 @@ public static class LevelDesigns
         n.NoChao("Loja", 198.8f, 4f);
         n.Chefe("YetiGigante", 218f, 4f, 203f);
 
-        n.Carimbar(0, 4, 4).Carimbar(1, 10, 4).Carimbar(0, 37, 4).Carimbar(1, 61, 4).Carimbar(0, 76, 4)
-         .Carimbar(0, 101, 4).Carimbar(1, 110, 4).Carimbar(0, 133, 4).Carimbar(0, 150, 4).Carimbar(1, 154, 4)
-         .Carimbar(0, 170, 4).Carimbar(1, 195, 4).Carimbar(0, 206, 4).Carimbar(0, 224, 4);
+        // Arvores (carimbo 0, 4 colunas x 8 linhas) com a base na superficie.
+        // Elas pareciam flutuar porque o tile de topo da neve tem uns 6 px de ar
+        // acima do desenho; o SceneBuilder afunda a camada de decoracao do
+        // inverno em 0,4 para as raizes entrarem na neve. Nenhuma sobre vao nem
+        // encostando em bloco ou laje (37 pendia sobre o vao 40-43, 76 estava
+        // inteira no vao 76-79, 101/133/170 entravam em blocos).
+        n.Carimbar(0, 4, 4).Carimbar(1, 10, 4).Carimbar(0, 26, 4).Carimbar(1, 61, 4).Carimbar(0, 80, 4)
+         .Carimbar(0, 112, 4).Carimbar(1, 110, 4).Carimbar(0, 134, 4).Carimbar(0, 150, 4).Carimbar(1, 154, 4)
+         .Carimbar(0, 164, 4).Carimbar(1, 195, 4).Carimbar(0, 206, 4).Carimbar(0, 224, 4);
 
         return n;
     }
@@ -435,7 +450,7 @@ public static class LevelDesigns
             cena = "Fase4", bioma = Bioma.Castelo, musica = "castelo", largura = 240,
             nascimento = new Vector2(3f, 4f), corDoCeu = new Color(0.09f, 0.07f, 0.15f),
             titulo = "FASE 4", subtitulo = "O CASTELO DA BRUXA",
-            icone = "Assets/_Game/Art/Castle/Bruxa/Bruxa_Idle (32x48).png"
+            icone = "Assets/_Game/Art/Elthen/Bruxa (32x32).png"
         };
 
         // Salas ligadas por vaos: o castelo e mais recortado que as outras fases.
@@ -459,9 +474,9 @@ public static class LevelDesigns
         n.Fila("Gema", 5f, 5.6f, 4).Fila("Gema", 8.5f, 10.6f, 4).Fila("Gema", 14.5f, 13.6f, 3)
          .Fila("Gema", 19.5f, 10.6f, 3).Fila("Gema", 22f, 5.6f, 4).Fila("Gema", 32.5f, 11.6f, 3)
          .Fila("Gema", 41.5f, 9.6f, 4).Fila("Gema", 46.5f, 12.6f, 3).Fila("Gema", 53f, 7.6f, 5)
-         .Fila("Gema", 56.5f, 11.6f, 4).Fila("Gema", 62.5f, 14.6f, 3).Fila("Gema", 71f, 5.6f, 5)
+         .Fila("Gema", 56.5f, 11.6f, 4).Fila("Gema", 62.5f, 14.6f, 3).Fila("Gema", 71f, 5.6f, 3)   // 5 entravam no bloco 74-77
          .Fila("Gema", 84.5f, 11.6f, 4).Fila("Gema", 90.5f, 14.6f, 3).Fila("Gema", 100.5f, 10.6f, 4)
-         .Fila("Gema", 106.5f, 13.6f, 3).Fila("Gema", 116f, 7.6f, 5).Fila("Gema", 126.5f, 11.6f, 4)
+         .Fila("Gema", 106.5f, 13.6f, 3).Fila("Gema", 116f, 7.6f, 4).Fila("Gema", 126.5f, 11.6f, 4)   // a 5a entrava no bloco 120-122
          .Fila("Gema", 132.5f, 14.6f, 4).Fila("Gema", 146.5f, 10.6f, 3).Fila("Gema", 156.5f, 12.6f, 4)
          .Fila("Gema", 165f, 5.6f, 5).Fila("Gema", 168.5f, 11.6f, 3).Fila("Gema", 178.5f, 13.6f, 4)
          .Fila("Gema", 192.5f, 10.6f, 4).Fila("Gema", 198.5f, 13.6f, 3).Fila("Gema", 208f, 5.6f, 5);
@@ -490,7 +505,8 @@ public static class LevelDesigns
          .NoChao("Espinhos", 62f, 6f).NoChao("Espinhos", 63f, 6f)
          .NoChao("Espinhos", 100f, 4f).NoChao("Espinhos", 101f, 4f).NoChao("Espinhos", 102f, 4f)
          .NoChao("Espinhos", 170f, 4f).NoChao("Espinhos", 171f, 4f)
-         .NoChao("Fogo", 24f, 4f).NoChao("Fogo", 76f, 4f).NoChao("Fogo", 128f, 6f).NoChao("Fogo", 180f, 4f)
+         // O fogo de 76 nascia dentro do Bloco(74, 4, 4, 3) (o validador acusou): foi para depois dos dois blocos.
+         .NoChao("Fogo", 24f, 4f).NoChao("Fogo", 85f, 4f).NoChao("Fogo", 128f, 6f).NoChao("Fogo", 180f, 4f)
          .NoAr("Serra", 49f, 5f).NoAr("Serra", 92f, 5f).NoAr("Serra", 139f, 5f).NoAr("Serra", 187f, 5f)
          .NoChao("Trampolim", 65f, 6f).NoChao("Trampolim", 148f, 4f).NoChao("Trampolim", 196f, 4f);
 
@@ -508,14 +524,18 @@ public static class LevelDesigns
         n.Chefe("Bruxa", 228f, 4f, 215f);
 
         // Cenario: janelas, altares, estatuas e tochas do pack gotico.
+        // Enfeites com o pe em chao de verdade e longe dos blocos de parede:
+        // altar 38 e janela 122 nasciam dentro de bloco, janela 60 dentro do
+        // chao alto, coluna 160 e estatua 204 sobre vaos, estatua 96 / altar 144 /
+        // janela 190 passavam da beirada, coluna 79 e tocha 176 encostavam em bloco.
         n.Enfeite(PropsCastelo + "/janela.png", 6f, 4f, 2).Enfeite(PropsCastelo + "/tocha.png", 16f, 4f, 6)
-         .Enfeite(PropsCastelo + "/estatua.png", 22f, 4f, 4).Enfeite(PropsCastelo + "/altar.png", 38f, 4f, 3)
-         .Enfeite(PropsCastelo + "/tocha.png", 54f, 6f, 6).Enfeite(PropsCastelo + "/janela.png", 60f, 4f, 2)
-         .Enfeite(PropsCastelo + "/coluna.png", 79f, 4f, 3).Enfeite(PropsCastelo + "/estatua.png", 96f, 4f, 4)
-         .Enfeite(PropsCastelo + "/tocha.png", 104f, 4f, 6).Enfeite(PropsCastelo + "/janela.png", 122f, 6f, 2)
-         .Enfeite(PropsCastelo + "/altar.png", 144f, 4f, 3).Enfeite(PropsCastelo + "/coluna.png", 160f, 4f, 3)
-         .Enfeite(PropsCastelo + "/tocha.png", 176f, 4f, 6).Enfeite(PropsCastelo + "/janela.png", 190f, 4f, 2)
-         .Enfeite(PropsCastelo + "/estatua.png", 204f, 4f, 4).Enfeite(PropsCastelo + "/altar.png", 222f, 4f, 3)
+         .Enfeite(PropsCastelo + "/estatua.png", 22f, 4f, 4).Enfeite(PropsCastelo + "/altar.png", 43f, 4f, 3)
+         .Enfeite(PropsCastelo + "/tocha.png", 54f, 6f, 6).Enfeite(PropsCastelo + "/janela.png", 60f, 6f, 2)
+         .Enfeite(PropsCastelo + "/tocha.png", 96f, 4f, 6).Enfeite(PropsCastelo + "/coluna.png", 100f, 4f, 3)
+         .Enfeite(PropsCastelo + "/estatua.png", 107f, 4f, 4).Enfeite(PropsCastelo + "/janela.png", 128f, 6f, 2)
+         .Enfeite(PropsCastelo + "/altar.png", 146f, 4f, 3).Enfeite(PropsCastelo + "/coluna.png", 168f, 4f, 3)
+         .Enfeite(PropsCastelo + "/tocha.png", 177f, 4f, 6).Enfeite(PropsCastelo + "/janela.png", 193f, 4f, 2)
+         .Enfeite(PropsCastelo + "/estatua.png", 198f, 4f, 4).Enfeite(PropsCastelo + "/altar.png", 222f, 4f, 3)
          .Enfeite(PropsCastelo + "/tocha.png", 232f, 4f, 6);
 
         return n;

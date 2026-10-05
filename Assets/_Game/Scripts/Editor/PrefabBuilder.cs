@@ -156,19 +156,23 @@ public static class PrefabBuilder
     }
 
     /// <summary>
-    /// A Bruxa: chefe final. Tem animacoes proprias de carregar magia, atacar,
-    /// levar dano e morrer, entao ganha um controller mais completo que os outros.
+    /// A Bruxa: chefe final, do pack "2D Pixel Art Witch Sprites" da Elthen.
+    /// Uma folha so, 10x6 quadros de 32 px, uma animacao por linha:
+    /// 0 parada (4), 1 andar (8), 2 feitico (8), 3 dano (4), 4 morte (10),
+    /// 5 voo na vassoura (4). O feitico e dividido em carregar (ela junta a
+    /// magia nas maos) e lancar (o raio sai), para o aviso visual vir antes do tiro.
     /// </summary>
     private static void CriarBruxa(GameObject fxMorte)
     {
-        string b = Art + "/Castle/Bruxa";
+        string folha = Art + "/Elthen/Bruxa (32x32).png";
 
-        Sprite[] idle = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Idle (32x48).png");
-        Sprite[] correr = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Run (32x48).png");
-        Sprite[] carregar = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Charge (48x48).png");
-        Sprite[] atacar = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Attack (104x46).png");
-        Sprite[] dano = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Hit (32x48).png");
-        Sprite[] morte = AnimationBuilder.QuadrosFatiados(b + "/Bruxa_Death (32x40).png");
+        Sprite[] idle = AnimationBuilder.QuadrosFatiados(folha, 0, 4);
+        Sprite[] correr = AnimationBuilder.QuadrosFatiados(folha, 10, 8);
+        Sprite[] carregar = AnimationBuilder.QuadrosFatiados(folha, 20, 4);
+        Sprite[] atacar = AnimationBuilder.QuadrosFatiados(folha, 24, 4);
+        Sprite[] dano = AnimationBuilder.QuadrosFatiados(folha, 30, 4);
+        Sprite[] morte = AnimationBuilder.QuadrosFatiados(folha, 40, 10);
+        Sprite[] voar = AnimationBuilder.QuadrosFatiados(folha, 50, 4);
 
         if (idle.Length == 0)
         {
@@ -176,20 +180,23 @@ public static class PrefabBuilder
             return;
         }
 
-        AnimationClip clipIdle = AnimationBuilder.CriarClip("Bruxa_Idle", idle, 8f, true);
+        AnimationClip clipIdle = AnimationBuilder.CriarClip("Bruxa_Idle", idle, 6f, true);
         AnimationClip clipCorrer = AnimationBuilder.CriarClip("Bruxa_Correr", correr, 12f, true);
         AnimationClip clipCarregar = AnimationBuilder.CriarClip("Bruxa_Carregar", carregar, 10f, false);
-        AnimationClip clipAtacar = AnimationBuilder.CriarClip("Bruxa_Atacar", atacar, 14f, false);
+        AnimationClip clipAtacar = AnimationBuilder.CriarClip("Bruxa_Atacar", atacar, 12f, false);
         AnimationClip clipDano = AnimationBuilder.CriarClip("Bruxa_Dano", dano, 10f, false);
         AnimationClip clipMorte = AnimationBuilder.CriarClip("Bruxa_Morte", morte, 10f, false);
+        AnimationClip clipVoar = AnimationBuilder.CriarClip("Bruxa_Voar", voar, 8f, true);
 
         AnimatorController controller = AnimationBuilder.CriarControllerBruxa(
-            "Bruxa", clipIdle, clipCorrer, clipCarregar, clipAtacar, clipDano, clipMorte);
+            "Bruxa", clipIdle, clipCorrer, clipCarregar, clipAtacar, clipDano, clipMorte, clipVoar);
 
         GameObject bruxa = new GameObject("Bruxa");
         bruxa.tag = "Enemy";
         bruxa.layer = LayerMask.NameToLayer("Enemy");
-        bruxa.transform.localScale = Vector3.one * 2.2f;
+        // O desenho tem 23 px de altura (o heroi tem 37): ampliada como os outros
+        // chefes, para ter presenca de chefe final.
+        bruxa.transform.localScale = Vector3.one * 2.8f;
 
         SpriteRenderer sr = bruxa.AddComponent<SpriteRenderer>();
         sr.sprite = idle[0];
@@ -203,10 +210,11 @@ public static class PrefabBuilder
         rb.freezeRotation = true;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-        // Quadro de 32x48 com o corpo em 20x38, base 6 px acima do fundo.
+        // Quadro de 32x32: do bico do chapeu (8 px do topo) aos pes (no fundo),
+        // 23 px de altura; o tronco tem uns 14 px de largura.
         BoxCollider2D col = bruxa.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(1.1f, 2.2f);
-        col.offset = new Vector2(0f, -0.2f);
+        col.size = new Vector2(0.9f, 1.4f);
+        col.offset = new Vector2(0f, -0.22f);
 
         Boss boss = bruxa.AddComponent<Boss>();
         SerializedObject so = new SerializedObject(boss);
@@ -216,29 +224,40 @@ public static class PrefabBuilder
         so.FindProperty("velocidadeInvestida").floatValue = 10f;
         so.FindProperty("forcaPulo").floatValue = 17f;
         so.FindProperty("intervaloEntreAcoes").floatValue = 1.9f;
-        so.FindProperty("spriteOlhaParaEsquerda").boolValue = false;
+        so.FindProperty("spriteOlhaParaEsquerda").boolValue = false;   // o desenho olha para a direita
         so.FindProperty("camadaChao").intValue = MascaraDe("Ground");
         so.FindProperty("projetil").objectReferenceValue = CriarMagia(fxMorte);
-        so.FindProperty("bocaDoTiro").vector2Value = new Vector2(1.2f, 0.4f);
-        so.FindProperty("velocidadeDoProjetil").floatValue = 11f;
-        so.FindProperty("alturaMinimaDoPisao").floatValue = 1.4f;
+        // Maos a frente, na altura do raio do feitico (um pouco abaixo do centro).
+        so.FindProperty("bocaDoTiro").vector2Value = new Vector2(1.6f, -0.8f);
+        so.FindProperty("velocidadeDoProjetil").floatValue = 10f;
+        // O tiro sai quando a animacao passa de "carregar" para "lancar" (4 quadros a 10 fps).
+        so.FindProperty("atrasoDoTiro").floatValue = 0.4f;
+        so.FindProperty("alturaMinimaDoPisao").floatValue = 1.2f;
+        // Sapos: nascem a frente dela, um pouco acima dos pes, e caem no chao.
+        so.FindProperty("invocacao").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(PastaPrefabs + "/Sapo.prefab");
+        so.FindProperty("maximoDeInvocados").intValue = 2;
+        so.FindProperty("pontoDaInvocacao").vector2Value = new Vector2(1.8f, 0.5f);
         so.FindProperty("efeitoMorte").objectReferenceValue = fxMorte;
         so.ApplyModifiedProperties();
 
         Salvar(bruxa, "Bruxa");
     }
 
-    /// <summary>Bola de magia da Bruxa (fireball do pack gotico).</summary>
+    /// <summary>
+    /// Feitico da Bruxa: a folha "Hex" da Elthen tem 4 quadros (magia juntando,
+    /// bola, estouro, fagulhas); o projetil pulsa entre os dois primeiros e o
+    /// impacto usa o efeito de morte, como as outras bolas.
+    /// </summary>
     private static GameObject CriarMagia(GameObject fxImpacto)
     {
-        Sprite[] quadros = AnimationBuilder.QuadrosFatiados(Art + "/Castle/FX/fireball (26x26).png");
-        AnimationClip clip = AnimationBuilder.CriarClip("Magia_Voar", quadros, 12f, true);
+        Sprite[] quadros = AnimationBuilder.QuadrosFatiados(Art + "/Elthen/Hex (32x32).png", 0, 2);
+        AnimationClip clip = AnimationBuilder.CriarClip("Magia_Voar", quadros, 6f, true);
         AnimatorController controller = AnimationBuilder.CriarControllerLoop("Magia", clip);
 
         GameObject magia = new GameObject("MagiaDaBruxa");
         magia.tag = "Hazard";
         magia.layer = LayerMask.NameToLayer("Hazard");
-        magia.transform.localScale = Vector3.one * 1.4f;
+        magia.transform.localScale = Vector3.one * 2f;
 
         SpriteRenderer sr = magia.AddComponent<SpriteRenderer>();
         sr.sprite = quadros.Length > 0 ? quadros[0] : null;
@@ -251,7 +270,7 @@ public static class PrefabBuilder
         rb.freezeRotation = true;
 
         CircleCollider2D col = magia.AddComponent<CircleCollider2D>();
-        col.radius = 0.4f;
+        col.radius = 0.3f;   // a bola tem uns 10 px; a escala 2 amplia junto
         col.isTrigger = true;
 
         Projetil projetil = magia.AddComponent<Projetil>();
@@ -401,6 +420,16 @@ public static class PrefabBuilder
         CriarInimigo("MagoEsqueleto", AnimationBuilder.QuadrosDaPasta(gr + "/MiniDemon", "run"), 10f,
             new Vector2(1.6f, 2.1f), new Vector2(0f, -0.26f), 2.2f, voador: false, pisavel: true, fxMorte);
 
+        // Sapo invocado pela Bruxa (pack da Elthen, folha 6x3 de 32 px: linha 0
+        // nascer (5), 1 parado (6), 2 pular (5)). Nao e posto nas fases: so a
+        // Bruxa o cria, ate dois por vez. O desenho tem 10 px e encosta no fundo
+        // do quadro, por isso o colisor desce 0,66.
+        string sapo = Art + "/Elthen/Sapo (32x32).png";
+        CriarInimigo("Sapo", AnimationBuilder.QuadrosFatiados(sapo, 12, 5), 10f,
+            new Vector2(0.7f, 0.6f), new Vector2(0f, -0.66f), 2.4f, voador: false, pisavel: true, fxMorte,
+            olhaEsquerda: false, escala: 1.8f,
+            nascer: AnimationBuilder.CriarClip("Sapo_Nascer", AnimationBuilder.QuadrosFatiados(sapo, 0, 5), 10f, false));
+
         // Inverno
         // O desenho da raposa tem 2 unidades de altura e encosta na base do
         // quadro. Com o colisor em 1,7 e offset -0,1, a base dele ficava 0,175
@@ -418,8 +447,10 @@ public static class PrefabBuilder
     /// Para que lado o desenho original aponta. Conferido na prancha dos primeiros
     /// quadros: quase todos olham para a esquerda; esqueleto, raposa e yeti, para a direita.
     /// </param>
+    /// <param name="nascer">Animacao tocada uma vez ao aparecer, antes do loop de andar (sapo invocado).</param>
     private static void CriarInimigo(string nome, Sprite[] quadros, float fps, Vector2 tamanho, Vector2 offset,
-        float velocidade, bool voador, bool pisavel, GameObject fxMorte, bool olhaEsquerda = true, float escala = 1f)
+        float velocidade, bool voador, bool pisavel, GameObject fxMorte, bool olhaEsquerda = true, float escala = 1f,
+        AnimationClip nascer = null)
     {
         if (quadros.Length == 0)
         {
@@ -428,7 +459,9 @@ public static class PrefabBuilder
         }
 
         AnimationClip andar = AnimationBuilder.CriarClip(nome + "_Andar", quadros, fps, true);
-        AnimatorController controller = AnimationBuilder.CriarControllerLoop(nome, andar);
+        AnimatorController controller = nascer != null
+            ? AnimationBuilder.CriarControllerNascerEAndar(nome, nascer, andar)
+            : AnimationBuilder.CriarControllerLoop(nome, andar);
 
         GameObject inimigo = new GameObject(nome);
         inimigo.tag = "Enemy";
@@ -583,6 +616,8 @@ public static class PrefabBuilder
             SerializedObject so = new SerializedObject(perigo);
             so.FindProperty("mataInstantaneamente").boolValue = false;
             so.FindProperty("dano").intValue = 1;
+            // O colisor e so a chama; sem isto o queimador afundava 0,8 no chao.
+            so.FindProperty("assentaPeloDesenho").boolValue = true;
             so.ApplyModifiedProperties();
 
             Salvar(fogo, "Fogo");

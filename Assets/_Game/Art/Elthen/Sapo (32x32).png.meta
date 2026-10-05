@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2a4e2c36071dcf44d8dd4d5749ee5d31
+guid: df71fff89ca002a419d2e13bcc9bd855
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_0
+      name: Sapo (32x32)_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 440
+        y: 64
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,20 +138,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b364214a2ffc8dc428a5d684288e25f2
-      internalID: 1662796845
+      spriteID: 23aff005c02757c40bc4ab7e66e69c7c
+      internalID: -659552000
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_1
+      name: Sapo (32x32)_1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 400
+        x: 32
+        y: 64
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,20 +160,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1efacbeb56ee3ab49845104c574c2de5
-      internalID: 656331032
+      spriteID: 11aeb4bfa33b38745941aa9e2a188e5b
+      internalID: -1727560460
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_2
+      name: Sapo (32x32)_2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 360
+        x: 64
+        y: 64
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -182,20 +182,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cf6a3673406039a4ea6870018a8f6746
-      internalID: 1300620646
+      spriteID: 720cb22935e11ca488f4ebc6659ac6bc
+      internalID: -57378602
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_3
+      name: Sapo (32x32)_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 320
+        x: 96
+        y: 64
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -204,20 +204,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c752511707c6178458c5b6399c64a5fa
-      internalID: 735305916
+      spriteID: eebf6371a296b3c4191cab066430deda
+      internalID: -240043713
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_4
+      name: Sapo (32x32)_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 280
+        x: 128
+        y: 64
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -226,20 +226,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fd056c1742f7f54459f3be6cb263c773
-      internalID: 48503085
+      spriteID: 3dd9c1bd7916f5e488d35ad575d9efd5
+      internalID: -1364581921
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_5
+      name: Sapo (32x32)_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 240
+        x: 160
+        y: 64
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -248,20 +248,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e106ef4cf345ed142973893af2b629e4
-      internalID: 38893732
+      spriteID: 966ae0ad6fb1d5d49bb27d3e3bc3342a
+      internalID: 1015948117
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_6
+      name: Sapo (32x32)_6
       rect:
         serializedVersion: 2
         x: 0
-        y: 200
+        y: 32
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -270,20 +270,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8cac38963ad3be14a8f220b8cc79f579
-      internalID: 1375569165
+      spriteID: a9e9ea1a4c7717e489a4cf6176fbc759
+      internalID: -902903383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_7
+      name: Sapo (32x32)_7
       rect:
         serializedVersion: 2
-        x: 0
-        y: 160
+        x: 32
+        y: 32
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -292,20 +292,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 09ccdd161c187e94c9f4bc578a941dbb
-      internalID: 772740197
+      spriteID: 650b70650a1f9d448afbbefdbec199a5
+      internalID: 1230442013
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_8
+      name: Sapo (32x32)_8
       rect:
         serializedVersion: 2
-        x: 0
-        y: 120
+        x: 64
+        y: 32
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -314,20 +314,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 983974ef3f211c147ae9784858c317f9
-      internalID: -333916080
+      spriteID: bed50dd3863412147927774ab6c2b34d
+      internalID: -1333027913
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_9
+      name: Sapo (32x32)_9
       rect:
         serializedVersion: 2
-        x: 0
-        y: 80
+        x: 96
+        y: 32
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -336,20 +336,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 928c0630263900840ad6d12608eb6f96
-      internalID: 577208751
+      spriteID: 40f121eabf37d6f4580e32f9904ab68c
+      internalID: 1320424135
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_10
+      name: Sapo (32x32)_10
       rect:
         serializedVersion: 2
-        x: 0
-        y: 40
+        x: 128
+        y: 32
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -358,20 +358,42 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fdaf5d417ecbd944cb2a5b33eb66b14f
-      internalID: -797021050
+      spriteID: 611351d52718ffb4e8923fd6890f5f21
+      internalID: 1267719122
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bruxa_Death (32x40)_11
+      name: Sapo (32x32)_11
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56502f90a5643ad4794c09a08527ae82
+      internalID: 1811633872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sapo (32x32)_12
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 40
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -380,8 +402,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a81050196d499ec499d39755d37b10ce
-      internalID: 189501700
+      spriteID: 46555df30d0204644a3404c66d187552
+      internalID: 500147654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sapo (32x32)_13
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d76094b2abf1e894dbd0782b4216d8b6
+      internalID: -2139812650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sapo (32x32)_14
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f72c5c74559fed448868a51ae7410a1
+      internalID: -1145597042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sapo (32x32)_15
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f1925aee3c1f8244834aa699b8fd538
+      internalID: -367956354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sapo (32x32)_16
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4281ba00510ab5f4ca008b860ebef0dd
+      internalID: 166615309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sapo (32x32)_17
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb32c3891d9fbd643b226035b98f185c
+      internalID: -237664978
       vertices: []
       indices: 
       edges: []
@@ -390,7 +522,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 06f71a3b3b904274ea95c2a982b29f76
+    spriteID: 5b57e4d8b4c702c4789843653152a4f5
     internalID: 0
     vertices: []
     indices: 
@@ -400,18 +532,24 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bruxa_Death (32x40)_0: 1662796845
-      Bruxa_Death (32x40)_1: 656331032
-      Bruxa_Death (32x40)_10: -797021050
-      Bruxa_Death (32x40)_11: 189501700
-      Bruxa_Death (32x40)_2: 1300620646
-      Bruxa_Death (32x40)_3: 735305916
-      Bruxa_Death (32x40)_4: 48503085
-      Bruxa_Death (32x40)_5: 38893732
-      Bruxa_Death (32x40)_6: 1375569165
-      Bruxa_Death (32x40)_7: 772740197
-      Bruxa_Death (32x40)_8: -333916080
-      Bruxa_Death (32x40)_9: 577208751
+      Sapo (32x32)_0: -659552000
+      Sapo (32x32)_1: -1727560460
+      Sapo (32x32)_10: 1267719122
+      Sapo (32x32)_11: 1811633872
+      Sapo (32x32)_12: 500147654
+      Sapo (32x32)_13: -2139812650
+      Sapo (32x32)_14: -1145597042
+      Sapo (32x32)_15: -367956354
+      Sapo (32x32)_16: 166615309
+      Sapo (32x32)_17: -237664978
+      Sapo (32x32)_2: -57378602
+      Sapo (32x32)_3: -240043713
+      Sapo (32x32)_4: -1364581921
+      Sapo (32x32)_5: 1015948117
+      Sapo (32x32)_6: -902903383
+      Sapo (32x32)_7: 1230442013
+      Sapo (32x32)_8: -1333027913
+      Sapo (32x32)_9: 1320424135
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

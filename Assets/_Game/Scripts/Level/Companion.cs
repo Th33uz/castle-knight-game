@@ -42,6 +42,9 @@ public class Companion : MonoBehaviour
     [SerializeField] private float alturaParaPular = 1.2f;
     [Tooltip("Recarga entre pulos. Curta para ele nao perder o salto seguinte do heroi.")]
     [SerializeField] private float intervaloEntrePulos = 0.28f;
+    [Tooltip("Ate esta distancia do heroi, o gato salta NO MESMO INSTANTE que ele, para o mesmo lado e com a mesma altura. " +
+             "Mais longe que isso, ele corre ate o ponto do salto e pula la.")]
+    [SerializeField] private float distanciaParaEspelhar = 2.5f;
 
     [Header("Chao e obstaculos")]
     [SerializeField] private LayerMask camadaChao;
@@ -103,6 +106,8 @@ public class Companion : MonoBehaviour
 
     private readonly List<MarcaDePulo> marcasDePulo = new List<MarcaDePulo>();
     private bool heroiEstavaSubindo;
+    private float ultimoPuloDoHeroi = -10f;
+    private bool puloDuploDisponivel = true;   // o gato repete o pulo duplo do heroi uma vez por voo
 
     // Ocio: 0 = acordado, 1 = ja miou, 2 = sentado, 3 = dormindo.
     private float tempoParado;
@@ -147,11 +152,22 @@ public class Companion : MonoBehaviour
         if (CuidarDaRecuperacao())
             return;
 
-        AnotarPuloDoHeroi();
+        bool noChao = NoChao();
+        if (noChao)
+            puloDuploDisponivel = true;
+
+        // O heroi acabou de saltar com o gato colado nele: o gato salta junto,
+        // agora e para o mesmo lado. Nada mais a decidir neste quadro.
+        if (AnotarPuloDoHeroi(noChao))
+        {
+            CuidarDoOcio(false);
+            CuidarDosPassos(false);
+            AtualizarVisual(false);
+            return;
+        }
 
         float alvoX = CalcularAlvoX();
         float distancia = alvoX - transform.position.x;
-        bool noChao = NoChao();
         float direcao = Mathf.Sign(distancia);
         bool querAndar = Mathf.Abs(distancia) > tolerancia;
 
@@ -170,7 +186,13 @@ public class Companion : MonoBehaviour
             ? Mathf.Sign(rb.linearVelocity.x)
             : direcao;
 
-        bool podePular = noChao && Time.time >= proximoPulo;
+        // Heroi em cima, mas com laje entre os dois: pular aqui e bater a cabeca
+        // na laje e cair de volta. Primeiro sai de baixo dela pelo lado em que o
+        // teto acaba mais perto; livre, o pulo normal de subida resolve.
+        bool tetoNoCaminho = noChao && precisaSubir && TetoAcima(Mathf.Min(desnivel, 3f) + 0.3f);
+        float ladoLivre = tetoNoCaminho ? LadoLivreDoTeto(direcao) : 0f;
+
+        bool podePular = noChao && Time.time >= proximoPulo && !tetoNoCaminho;
         int marca = podePular ? MarcaAlcancada(direcaoDoMovimento) : -1;
 
         // Repetir o salto do heroi tem prioridade: os sensores de parede e buraco
@@ -181,15 +203,23 @@ public class Companion : MonoBehaviour
         if (vaiPular)
         {
             float alturaPedida = -1f;
+            float direcaoDoPulo = direcao;
 
+            // Repetindo o salto do heroi, o lado e o DELE. Antes saia o sinal do
+            // erro de posicao, que colado no alvo troca a toda hora: o heroi
+            // pulava para a direita e o gato, para a esquerda.
             if (marca >= 0)
             {
-                alturaPedida = marcasDePulo[marca].altura;
+                MarcaDePulo m = marcasDePulo[marca];
+                alturaPedida = m.altura;
+                direcaoDoPulo = m.direcao != 0f ? m.direcao : direcaoDoMovimento;
                 marcasDePulo.RemoveAt(marca);
             }
 
-            Pular(direcao, desnivel, temBuraco, alturaPedida);
+            Pular(direcaoDoPulo, desnivel, temBuraco, alturaPedida);
         }
+        else if (tetoNoCaminho && ladoLivre != 0f && !BuracoAFrente(ladoLivre))
+            AndarPara(ladoLivre);    // sai de baixo da laje antes de tentar subir
         else if (temBuraco)
             PararNaBorda();          // pulo em recarga: espera, nao anda para dentro
         else
@@ -322,42 +352,72 @@ public class Companion : MonoBehaviour
     }
 
     /// <summary>
-    /// Anota onde o heroi bateu o pe para pular. O gato repete o salto no MESMO
-    /// PONTO, e nao no mesmo instante: como ele anda um passo atras, pular junto
-    /// o faria saltar cedo demais e bater na quina da plataforma.
+    /// Reage ao salto do heroi no instante em que ele bate o pe.
+    ///
+    /// Gato perto (ate <see cref="distanciaParaEspelhar"/>): salta JUNTO, para o
+    /// mesmo lado e com a mesma altura - e o que faz ele acompanhar o heroi por
+    /// cima dos buracos em vez de chegar atrasado na beirada. Pulo duplo do
+    /// heroi com o gato ainda no ar: o gato ganha o mesmo impulso extra.
+    ///
+    /// Gato longe: anota onde o heroi saiu do chao e repete o salto quando chegar
+    /// la (MarcaAlcancada), porque pular de longe o jogaria contra a quina.
+    /// Devolve true quando o gato saltou agora.
     /// </summary>
-    private void AnotarPuloDoHeroi()
+    private bool AnotarPuloDoHeroi(bool gatoNoChao)
     {
         if (jogadorRb == null)
-            return;
+            return false;
 
         float vy = jogadorRb.linearVelocity.y;
         bool subindo = vy > 1f;
+        bool pulou = false;
 
         if (subindo && !heroiEstavaSubindo)
         {
             float gravidadeDoHeroi = Mathf.Abs(Physics2D.gravity.y) * jogadorRb.gravityScale;
             float altura = gravidadeDoHeroi > 0.01f ? (vy * vy) / (2f * gravidadeDoHeroi) : 1.5f;
 
-            int ultima = marcasDePulo.Count - 1;
+            float vx = jogadorRb.linearVelocity.x;
+            float direcaoDoHeroi = Mathf.Abs(vx) > 0.5f ? Mathf.Sign(vx) : 0f;
+            bool segundoPulo = Time.time - ultimoPuloDoHeroi < 0.6f;
+            float distanciaDoHeroi = Mathf.Abs(jogador.position.x - transform.position.x);
+            ultimoPuloDoHeroi = Time.time;
 
-            // Pulo duplo: o gato so tem um pulo, entao em vez de anotar um segundo
-            // salto ele soma a altura na marca de onde o heroi saiu do chao.
-            if (ultima >= 0 && Time.time - marcasDePulo[ultima].momento < 0.6f)
+            if (segundoPulo)
             {
-                MarcaDePulo anterior = marcasDePulo[ultima];
-                anterior.altura += altura;
-                marcasDePulo[ultima] = anterior;
+                int ultima = marcasDePulo.Count - 1;
+
+                if (!gatoNoChao && puloDuploDisponivel)
+                {
+                    // Pulo duplo espelhado: so o impulso vertical, mantendo o rumo.
+                    float gravidade = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
+                    float forca = Mathf.Clamp(Mathf.Sqrt(2f * gravidade * altura), puloMinimo, puloMaximo);
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Max(rb.linearVelocity.y, forca));
+                    puloDuploDisponivel = false;
+                    pulou = true;
+                }
+                else if (ultima >= 0 && Time.time - marcasDePulo[ultima].momento < 0.6f)
+                {
+                    // Gato ainda a caminho da marca: ela passa a pedir a altura somada.
+                    MarcaDePulo anterior = marcasDePulo[ultima];
+                    anterior.altura += altura;
+                    marcasDePulo[ultima] = anterior;
+                }
+            }
+            else if (gatoNoChao && Time.time >= proximoPulo && distanciaDoHeroi <= distanciaParaEspelhar
+                     && !TetoAcima(Mathf.Min(altura, 3f) + 0.3f))
+            {
+                bool sobreBuraco = direcaoDoHeroi != 0f && BuracoAFrente(direcaoDoHeroi);
+                Pular(direcaoDoHeroi, 0f, sobreBuraco, altura);
+                pulou = true;
             }
             else
             {
-                float vx = jogadorRb.linearVelocity.x;
-
                 marcasDePulo.Add(new MarcaDePulo
                 {
                     x = jogador.position.x,
                     altura = altura,
-                    direcao = Mathf.Abs(vx) > 0.5f ? Mathf.Sign(vx) : 0f,
+                    direcao = direcaoDoHeroi,
                     momento = Time.time
                 });
 
@@ -370,6 +430,7 @@ public class Companion : MonoBehaviour
 
         // Marca velha nao serve mais: aquele salto ja passou.
         marcasDePulo.RemoveAll(m => Time.time - m.momento > 2f);
+        return pulou;
     }
 
     /// <summary>Indice da marca que o gato acabou de alcancar, ou -1 se nenhuma.</summary>
@@ -433,6 +494,52 @@ public class Companion : MonoBehaviour
 
         rb.linearVelocity = new Vector2(direcao * impulsoHorizontal, forca);
         proximoPulo = Time.time + intervaloEntrePulos;
+    }
+
+    /// <summary>Anda para um lado num passo firme, sem a correcao de distancia ate o heroi.</summary>
+    private void AndarPara(float lado)
+    {
+        float novaVelocidadeX = Mathf.MoveTowards(rb.linearVelocity.x, lado * velocidade * 0.7f, aceleracao * Time.fixedDeltaTime);
+        rb.linearVelocity = new Vector2(novaVelocidadeX, rb.linearVelocity.y);
+    }
+
+    /// <summary>Ha laje ou teto ate esta altura acima da cabeca?</summary>
+    private bool TetoAcima(float altura)
+    {
+        if (colisor == null)
+            return false;
+
+        Vector2 cabeca = new Vector2(colisor.bounds.center.x, colisor.bounds.max.y);
+        return Physics2D.Raycast(cabeca, Vector2.up, altura, camadaChao)
+            || Physics2D.Raycast(cabeca + Vector2.left * colisor.bounds.extents.x, Vector2.up, altura, camadaChao)
+            || Physics2D.Raycast(cabeca + Vector2.right * colisor.bounds.extents.x, Vector2.up, altura, camadaChao);
+    }
+
+    /// <summary>
+    /// Para que lado o teto acaba mais perto: -1, +1, ou 0 se nao acha saida em
+    /// 4 unidades. Empate vai para o lado do heroi (<paramref name="preferido"/>).
+    /// </summary>
+    private float LadoLivreDoTeto(float preferido)
+    {
+        if (colisor == null)
+            return 0f;
+
+        Vector2 cabeca = new Vector2(colisor.bounds.center.x, colisor.bounds.max.y);
+
+        for (float avanco = 0.5f; avanco <= 4f; avanco += 0.5f)
+        {
+            bool esquerdaLivre = !Physics2D.Raycast(cabeca + Vector2.left * avanco, Vector2.up, 3f, camadaChao);
+            bool direitaLivre = !Physics2D.Raycast(cabeca + Vector2.right * avanco, Vector2.up, 3f, camadaChao);
+
+            if (esquerdaLivre && direitaLivre)
+                return preferido != 0f ? preferido : 1f;
+            if (esquerdaLivre)
+                return -1f;
+            if (direitaLivre)
+                return 1f;
+        }
+
+        return 0f;
     }
 
     /// <summary>Freia rapido para nao passar da beirada enquanto o pulo recarrega.</summary>

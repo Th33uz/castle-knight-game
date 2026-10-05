@@ -21,6 +21,13 @@ public class Collectible : MonoBehaviour
 
     private bool jaPego;
 
+    private void Start()
+    {
+        // Renasceu no checkpoint: o que ja foi pego nesta fase nao volta.
+        if (GameManager.Instance != null && GameManager.Instance.ItemJaColetado(transform.position))
+            Destroy(gameObject);
+    }
+
     private void OnTriggerEnter2D(Collider2D outro)
     {
         // A trava evita contar duas vezes se o jogador tiver mais de um colisor.
@@ -47,6 +54,9 @@ public class Collectible : MonoBehaviour
         }
 
         jaPego = true;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.RegistrarItemColetado(transform.position);
 
         if (efeitoVisual != null)
             Instantiate(efeitoVisual, transform.position, Quaternion.identity);

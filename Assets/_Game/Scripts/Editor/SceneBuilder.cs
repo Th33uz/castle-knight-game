@@ -130,16 +130,26 @@ public static class SceneBuilder
         player.waitForFirstFrame = true;
 
         CutsceneIntro intro = cam.gameObject.AddComponent<CutsceneIntro>();
+
+        // Aviso discreto no canto: "aperte qualquer tecla para pular".
+        UIBuilder.CriarAvisoDePular();
+
+        // O que aparece quando o video acaba: na abertura, a pergunta do
+        // tutorial (SIM -> Tutorial, NAO -> Fase 1); no final, o "Continua...",
+        // que some sozinho e volta ao menu.
+        GameObject telaAoTerminar = voltarAoMenu
+            ? UIBuilder.CriarTelaContinua()
+            : UIBuilder.CriarEscolhaDeTutorial(intro);
+
         SerializedObject so = new SerializedObject(intro);
         so.FindProperty("player").objectReferenceValue = player;
         // Vazio: usa a primeira fase definida no GameManager (Tutorial).
         so.FindProperty("cenaSeguinte").stringValue = "";
         // Final: encerra a partida e volta ao menu em vez de seguir para uma fase.
         so.FindProperty("voltarAoMenu").boolValue = voltarAoMenu;
+        so.FindProperty("telaAoTerminar").objectReferenceValue = telaAoTerminar;
+        so.FindProperty("duracaoDaTela").floatValue = voltarAoMenu ? 4f : 0f;
         so.ApplyModifiedProperties();
-
-        // Aviso discreto no canto: "aperte qualquer tecla para pular".
-        UIBuilder.CriarAvisoDePular();
 
         EditorSceneManager.MarkSceneDirty(cena);
         EditorSceneManager.SaveScene(cena);
@@ -266,6 +276,11 @@ public static class SceneBuilder
         TilemapCollider2D colisorDoChao = chao.GetComponent<TilemapCollider2D>();
         if (colisorDoChao != null)
             colisorDoChao.offset = new Vector2(0f, -afundamento);
+
+        // A decoracao de fundo (arvores, pilares, pedras) desce o mesmo ar e mais
+        // um pouco: fica atras do chao, entao a base entra na neve/rocha e a
+        // arvore parece plantada, em vez de pousada numa linha acima do desenho.
+        fundo.transform.localPosition = new Vector3(0f, -(afundamento + 0.15f), 0f);
 
         foreach (RectInt r in nivel.chao)
         {
@@ -536,6 +551,13 @@ public static class SceneBuilder
     /// <summary>Y local da borda de baixo do colisor (negativo = abaixo do pivo).</summary>
     private static float BaseDoColisor(GameObject go)
     {
+        // Fogo: o colisor cobre so a chama, e o queimador desenhado embaixo
+        // dela precisa ficar em cima do chao. Assenta pela base do desenho.
+        Hazard perigo = go.GetComponent<Hazard>();
+        SpriteRenderer desenho = go.GetComponent<SpriteRenderer>();
+        if (perigo != null && perigo.AssentaPeloDesenho && desenho != null && desenho.sprite != null)
+            return desenho.sprite.bounds.min.y;
+
         Collider2D col = go.GetComponent<Collider2D>();
 
         switch (col)

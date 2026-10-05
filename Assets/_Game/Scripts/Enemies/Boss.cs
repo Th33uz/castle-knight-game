@@ -1,9 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// Chefe de fim de fase. Fica dormindo ate a BossArena ativa-lo; entao persegue
-/// o jogador e alterna entre investir, pular e (se tiver projetil) atirar.
+/// o jogador e alterna entre investir, pular, (se tiver projetil) atirar e
+/// (se tiver invocacao) chamar ajudantes.
 /// Morre com alguns pisoes ou golpes de espada e libera o fim da fase.
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
@@ -34,6 +36,18 @@ public class Boss : MonoBehaviour
     [SerializeField] private float velocidadeDoProjetil = 9f;
     [Tooltip("De onde o tiro sai, em relacao ao centro, olhando para a direita.")]
     [SerializeField] private Vector2 bocaDoTiro = new Vector2(1.4f, 0.2f);
+    [Tooltip("Segundos entre o comeco da animacao de ataque e o tiro sair: o tempo de 'carregar' a magia. 0 = sai na hora.")]
+    [SerializeField] private float atrasoDoTiro = 0f;
+
+    [Header("Invocacao (opcional)")]
+    [Tooltip("Prefab de inimigo que o chefe faz aparecer (os sapos da Bruxa). Vazio = nao invoca.")]
+    [SerializeField] private GameObject invocacao;
+    [Tooltip("Quantos invocados podem estar vivos ao mesmo tempo.")]
+    [SerializeField] private int maximoDeInvocados = 2;
+    [Tooltip("Onde o invocado nasce, em relacao ao centro, olhando para a direita. Ele cai ate o chao.")]
+    [SerializeField] private Vector2 pontoDaInvocacao = new Vector2(1.5f, 0.5f);
+
+    private readonly List<GameObject> invocados = new List<GameObject>();
 
     [Header("Dano ao jogador")]
     [SerializeField] private int dano = 1;
@@ -108,6 +122,7 @@ public class Boss : MonoBehaviour
         }
 
         bool noChao = NoChao();
+        DefinirBool("NoAr", !noChao);
 
         if (investindo)
         {
@@ -164,15 +179,14 @@ public class Boss : MonoBehaviour
             return;
         }
 
-        int opcoes = projetil != null ? 3 : 2;
-        int sorteio = Random.Range(0, opcoes);
+        // Sorteia entre o que este chefe sabe fazer, com peso igual.
+        var acoes = new List<System.Action> { Investir, () => Pular() };
+        if (projetil != null)
+            acoes.Add(Atirar);
+        if (PodeInvocar())
+            acoes.Add(Invocar);
 
-        switch (sorteio)
-        {
-            case 0: Investir(); break;
-            case 1: Pular(); break;
-            default: Atirar(); break;
-        }
+        acoes[Random.Range(0, acoes.Count)]();
     }
 
     private void Investir()
@@ -213,6 +227,27 @@ public class Boss : MonoBehaviour
             return;
         }
 
+        // A animacao comeca ja (a Bruxa junta a magia nas maos); o tiro sai
+        // depois do atraso, para o jogador ter o aviso visual antes do perigo.
+        DispararTrigger("Atacar");
+
+        if (atrasoDoTiro > 0f)
+            StartCoroutine(DispararDepois(atrasoDoTiro));
+        else
+            Disparar();
+    }
+
+    private IEnumerator DispararDepois(float atraso)
+    {
+        yield return new WaitForSeconds(atraso);
+        Disparar();
+    }
+
+    private void Disparar()
+    {
+        if (morto || projetil == null || jogador == null)
+            return;
+
         Vector3 origem = transform.position + new Vector3(bocaDoTiro.x * direcao, bocaDoTiro.y, 0f);
         GameObject tiro = Instantiate(projetil, origem, Quaternion.identity);
 
@@ -222,9 +257,43 @@ public class Boss : MonoBehaviour
         Projetil script = tiro.GetComponent<Projetil>();
         if (script != null)
             script.Lancar(rumo * velocidadeDoProjetil);
+    }
 
-        if (animator != null)
-            animator.SetTrigger("Atacar");
+    // ----------------- Invocacao -----------------
+
+    private bool PodeInvocar()
+    {
+        if (invocacao == null)
+            return false;
+
+        invocados.RemoveAll(i => i == null); // os que o jogador ja matou
+        return invocados.Count < maximoDeInvocados;
+    }
+
+    /// <summary>Faz um ajudante aparecer a frente do chefe, com a mesma animacao de lancar magia.</summary>
+    private void Invocar()
+    {
+        DispararTrigger("Atacar");
+
+        Vector3 pos = transform.position + new Vector3(pontoDaInvocacao.x * direcao, pontoDaInvocacao.y, 0f);
+        invocados.Add(Instantiate(invocacao, pos, Quaternion.identity));
+    }
+
+    /// <summary>Some com os invocados que sobraram: a luta acabou com o chefe.</summary>
+    private void DesfazerInvocados()
+    {
+        foreach (GameObject invocado in invocados)
+        {
+            if (invocado == null)
+                continue;
+
+            if (efeitoMorte != null)
+                Instantiate(efeitoMorte, invocado.transform.position, Quaternion.identity);
+
+            Destroy(invocado);
+        }
+
+        invocados.Clear();
     }
 
     // ----------------- Contato com o jogador -----------------
@@ -279,6 +348,7 @@ public class Boss : MonoBehaviour
         rb.linearVelocity = new Vector2(lado * 5f, 6f);
         investindo = false;
         proximaAcao = Time.time + 0.8f;
+        DispararTrigger("Dano");
 
         StartCoroutine(FicarInvencivel());
         return true;
@@ -304,6 +374,8 @@ public class Boss : MonoBehaviour
     {
         morto = true;
         AudioManager.Sfx(RetroSfx.ChefeMorte);
+        DispararTrigger("Morrer");
+        DesfazerInvocados();
 
         rb.linearVelocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
@@ -366,5 +438,39 @@ public class Boss : MonoBehaviour
     {
         if (sprite == null) return;
         sprite.flipX = spriteOlhaParaEsquerda ? direcao > 0 : direcao < 0;
+    }
+
+    // ----------------- Animator -----------------
+    // Os chefes simples tem so "Velocidade" e "Atacar"; a Bruxa tem tambem
+    // "NoAr", "Dano" e "Morrer". Escrever um parametro que nao existe enche o
+    // console de avisos, entao cada um e conferido antes.
+
+    private HashSet<string> parametrosDoAnimator;
+
+    private bool TemParametro(string nome)
+    {
+        if (animator == null)
+            return false;
+
+        if (parametrosDoAnimator == null)
+        {
+            parametrosDoAnimator = new HashSet<string>();
+            foreach (AnimatorControllerParameter p in animator.parameters)
+                parametrosDoAnimator.Add(p.name);
+        }
+
+        return parametrosDoAnimator.Contains(nome);
+    }
+
+    private void DispararTrigger(string nome)
+    {
+        if (TemParametro(nome))
+            animator.SetTrigger(nome);
+    }
+
+    private void DefinirBool(string nome, bool valor)
+    {
+        if (TemParametro(nome))
+            animator.SetBool(nome, valor);
     }
 }

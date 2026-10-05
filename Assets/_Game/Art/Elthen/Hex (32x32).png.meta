@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7a52e6b0190e44442a17aca4f734aa78
+guid: e4a8e16df584d9c4d93b7dba86735acf
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,57 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bruxa_Hit (32x48)_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 96
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: be74f3a306e466f409d9655d91895ce6
-      internalID: 437419054
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bruxa_Hit (32x48)_1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 48
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0d315851d24444549b8277e521789cb4
-      internalID: 1011929394
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bruxa_Hit (32x48)_2
+      name: Hex (32x32)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 48
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -182,8 +138,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dba2e4cc483332f4abaa1d54c840f9e1
-      internalID: 1384252395
+      spriteID: f9e97babb429a9843b2a4ccdc4cc25d9
+      internalID: -1916744189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hex (32x32)_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffa34eabfd135dd4f939c2f64d0262a7
+      internalID: -686848109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hex (32x32)_2
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c562b17f23ad3744ca05400fa5fb44f2
+      internalID: 952345080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hex (32x32)_3
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fbb0d39be93e0c4f98aecb84ee9f6d4
+      internalID: -740318904
       vertices: []
       indices: 
       edges: []
@@ -192,7 +214,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: a636f8983c3b3cd46be15f2630dfc3e8
+    spriteID: a6211cfcea1d9bf4bba6071c2637e704
     internalID: 0
     vertices: []
     indices: 
@@ -202,9 +224,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bruxa_Hit (32x48)_0: 437419054
-      Bruxa_Hit (32x48)_1: 1011929394
-      Bruxa_Hit (32x48)_2: 1384252395
+      Hex (32x32)_0: -1916744189
+      Hex (32x32)_1: -686848109
+      Hex (32x32)_2: 952345080
+      Hex (32x32)_3: -740318904
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -10,6 +10,12 @@ public class Hazard : MonoBehaviour
     [SerializeField] private bool mataInstantaneamente = false;
     [SerializeField] private int dano = 1;
 
+    [Tooltip("Ao montar a fase, assenta no chao pela base do DESENHO e nao do colisor. " +
+             "O fogo so machuca na chama, mas o queimador precisa ficar em cima do chao, nao dentro dele.")]
+    [SerializeField] private bool assentaPeloDesenho = false;
+
+    public bool AssentaPeloDesenho => assentaPeloDesenho;
+
     private void OnTriggerEnter2D(Collider2D outro)
     {
         Machucar(outro);

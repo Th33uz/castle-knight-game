@@ -11,17 +11,18 @@ Projeto Unity 6.3 (6000.3.21f1), 2D URP. Menu + cutscene + tutorial + 4 fases
 > No Editor, o Play roda **a cena que está aberta** — a ordem do Build Settings só
 > vale no `.exe`. Para ver o jogo do começo, abra sempre o `MainMenu`.
 
-Clicar em **JOGAR** toca a cutscene (`Assets/_Game/Video/cutscene.mp4`) e depois
-carrega o Tutorial; `Espaço` pula. Pelo menu **FASES** você entra direto na fase,
-sem cutscene.
+Clicar em **JOGAR** toca a cutscene (`Assets/_Game/Video/cutscene.mp4`); `Espaço` pula.
+No fim dela aparece a pergunta **"Quer fazer o tutorial?"**: SIM leva ao Tutorial (que
+termina na Fase 1), NÃO vai direto para a Fase 1. Pelo menu **FASES** você entra direto
+na fase, sem cutscene.
 
-Fluxo: `JOGAR → cutscene → Tutorial → (volta ao menu)` e `FASES → Fase 1 → 2 → 3 → 4 →
-cutscene final → (volta ao menu)`. O tutorial termina no menu porque não está em
-`ordemDasFases` (no `GameManager`) — quem não está nessa lista volta para o menu ao
-terminar. A **cutscene final** (`Assets/_Game/Video/cutscene_final.mp4`, cena
-`CutsceneFinal`) toca ao derrotar a Bruxa na Fase 4; `Espaço` pula, e no fim o jogo volta
-ao menu. As duas cutscenes usam o mesmo script (`Scripts/UI/CutsceneIntro.cs`), a final com
-`voltarAoMenu` ligado.
+Fluxo: `JOGAR → cutscene → pergunta → Tutorial → Fase 1 → 2 → 3 → 4 → cutscene final →
+"Continua..." → (volta ao menu)`. A progressão anda por `ordemDasFases` (no `GameManager`);
+o tutorial é tratado à parte e leva à primeira fase da lista. A **cutscene final**
+(`Assets/_Game/Video/cutscene_final.mp4`, cena `CutsceneFinal`) toca ao derrotar a Bruxa
+na Fase 4; depois dela a tela "CONTINUA..." fica 4 s (ou até confirmar) e o jogo volta ao
+menu. As duas cutscenes usam o mesmo script (`Scripts/UI/CutsceneIntro.cs`): a tela do fim
+é um painel gerado pelo `UIBuilder` (`CriarEscolhaDeTutorial` / `CriarTelaContinua`).
 
 Se algum texto aparecer invisível: `Window → TextMeshPro → Import TMP Essential Resources`.
 
@@ -53,7 +54,7 @@ morrer 3 vezes volta ao menu.
 **Chefes** no fim das fases 1–4 (o tutorial termina no troféu direto): ao entrar na arena, uma
 parede fecha atrás e a barra de vida do chefe aparece no topo. Gambá Rei (3 golpes, investe e
 pula), Lagarto de Fogo (4 golpes, cospe bolas de fogo), Yeti Gigante (4 golpes, rápido e
-saltador) e **A Bruxa** (6 golpes, chefe final — carrega magia antes de lançar). Quanto menos
+saltador) e **A Bruxa** (6 golpes, chefe final — carrega magia antes de lançar, monta na vassoura ao pular e invoca até dois sapos por vez). Quanto menos
 vida, mais frequentes os ataques. Pisão e espada tiram 1 cada.
 
 **O gatinho preto** (`Scripts/Level/Companion.cs`) anda colado no herói com um atraso de
@@ -161,7 +162,7 @@ porque traz a `Global Light 2D`. Sem ela, todo sprite fica preto no URP 2D.
 |---|---|---|
 | Animated Pixel Adventurer | rvros | livre p/ uso, sem redistribuir |
 | SunnyLand, SunnyLand Winter Forest, Super Grotto Escape, GothicVania Church (+ músicas) | ansimuz | livre p/ uso pessoal e comercial |
-| Witches Pack — Blue Witch (chefe final) | 9E0 | livre p/ uso comercial, sem revender |
+| 2D Pixel Art Witch Sprites — a Bruxa (chefe final), o feitiço e o sapo | Elthen's Pixel Art Shop | livre p/ uso pessoal e comercial com crédito; sem redistribuir |
 | Pixel Adventure 1 | Pixel Frog | CC0 |
 | Hearts and health bar | VampireGirl | CC0 |
 | Black Cat Sprites — versão completa (gato companheiro) | carysaurus | comprada; crédito obrigatório, sem redistribuir |

@@ -154,6 +154,79 @@ public static class UIBuilder
         return canvas;
     }
 
+    /// <summary>
+    /// Fim da cutscene de abertura: "quer fazer o tutorial?", com SIM (tutorial)
+    /// e NAO (direto para a Fase 1). Volta desativado; o CutsceneIntro liga.
+    /// </summary>
+    public static GameObject CriarEscolhaDeTutorial(CutsceneIntro intro)
+    {
+        Canvas canvas = CriarCanvas("Canvas Escolha");
+
+        // Mesma cara da selecao de fases: a ilustracao do menu ao fundo, um
+        // escurecimento por cima e dois cartoes grandes com icone, em vez de uma
+        // caixa com botoes soltos no preto.
+        GameObject painel = CriarPainelTransparente(canvas.transform, "PainelEscolha");
+        CriarFundoDoMenu(painel.transform);
+        GameObject escurece = CriarPainelTransparente(painel.transform, "Escurece");
+        Object.DestroyImmediate(escurece.GetComponent<FocoDeMenu>());   // so o painel de fora guarda o foco
+        escurece.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.58f);
+
+        FonteDeCabecalho(CriarTexto(painel.transform, "Titulo", "QUER FAZER O TUTORIAL?", new Vector2(0.5f, 1f), new Vector2(0f, -90f), TextAlignmentOptions.Center, 56f, CorTitulo))
+            .rectTransform.sizeDelta = new Vector2(1400f, 90f);
+
+        // Os dois caminhos como cartoes de fase, com o mesmo icone que eles tem
+        // na selecao de fases (a placa do tutorial e a arvore da floresta).
+        NivelDef tutorial = LevelDesigns.PorNome("Tutorial");
+        NivelDef fase1 = LevelDesigns.PorNome("Fase1");
+
+        var cartaoSim = new NivelDef
+        {
+            cena = "EscolhaTutorial", titulo = "SIM", subtitulo = "APRENDA A JOGAR",
+            icone = tutorial != null ? tutorial.icone : null
+        };
+        var cartaoNao = new NivelDef
+        {
+            cena = "EscolhaFase1", titulo = "NÃO", subtitulo = "DIRETO PARA A FASE 1",
+            icone = fase1 != null ? fase1.icone : null
+        };
+
+        Button sim = CriarCartaoDeSelecao(painel.transform, cartaoSim, new Vector2(-190f, -20f));
+        Button nao = CriarCartaoDeSelecao(painel.transform, cartaoNao, new Vector2(190f, -20f));
+
+        CriarTexto(painel.transform, "Dica", "SETAS PARA ESCOLHER   •   ENTER OU A PARA CONFIRMAR", new Vector2(0.5f, 0f), new Vector2(0f, 60f), TextAlignmentOptions.Center, 20f, new Color(1f, 1f, 1f, 0.8f))
+            .rectTransform.sizeDelta = new Vector2(1200f, 40f);
+
+        UnityEventTools.AddPersistentListener(sim.onClick, intro.IrParaTutorial);
+        UnityEventTools.AddPersistentListener(nao.onClick, intro.IrParaPrimeiraFase);
+        LigarNavegacao(new[] { sim, nao }, vertical: false);
+
+        // O foco cai no SIM quando a tela abre, para o controle responder na hora.
+        SerializedObject foco = new SerializedObject(painel.GetComponent<FocoDeMenu>());
+        foco.FindProperty("botaoPadrao").objectReferenceValue = sim;
+        foco.ApplyModifiedProperties();
+
+        CriarEventSystem(sim.gameObject);
+        painel.SetActive(false);
+        return painel;
+    }
+
+    /// <summary>Fim da cutscene final: "CONTINUA..." sobre preto, antes de voltar ao menu.</summary>
+    public static GameObject CriarTelaContinua()
+    {
+        Canvas canvas = CriarCanvas("Canvas Continua");
+        GameObject painel = CriarPainelTransparente(canvas.transform, "PainelContinua");
+        Image fundo = painel.AddComponent<Image>();
+        fundo.color = Color.black;
+
+        FonteDeCabecalho(CriarTexto(painel.transform, "Titulo", "CONTINUA...", new Vector2(0.5f, 0.5f), new Vector2(0f, 20f), TextAlignmentOptions.Center, 64f, CorTitulo))
+            .rectTransform.sizeDelta = new Vector2(1200f, 120f);
+        CriarTexto(painel.transform, "Rodape", "OBRIGADO POR JOGAR", new Vector2(0.5f, 0.5f), new Vector2(0f, -70f), TextAlignmentOptions.Center, 22f, new Color(1f, 1f, 1f, 0.75f))
+            .rectTransform.sizeDelta = new Vector2(1200f, 50f);
+
+        painel.SetActive(false);
+        return painel;
+    }
+
     /// <summary>Tela da loja: saldo, tres itens com icone/descricao/preco e botao de compra.</summary>
     private static void CriarLoja(Canvas canvas)
     {
@@ -468,7 +541,11 @@ public static class UIBuilder
             botoesDeFase.Add((cartao, n.cena));
         }
 
-        Button voltarFases = CriarBotao(painelFases.transform, "BotaoVoltar", "VOLTAR", new Vector2(0f, -400f));
+        // Embaixo dos cartoes: a opcao de entrar com a vida cheia e o VOLTAR.
+        Button coracoesFases = CriarBotao(painelFases.transform, "BotaoCoracoes", "CORAÇÕES: NORMAL (3)", new Vector2(-250f, -400f));
+        Button voltarFases = CriarBotao(painelFases.transform, "BotaoVoltar", "VOLTAR", new Vector2(250f, -400f));
+        RedimensionarBotao(coracoesFases, new Vector2(440f, 72f), 24f);
+        RedimensionarBotao(voltarFases, new Vector2(300f, 72f), 26f);
 
         // Painel de controles: teclas desenhadas como keycaps, uma linha por acao.
         GameObject painelControles = CriarPainelEscuro(canvas.transform, "PainelControles");
@@ -530,7 +607,7 @@ public static class UIBuilder
         TMP_Text textoCreditos = CriarTexto(caixaCreditos.transform, "Texto",
             "Personagem: Animated Pixel Adventurer - rvros\n\n" +
             "Cenarios e inimigos: SunnyLand, SunnyLand Winter,\nSuper Grotto Escape, GothicVania Church - ansimuz\n\n" +
-            "A Bruxa: Witches Pack - 9E0\n\n" +
+            "A Bruxa e o sapo: 2D Pixel Art Witch Sprites - Elthen\n\n" +
             "Armadilhas e itens: Pixel Adventure - Pixel Frog\n\n" +
             "Coracoes: Hearts and health bar - VampireGirl\n\n" +
             "Gato: Black Cat Sprites - carysaurus\n\n" +
@@ -548,6 +625,7 @@ public static class UIBuilder
         UnityEventTools.AddPersistentListener(voltar1.onClick, controlador.MostrarPrincipal);
         UnityEventTools.AddPersistentListener(voltar2.onClick, controlador.MostrarPrincipal);
         UnityEventTools.AddPersistentListener(voltarFases.onClick, controlador.MostrarPrincipal);
+        UnityEventTools.AddPersistentListener(coracoesFases.onClick, controlador.AlternarCoracoesNoMaximo);
 
         // Cada cartao chama IrParaFase("NomeDaCena").
         foreach ((Button botao, string cena) in botoesDeFase)
@@ -558,6 +636,7 @@ public static class UIBuilder
         so.FindProperty("painelControles").objectReferenceValue = painelControles;
         so.FindProperty("painelCreditos").objectReferenceValue = painelCreditos;
         so.FindProperty("painelFases").objectReferenceValue = painelFases;
+        so.FindProperty("botaoCoracoes").objectReferenceValue = coracoesFases;
         so.ApplyModifiedProperties();
 
         painelControles.SetActive(false);
@@ -568,6 +647,22 @@ public static class UIBuilder
         // andar de JOGAR ate SAIR e voltar.
         LigarNavegacao(new[] { jogar, fases, controles, creditos, sair }, vertical: true);
         LigarNavegacao(botoesDeFase.ConvertAll(b => b.botao).ToArray(), vertical: false);
+
+        // Dos cartoes, "baixo" vai para a linha de botoes; dela, "cima" volta ao
+        // primeiro cartao. Sem isto o controle nao alcancava o VOLTAR.
+        LigarNavegacao(new[] { coracoesFases, voltarFases }, vertical: false);
+        foreach ((Button botao, string _) in botoesDeFase)
+        {
+            Navigation nav = botao.navigation;
+            nav.selectOnDown = coracoesFases;
+            botao.navigation = nav;
+        }
+        foreach (Button b in new[] { coracoesFases, voltarFases })
+        {
+            Navigation nav = b.navigation;
+            nav.selectOnUp = botoesDeFase.Count > 0 ? botoesDeFase[0].botao : null;
+            b.navigation = nav;
+        }
 
         CriarEventSystem(jogar.gameObject);
     }
@@ -648,6 +743,15 @@ public static class UIBuilder
 
     private static Sprite Carregar(string caminho)
     {
+        // Folha fatiada ("nome (32x32).png"): usa o primeiro quadro, e nao um
+        // sub-sprite qualquer (icone da Fase 4 vem da folha da Bruxa).
+        if (caminho.Contains("("))
+        {
+            Sprite primeiro = AnimationBuilder.SpriteFatiado(caminho, 0);
+            if (primeiro != null)
+                return primeiro;
+        }
+
         Sprite s = AssetDatabase.LoadAssetAtPath<Sprite>(caminho);
         if (s == null)
             Debug.LogWarning("[UI] Sprite nao encontrado: " + caminho);
